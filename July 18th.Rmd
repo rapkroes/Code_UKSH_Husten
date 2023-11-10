@@ -1,0 +1,139 @@
+---
+title: "18.07.23"
+author: "Raphael Kroes"
+date: "2023-07-13"
+output: html_document
+---
+
+Procedure:
+1. Clear work space & load packages
+2. Read in all functions (external functions.R file)
+3. Read in data
+4. Preprocessing I: create correct columns
+5. Check whether multiple entries for the same date/ patient are in the data sets
+6. Preprocessing II: Deal with multiple entries
+7. Create list of data frames
+8. Merge data sets
+```{r}
+# 1-2
+rm(list=ls())
+library(dplyr)
+library(parallel)
+# now read in all functions from functions.R file (CTRL+A, CTRL+Enter)
+```
+
+```{r}
+# 3
+# Read in data
+setwd("N:/StudentischeHilfskraefte/_Kroes (Christoph)/Routinedaten/01_Husten/DB")
+
+names.vec<- c("Cov3","Diab3","Diag3","DMPChron3","EBM3","EKG3","Impf3","IPC23","Konsul3","Kuerzel3","Labor3","LU3","PZN3","Stamm3","Time3","Ueberweis3","Unters3")
+
+
+for (i in seq(1,length(names.vec))) {
+  file.name<- paste0("DB_",names.vec[i],"_v03",".csv")
+  im.file<- read.csv(file = file.name, header = TRUE, sep = ";")
+
+  assign(names.vec[i],im.file)
+
+}
+# remove duplicate file and unnecessary name
+rm(file.name,im.file)
+
+# adapt this part
+ListeKrankenkassen<- read.csv(file = "ListeKrankenkassen.csv", header = TRUE, sep = ";")
+```
+
+```{r}
+# 4
+# continue to filter with distinct!
+labor.up<- Labor3|>
+  select(uniPatID,TG_DateNum,Untersuchung,Wertnum,NormLB,NormUB) |>
+  filter(Untersuchung=="KREA")
+labor.up$KREA_unter<- as.numeric(labor.up$Wertnum<labor.up$NormLB)
+labor.up$KREA_ueber<- as.numeric(labor.up$Wertnum>labor.up$NormUB)
+labor.up<- labor.up|>
+  select(uniPatID,TG_DateNum,KREA_unter,KREA_ueber)|>
+  distinct()
+
+ueberweis.up<- Ueberweis3|>
+  select(uniPatID,TG_DateNum,Uberw_Pneumo,Uberw_Radiol,Uberw_KH) |>
+  filter(Uberw_Pneumo>0|Uberw_Radiol>0|Uberw_KH>0)|>
+  distinct()
+
+stamm.up<- Stamm3
+stamm.up$PKV<- IK2PKV(stamm.up$IK)
+stamm.up<- stamm.up|> 
+  select(-PatID,-index_i,-IK,-Kasse)|>
+  distinct()
+
+ipc.up<- IPC23 |>
+  select(uniPatID,TG_DateNum,AnamnTyp,ipc2)
+
+diag.up<- Diag3 |> 
+  select(uniPatID,TG_DateNum,DiagTyp,icd10)|>
+  distinct
+
+lu.up<- LU3|> 
+  select(uniPatID,TG_DateNum)|>
+  distinct()
+lu.up$lu.dummy<- 1
+
+impf.up<- Impf3|> 
+  select(uniPatID,TG_DateNum,Influenza,starts_with("Cov"))|>
+  distinct()
+
+pzn.up<- PZN3 |> 
+  select(uniPatID,TG_DateNum,PZN) |> 
+  filter(TG_DateNum>0)|>
+  distinct()
+
+```
+```{r}
+# 5
+contains.multiple.entries(ipc.up)
+contains.multiple.entries(labor.up)
+contains.multiple.entries(ueberweis.up)
+contains.multiple.entries(stamm.up)
+contains.multiple.entries(diag.up)
+contains.multiple.entries(lu.up)
+contains.multiple.entries(impf.up)
+contains.multiple.entries(pzn.up)
+
+```
+STOP: code must be adapted if any line (except for icp.up) returns TRUE
+```{r}
+# 6
+im<- ipc.filter(ipc.up)
+ipc.up<- im[[1]]
+ipc.reference.matrix<- im[[2]]
+
+# im<- ipc.filter(diag.up)
+# diag.up<- im[[1]]
+# diag.reference.matrix<- im[[2]]
+```
+
+```{r}
+# 7
+merger.list<- list(
+  ipc.up,
+  labor.up,
+  ueberweis.up,
+  stamm.up,
+  diag.up,
+  lu.up,
+  impf.up,
+  pzn.up
+)
+
+```
+
+```{r}
+# 8
+merged.data.set<- par.patient.file(merger.list)
+```
+
+
+
+
+

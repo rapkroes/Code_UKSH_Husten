@@ -1,0 +1,961 @@
+---
+title: "19.10.23"
+author: "Raphael Kroes"
+date: "2023-10-19"
+output: html_document
+---
+
+Procedure:
+1. Clear work space & load packages
+2. Read in all functions (external functions.R file)
+3. Read in data
+4. Preprocessing I: create correct columns
+5. Check whether multiple entries for the same date/ patient are in the data sets
+6. Preprocessing II: Deal with multiple entries
+7. Create list of data frames
+8. Merge data sets
+```{r}
+# 1-2
+rm(list=ls())
+library(dplyr)
+library(parallel)
+library(lubridate)
+library(ggplot2)
+# now read in all functions from functions.R file (CTRL+A, CTRL+Enter)
+```
+
+```{r}
+# 3
+# Read in data
+setwd("N:/StudentischeHilfskraefte/_Kroes (Christoph)/Routinedaten/01_Husten/DB")
+
+names.vec<- c("Diag3","Impf3","IPC23","Labor3","LU3","PZN3","Stamm3","Ueberweis3")
+
+
+for (i in seq(1,length(names.vec))) {
+  file.name<- paste0("DB_",names.vec[i],"_v03",".csv")
+  im.file<- read.csv(file = file.name, header = TRUE, sep = ";")
+
+  assign(names.vec[i],im.file)
+
+}
+# remove duplicate file and unnecessary name
+rm(file.name,im.file)
+
+# adapt this part
+ListeKrankenkassen<- read.csv(file = "ListeKrankenkassen.csv", header = TRUE, sep = ";")
+```
+
+```{r}
+# 4
+diag.up<- Diag3 |> 
+  select(uniPatID,TG_DateNum,DiagTyp,icd10)|>
+  distinct()
+diag.up$uniPatID<- as.factor(diag.up$uniPatID)
+diag.up$DiagTyp<- as.factor(diag.up$DiagTyp)
+
+impf.up<- Impf3|> 
+  select(uniPatID,TG_DateNum,Influenza,starts_with("Cov"))|>
+  distinct()
+impf.up$uniPatID<- as.factor(impf.up$uniPatID)
+
+ipc.up<- IPC23 |>
+  select(uniPatID,TG_DateNum,AnamnTyp,ipc2)
+ipc.up$uniPatID<- as.factor(ipc.up$uniPatID)
+ipc.up$AnamnTyp<- as.factor(ipc.up$AnamnTyp)
+
+labor.up<- Labor3|>
+  select(uniPatID,TG_DateNum,Untersuchung,Wertnum,NormLB,NormUB) |>
+  filter(Untersuchung=="KREA")
+labor.up$KREA_unter<- as.numeric(labor.up$Wertnum<labor.up$NormLB)
+labor.up$KREA_ueber<- as.numeric(labor.up$Wertnum>labor.up$NormUB)
+labor.up<- labor.up|>
+  select(uniPatID,TG_DateNum,KREA_unter,KREA_ueber)|>
+  distinct()
+labor.up$uniPatID<- as.factor(labor.up$uniPatID)
+
+lu.up<- LU3|> 
+  select(uniPatID,TG_DateNum)|>
+  distinct()
+lu.up$lu.dummy<- 1
+lu.up$uniPatID<- as.factor(lu.up$uniPatID)
+
+pzn.up<- PZN3 |> 
+  select(uniPatID,TG_DateNum,PZN) |> 
+  filter(TG_DateNum>0)|>
+  distinct()
+pzn.up$uniPatID<- as.factor(pzn.up$uniPatID)
+pzn.up$PZN<- as.factor(pzn.up$PZN)
+
+stamm.up<- Stamm3
+stamm.up$PKV<- IK2PKV(stamm.up$IK)
+stamm.up<- stamm.up|> 
+  filter(IK>0)|>
+  select(-PatID,-index_i,-IK,-Kasse,-PLZ)|>
+  distinct()|>
+  arrange(uniPatID,desc(TG_DateNum))
+stamm.up$uniPatID<- as.factor(stamm.up$uniPatID)
+
+ueberweis.up<- Ueberweis3|>
+  select(uniPatID,TG_DateNum,Uberw_Pneumo,Uberw_Radiol,Uberw_KH) |>
+  filter(Uberw_Pneumo>0|Uberw_Radiol>0|Uberw_KH>0)|>
+  distinct()
+ueberweis.up$uniPatID<- as.factor(ueberweis.up$uniPatID)
+```
+```{r}
+# 5
+contains.multiple.entries(diag.up)
+contains.multiple.entries(impf.up)
+contains.multiple.entries(ipc.up)
+contains.multiple.entries(labor.up)
+contains.multiple.entries(lu.up)
+contains.multiple.entries(pzn.up)
+contains.multiple.entries(stamm.up)
+contains.multiple.entries(ueberweis.up)
+
+```
+
+STOP: the difference between number of rows and patient/ time combinations must be 0. We believe diag.up, ipc.up, and pzn.up have multiple entries by design. We believe impf.up, labor.up, stamm.up, and ueberweis.up should have only one line per patient/ time combination. In #6.1 we remedy the presumed errors by selecting the last entry for each patient/ time combination. In #6.2 we write the multiple data points of diag.up, ipc.up, and pzn.up in additional columns. Both procedures leave us with unique date/ time combinations for each data set.
+In #6.2, we do not keep all entries for diag.up and ipc.up. There are a few entreis with unreasonably high numbers of diagnoses or symptoms. Therefore, we truncate the number observations at the 95% quantile of the distribution of entries per combination. If the last sentence is not clear in meaning, please run the commented code to gain better insight.
+```{r}
+# 6.1
+impf.up<- data.repair(impf.up)
+contains.multiple.entries(impf.up)
+
+labor.up<- data.repair(labor.up)
+contains.multiple.entries(labor.up)
+
+stamm.up<- data.repair(stamm.up)
+contains.multiple.entries(stamm.up)
+
+ueberweis.up<- data.repair(ueberweis.up)
+contains.multiple.entries(ueberweis.up)
+
+```
+```{r}
+# 6.2
+x_diag<- quantile(table(paste(diag.up$uniPatID,diag.up$TG_DateNum)), probs= 0.95)
+x_ipc<- quantile(table(paste(ipc.up$uniPatID,ipc.up$TG_DateNum)), probs= 0.95)
+x_pzn<- quantile(table(paste(pzn.up$uniPatID,pzn.up$TG_DateNum)), probs= 1)
+
+# table(paste0(diag.up$uniPatID,diag.up$TG_DateNum)
+# quantile(table(paste0(diag.up$uniPatID,diag.up$TG_DateNum)))
+
+
+diag.up_2<- aligner(diag.up, x_diag)
+contains.multiple.entries(diag.up)
+
+ipc.up_2<- aligner(ipc.up, x_ipc)
+contains.multiple.entries(ipc.up)
+
+pzn.up_2<- aligner(pzn.up, x_pzn)
+contains.multiple.entries(pzn.up)
+```
+
+```{r}
+# For some reason, some of the dates were changed from their original numeric class to the character class. This chunk remedies this error.
+diag.up_2$TG_DateNum<- as.numeric(diag.up_2$TG_DateNum)
+ipc.up_2$TG_DateNum<- as.numeric((ipc.up_2$TG_DateNum))
+```
+
+
+```{r}
+episode.creating.fun<- function(ipc.data, add.data.list, i_diag=1, i_pzn=2, i_stamm=3, i_impf=4, i_labor=5, i_lu=6, i_ueberweis=7, start.time=0,length.of.episode,start.date="all",end.date="all", par.factor=1L){
+  #a function which generates health incidents from the data. 
+  #ipc.data is the data with IPC2 codes needed for finding the patients who had coughing (IPC2 code R05) as a symptom.
+  #add.data.list is a list of data frames that are merged with the ipc data.
+  #i_diag, i_pzn,  etc. are indicators which list element the diagnosis [pzn] data is (e.g. add.list.data[[x]]= diag.up => i_diag=x). If a dataset is to be excluded, set the respective indicator to NA.
+  #start.time is the number of days before the patient went to their GP with coughing symptoms in which other health incidents may be recorded. It is currently redundand.
+  #length.of.episode is the number of days after the patient went to their doctor for the first time that are analysed.
+  #start.date is a specified TG_DateNum-value which marks the earliest date we want to analyse in the data, i.e. if we do not want to analyse all of the data but set a specific start date.
+  #end.date is a specified TG_DateNum-value which marks the latest date we want to analyse in the data, i.e. if we do not want to analyse all of the data but set a specific end date.
+  #par.factor is a factor that determines in how many chunks the data is separated in the process. Several functions scale (necessarily) in O(n^2), increasing par.factor might be able to speed up the process as the chunking up of the data set scales only in O(n).
+  
+  # error handles for function inputs
+  if(all(sort(c(i_diag,i_pzn,i_stamm,i_impf,i_labor,i_lu,i_ueberweis))!=seq(1,length(add.data.list)))){
+    stop("There is an error in the add.data.list or specification which data frame is where. The i_x variables should taken together create a sequence from 1 to the number of data frames in add.data.list. The function stops because this error would prove critical later on in the execution of the function.")
+  }
+  
+  if(start.date!="all"){
+    if(is.numeric(start.date)){
+      if(start.date<min(as.numeric(ipc.data$TG_DateNum))) warning("Start date is earlier than the earliest incident in the dataset. The constraint is thus non-binding!")
+    }else{
+      stop("start date must be either 'all' or take a numeric value")
+    }
+  }
+  
+  if(end.date!="all"){
+    if(is.numeric(end.date)){
+      if(end.date>max(as.numeric(ipc.data$TG_DateNum))) warning("End date is later than the latest incident in the dataset. The constraint is thus non-binding!")
+    }else{
+      stop("End date must be either 'all' or take a numeric value")
+    }
+  }
+  if(is.numeric(start.date) & is.numeric(end.date)){
+    if(start.date>end.date) stop("The end date as entered into the function is before the start date.")
+  }
+  
+  if(is.numeric(length.of.episode)){
+    if(length.of.episode!=round(length.of.episode)) stop("length.of.episode must take an integer value!")
+    if(length.of.episode>56) warning("length.of.episode is selected such that it looks at episodes more than 56 days after the patient went to their GP with cough for the first time. Beware that past these eight weeks we must consider that the cough is chronic. Also beware that the longer the time frame, the higher the likelihood that medically unconnected incidents are connected by this function.")
+  }else{
+    stop("length.of.episode must be numeric!")
+  }
+  
+
+  # 1. step: enforce time limits
+  # 1.1. enforce start date
+  if(start.date!="all"){
+    # 1.1.1. enforce start date for ipc.data
+    ipc.data<- ipc.data[as.numeric(ipc.data$TG_DateNum)>=start.date,]
+    if(nrow(ipc.data)==0) stop("There are no entries in ipc.data that correspond to this start.date request- after enforcing it, no rows were left!")
+    
+    # 1.1.2. enforce start date for all other data sets
+    # ...for all other data sets
+    rm.data.set<- c()
+    for(i in seq(1,length(add.data.list))){
+      ds<- add.data.list[[i]][as.numeric(add.data.list[[i]]$TG_DateNum)>=start.date,]
+      if(nrow(ds)==0){
+        rm.data.set<- c(rm.data.set,i)
+      }else{
+        add.data.list[[i]]<- ds
+      }
+    }
+    if(length(rm.data.set)>1){
+      warning(paste("Some data set(s) is/ are being dropped from the analysis because the start.date rule sets the number of rows in the corresponding dataset(s) to 0. Please have a look at the dataset(s) no°s",rm.data.set))
+      add.data.list<- add.data.list[-rm.data.set]
+    }
+  }
+  
+  # 1.2. enforce end date
+  if(end.date!="all"){
+    # 1.1.1. enforce end date for ipc.data
+    ipc.data<- ipc.data[as.numeric(ipc.data$TG_DateNum)<=end.date,]
+    if(nrow(ipc.data)==0) stop("There are no entries in ipc.data that correspond to this end.date request- after enforcing it, no rows were left!")
+    
+    # 1.1.2. enforce end date for all other data sets
+    # ...for all other data sets
+    rm.data.set<- c()
+    for(i in seq(1,length(add.data.list))){
+      ds<- add.data.list[[i]][as.numeric(add.data.list[[i]]$TG_DateNum)<=end.date,]
+      if(nrow(ds)==0){
+        rm.data.set<- c(rm.data.set,i)
+      }else{
+        add.data.list[[i]]<- ds
+      }
+    }
+    if(length(rm.data.set)>1){
+      warning(paste("Some data set(s) is/ are being dropped from the analysis because the end.date rule sets the number of rows in the corresponding dataset(s) to 0. Please have a look at the dataset(s) no°s",rm.data.set))
+      add.data.list<- add.data.list[-rm.data.set]
+    }
+  }
+  
+  
+  
+  # 2. step: filter out all patients who never coughed
+  # ...for ipc.data
+  cols<- seq(1,ncol(ipc.data))[grepl("ipc2", colnames(ipc.data))]
+  selector.cough<- logical(nrow(ipc.data))
+  for(i in seq(1,nrow(ipc.data))){
+    ipc.string<- paste0(ipc.data[i,cols], collapse = "")
+    selector.cough[i]<- grepl("R05",ipc.string)
+  }
+  
+  patients.who.ever.coughed<- levels(as.factor(ipc.data$uniPatID[selector.cough]))
+  ipc.data_2<- ipc.data[ipc.data$uniPatID %in% patients.who.ever.coughed,]
+
+  #error handle: Are there any entries in the newly created data frame?
+  if(nrow(ipc.data_2)==0) stop("There are no patients who ever coughed recorded in the dataset for this configuration.")
+  
+  # ...for all other data sets
+  
+  rm.data.set<- c()
+  for(i in seq(1,length(add.data.list))){
+    ds<- add.data.list[[i]]
+    ds<-ds[ds$uniPatID %in% patients.who.ever.coughed,] #here
+    if(nrow(ds)==0){
+      rm.data.set<- c(rm.data.set,i)
+    }else{
+      add.data.list[[i]]<- ds
+    }
+  }
+  if(length(rm.data.set)>1){
+    warning(paste("Some data set(s) is/ are being dropped from the analysis because the patients in the dataset never went to their GP coughing. Please have a look at the dataset(s) no°s",rm.data.set))
+    add.data.list<- add.data.list[-rm.data.set]
+  }
+  
+
+  # 3. step: merge diagnosis data to ipc data
+  no.cores<- detectCores()
+
+  ipc.chunks<- chunk.data(ipc.data,no.cores*par.factor)
+  diag.chunks<- list()
+  dd<- add.data.list[[i_diag]]
+  for (i in seq(1,no.cores*par.factor)) {
+    patients<- ipc.chunks[[i]]$uniPatID
+    diag.chunks[[i]]<- dd[dd$uniPatID %in% patients,]
+  }
+  rm(dd)
+  
+  # tic()
+  # merger.cluster<- makeCluster(no.cores)
+  # distinct.environment<- environment()
+  # clusterExport(cl = merger.cluster, varlist = c("ipc.chunks","diag.chunks"), envir = distinct.environment)
+  # merge_1<- parSapply(cl = merger.cluster, seq(1,no.cores*par.factor), function(i){
+  #   ipc<- ipc.chunks[[i]]
+  #   diag<- diag.chunks[[i]]
+  # 
+  #   ipc.id<- as.factor(paste(ipc$uniPatID, ipc$TG_DateNum))
+  #   diag.id<- as.factor(paste(diag$uniPatID, diag$TG_DateNum))
+  # 
+  #   in.vec<- diag.id %in% ipc.id
+  #   
+  #   diag_2<- diag[,colnames(diag)!="uniPatID" & colnames(diag)!="TG_DateNum"]
+  # 
+  #   merge.matrix<- matrix(NA, nrow = nrow(ipc), ncol = ncol(ipc)+ncol(diag_2))
+  #   merge.matrix[,1:ncol(ipc)]<- ipc
+  #   for(j in seq(1,length(in.vec))){
+  #     if(in.vec[j]){
+  #       row<- which(ipc.id==diag.id[j])
+  #       merge.matrix[row,seq(ncol(ipc)+1,ncol(merge.matrix))]<- diag_2[j,]
+  #     }
+  #   }
+  #   return(merge.matrix)
+  # })
+  # stopCluster()
+  
+  # merge_1<- sapply(merge_1, rbind)
+  # loop.time<- toc()
+  # browser()
+  # drop episodes with no diagnosis
+  
+  if(start.time==0){
+    episode.cluster<- makeCluster(no.cores)
+    distinct.environment<- environment()
+    clusterExport(cl = episode.cluster, varlist = c("ipc.chunks","diag.chunks","length.of.episode"), envir = distinct.environment)
+  episode_1<- parSapply(cl = episode.cluster, seq(1,no.cores*par.factor), function(i){
+    ipc<- ipc.chunks[[i]]
+    ipc$episode.id<- NA
+    diag<- diag.chunks[[i]]
+    #create episode matrix: patient, start date of incident, last diagnosis, number of diagnoses
+    episode.matrix<- matrix(NA, nrow = nrow(ipc), ncol = 4)
+    colnames(episode.matrix)<- c("uniPatID","TG_Start_Date","final_diagnosis","patient_did_cough")
+    
+    patients<- levels(ipc$uniPatID)
+    
+    for (j in seq(1,length(patients))) {
+      sel.patient<- patients[j]
+      entry.selection_ipc<- ipc$uniPatID==sel.patient
+      entry.selection_diag<- diag$uniPatID==sel.patient
+      dates.ipc<- ipc$TG_DateNum[entry.selection_ipc]
+      dates.diag<- diag$TG_DateNum[entry.selection_diag]
+      
+      #select episodes when patient coughs
+      
+      
+      d<- as.numeric(abs(diff(dates.sel.patient))>=length.of.episode)
+      d_2<- 1+cumsum(d)
+      d_3<- c(1,d_2)
+      df$episode.id[entry.selection]<- as.factor(paste(sel.patient,d_3))
+    }
+    return(df)
+  })
+  stopCluster()
+  episode_1<- sapply(episode_1,rbind)
+  
+  }else{
+    #start.time!=0 what then?
+  }
+  browser()
+  
+  if(start.time==0){
+    episode.chunks<- chunk.up(merge_1, no.cores*par.factor)
+    episode.cluster<- makeCluster(no.cores)
+    distinct.environment<- environment()
+    clusterExport(cl = episode.cluster, varlist = c("episode.chunks","length.of.episode"), envir = distinct.environment)
+  episode_1<- parSapply(cl = episode.cluster, seq(1,no.cores*par.factor), function(i){
+    df<- episode.chunks[[i]]
+    df$episode.id<- NA
+    
+    patients<- levels(df$uniPatID)
+    for (j in seq(1,length(patients))) {
+      sel.patient<- patients[j]
+      entry.selection<- df$uniPatID==sel.patient
+      dates.sel.patient<- df$TG_DateNum[entry.selection]
+      d<- as.numeric(abs(diff(dates.sel.patient))>=length.of.episode)
+      d_2<- 1+cumsum(d)
+      d_3<- c(1,d_2)
+      df$episode.id[entry.selection]<- as.factor(paste(sel.patient,d_3))
+    }
+    return(df)
+  })
+  stopCluster()
+  episode_1<- sapply(episode_1,rbind)
+  
+  }else{
+    #start.time!=0 what then?
+  }
+  
+  #merge ipc with diag data, create episodes, select episodes that contain coughing, insert all into data frame, add all other information on the patients
+}
+```
+
+```{r}
+dl<- list(diag.up_2, pzn.up_2, stamm.up_2, impf.up, labor.up, lu.up, ueberweis.up)
+```
+
+
+```{r}
+episode.creating.fun(ipc.data = ipc.up_2, 
+                  add.data.list = dl,
+                  length.of.episode = 56,
+                  #start.date = (min(as.numeric(ipc.up_2$TG_DateNum))-100),
+                  #start.date = (max(as.numeric(ipc.up_2$TG_DateNum))+110),
+                  end.date = (max(as.numeric(ipc.up_2$TG_DateNum))+100))
+
+#i_diag=1, i_pzn=2, i_stamm=3, i_impf=4, i_labor=5, i_lu=6, i_ueberweis=7
+```
+
+
+
+```{r}
+boot.simple<- function(df, seed){
+  set.seed(seed)
+  n<- dim(df)[1]
+  p<- dim(df)[2]
+  out<- df
+  out$uniPatID<- sample(out$uniPatID)
+  out$TG_DateNum<- sample(out$TG_DateNum)
+}
+boot.ipc<- boot.simple(ipc.up_2,3434543)
+boot.diag<- boot.simple(diag.up_2)
+
+bootstrap.dag<- function(df, dag.from, dag.to){
+  # Uses a directed acyclic graph to create a semiparametric bootstrap sample from the data.
+  # df is the dataset to be sampled from
+  # dag.from, dag.to are vectors. A number in either of these vectors corresponds to a vertex, the number corresponds to the column number. I.e. if there are three columns A, B, and C, 2 would be the vertex for B.
+  # The function (1) identifies the independent variables and draws them randomly from the ECDF of corresponding the variable. Then, it finds the start point(s) of the graph
+  n<- nrow(df)
+  
+}
+
+```
+
+
+
+
+```{r}
+#create episodes based on the data
+episodes<- episode.fun(ipc.up_2,56)
+```
+
+```{r}
+no.overlaps<- numeric(nrow(episodes))
+no.overlaps[1]<- NA
+for(i in seq(2,nrow(episodes))){
+  if(episodes$uniPatID[i]==episodes$uniPatID[i-1]){
+    no.overlaps[i]<- episodes$end_date[i-1]>episodes$start_date[i]
+  }else{
+    no.overlaps[i]<- NA
+  }
+}
+```
+
+
+```{r}
+episodes_6months<- episode.fun(ipc.up_2, 175)
+no.overlaps_6months<- numeric(nrow(episodes_6months))
+no.overlaps_6months[1]<- NA
+for(i in seq(2,nrow(episodes_6months))){
+  if(episodes_6months$uniPatID[i]==episodes_6months$uniPatID[i-1]){
+    no.overlaps_6months[i]<- episodes_6months$end_date[i-1] > episodes_6months$start_date[i]
+  }else{
+    no.overlaps_6months[i]<- NA
+  }
+}
+sum(no.overlaps_6months, na.rm = TRUE)
+```
+There must be no overlap in the timing of the episodes in order to map diagnoses and treatments to the episodes.
+There is no decision rule we can enforce that distinguishes perfectly whether episodes match or match not. Therefore, we implement different decision rules.
+
+```{r}
+#decision rule 1: If the timing of episodes overlaps, we treat them as one episode
+#decision rule 2: If the timing of episodes overlaps, we treat them as two distinct episodes. The last day of the earlier episode is the day before the new episode begins.
+#decision rule 3: For every episode, we select the end date as the earlier of the following two: (1) the previously selected maximum length of episode, (2) the next recorded symptom or batch of symptoms which is not cough (R05).
+#decision rule 4: If the timing of episodes overlaps, we check whether there is a change in quarter between those two visits. If there is a change, we treat them as one and use the first incident's end date, otherwise we set the last day of the earlier episode to be last day of the quarter.
+#decision rule 5: Combination of rules 3 and 4. If there is an overlap between episodes, we consider them as one if the quarter ends between the two records. However, if symptoms are recorded between these dates which are not cough, the first episode ends with the day before the new symptoms- even if the quarter ends between these days.
+
+
+#check rule3: does it also cut off for dates before the overlapping time? Because it should by our rationale
+#test for functionality/ troubleshoot
+episodes.dr4<- function(episodedf){
+  # Applies decision rule 5 to a raw (i.e. containing overlapping episodes) episode data frame.
+  earliest.TG_Date<- min(episodedf$start_date)
+  latest.TG_Date<- max(episodedf$start_date)
+  earliest.year.POSIXlt<- year(TG_DateNum2date(earliest.TG_Date))
+  latest.year.POSIXlt<- year(TG_DateNum2date(latest.TG_Date))
+  no.years<- latest.year.POSIXlt-earliest.year.POSIXlt
+  threshold.dates<- numeric(4*no.years)
+  for(i in seq(1,no.years)){
+    threshold.dates[1+(i-1)*4]<- paste0(seq(earliest.year.POSIXlt, latest.year.POSIXlt)[i], "-01-01")
+    threshold.dates[2+(i-1)*4]<- paste0(seq(earliest.year.POSIXlt, latest.year.POSIXlt)[i], "-04-01")
+    threshold.dates[3+(i-1)*4]<- paste0(seq(earliest.year.POSIXlt, latest.year.POSIXlt)[i], "-07-01")
+    threshold.dates[4+(i-1)*4]<- paste0(seq(earliest.year.POSIXlt, latest.year.POSIXlt)[i], "-10-01")
+  }
+  threshold.dates_num<- as.numeric(as.Date(threshold.dates, origin= "0000-01-01"))
+  #if(all(as.Date(threshold.dates_num!=as.Date(threshold.dates)))) stop("Conversion error in the threshold date!")
+  
+  n<- nrow(episodedf)
+  out<- episodedf
+  for(i in seq(2,n)){
+    if(episodedf$uniPatID[i]==episodedf$uniPatID[i-1]){
+      if(out$start_date[i]<out$end_date[i-1]){
+        if(sum(out$start_date[i]>threshold.dates_num & out$end_date[i-1]<threshold.dates_num)==1){#condition: one threshold numeric date lies between these two
+          outf$start_date[i]<- out$start_date[i-1]
+          out$end_date[i]<- out$end_date[i-1]
+        }else if(sum(out$start_date[i]>threshold.dates_num & out$end_date[i-1]<threshold.dates_num)>1){
+          warning(paste("Between the coughing incidents, lies more than one quarter. To check out the episode, have a look at lines", (i-1),"&", i, "in the original dataset (episodedf, not the output dataset)."))
+          outf$start_date[i]<- out$start_date[i-1]
+          out$end_date[i]<- out$end_date[i-1]
+        }else{
+          out$end_date[i-1]<- out$start_date[i]-1
+      }
+    }
+    }
+    
+  }
+  out<- distinct(out)
+  return(out)
+}
+episodes_r4<- episodes.dr4(episodes)
+a<-episodes.dr4(episodedf = episodes)
+
+#work in progress
+episodes.dr5<- function(episodedf,ipc, debug=FALSE){
+  # Applies decision rule 5 to a raw (i.e. containing overlapping episodes) episode data frame.
+  patients<- levels(as.factor(episodedf$uniPatID))
+  next.incident<- numeric(nrow(episodedf))
+  for(i in seq(1,length(patients))){
+    pat_i<- patients[i]
+    rows.episodes<- which(episodedf$uniPatID==pat_i)
+    start.dates.episodes<- episodedf$start_date[rows.episodes]
+    end.dates.episodes<- episodedf$end_date[rows.episodes]
+    incident.dates<- ipc$TG_DateNum[ipc$uniPatID==pat_i]
+    store<- numeric(length(start.dates.episodes))
+    for(j in seq(1, length(start.dates.episodes))){
+      indices<- which(incident.dates> start.dates.episodes[j] & incident.dates<end.dates.episodes[j])
+      if(length(indices)>0){
+        store[j]<- min(incident.dates[indices])
+      }else{
+        store[j]<- end.dates.episodes[j]
+      }
+    }
+    next.incident[rows.episodes]<- store
+  }
+  
+  if(debug==TRUE){
+    out<- cbind(episodedf,next.incident)
+  }else{
+    out<- episodedf
+    out$end_date<- next.incident
+  }
+  return(out)
+}
+
+episodes.overlap.finder<- function(episodedf, date=FALSE){
+  n<- nrow(episodedf)
+  overlap<- numeric(n)
+  for(i in seq(2,n)){
+    if(episodedf$uniPatID[i]==episodedf$uniPatID[i-1]){
+      if(episodedf$start_date[i]<episodedf$end_date[i-1]){
+        overlap[i]<- 1
+      }
+    }
+  }
+  out<- episodedf
+  out$overlap<- overlap
+  if(date==TRUE){
+    out$start_date<- TG_DateNum2date(out$start_date)
+    out$end_date<- TG_DateNum2date(out$end_date)
+  }
+  return(out)
+}
+```
+```{r}
+episodes_r1<- episodes.dr1(episodes)
+episodes_r2<- episodes.dr2(episodes)
+episodes_r3<- episodes.dr3(episodes,ipc.up_2,TRUE)
+episodes_r4<- episodes.dr4(episodes)
+
+episodes.overlap<- episodes.overlap.finder(episodes)
+sum(episodes.overlap.finder(episodes)$overlap)
+
+sum(episodes.overlap.finder(episodes_r1)$overlap)
+sum(episodes.overlap.finder(episodes_r2)$overlap)
+sum(episodes.overlap.finder(episodes_r3)$overlap)
+sum(episodes.overlap.finder(episodes_r4)$overlap)
+
+
+episodes_r1_2<- episodes.dr1(episodes.dr1(episodes.dr1(episodes_r1)))
+episodes_r1_2_o<- episodes.overlap.finder(episodes_r1_2)
+sum(episodes.overlap.finder(episodes_r1_2_o)$overlap)
+
+#debug here!!!
+episodes.dr1<- function(episodedf, no.it, debug=FALSE){
+  # Applies decision rule 1 to a raw (i.e. containing overlapping episodes) episode data frame. Relies on episodes.overlap.finder
+  out<- episodedf
+  #out<- episodes.overlap.finder(out)
+  ticker<- 1
+  while(ticker<=no.it){
+    n<- nrow(out)
+    for(i in seq(2,n)){
+      if(episodedf$uniPatID[i]==episodedf$uniPatID[i-1]){
+        if(episodedf$end_date[i-1]>episodedf$start_date[i]){
+          #create duplicate episodes, then remove the duplicates
+          out$start_date[i]<- out$start_date[i-1]
+          out$end_date[i-1]<- out$end_date[i]
+        }
+      }
+    }
+    out<- distinct(out)
+    ticker<- ticker+1
+  }
+  
+  if(debug==TRUE){
+    out<- episodes.overlap.finder(out)
+    overlap.exists<- sum(out$overlap)>0
+    out<- list(out, overlap.exists)
+  }
+  return(out)
+}
+
+episodes.dr1<- function(episodedf, length.of.episode){
+  out<- episodedf
+  out$uniPatID<- as.factor(as.character(out$uniPatID))
+  n<- nrow(out)
+  for(i in seq(2,n)){
+    if(out$uniPatID[i]==out$uniPatID[i-1]){
+      if((out$start_date[i-1]+length.of.episode)>out$start_date[i]){
+        out$start_date[i]<- out$start_date[i-1]
+        out$end_date[i-1]<- out$end_date[i]
+      }
+    }
+  }
+}
+episodes.dr1<- function(episodedf){
+  library(dplyr)
+  n<- nrow(episodedf)
+  out<- episodedf|>
+    arrange(uniPatID,start_date)
+  patients<- out$uniPatID
+  compare_1<- patients[1:(n-1)]==patients[2:n]
+  compare_2<- out$start_date[2:n]<=out$end_date[1:(n-1)]
+  joint.comp<- compare_1 & compare_2
+  for(i in seq_along(joint.comp)){
+    if(joint.comp[i]==TRUE){
+      out$start_date[i+1]<- out$start_date[i]
+      out$end_date[i]<- out$end_date[i+1]
+    }
+  }
+  out<- distinct(out)
+  return(out)
+}
+
+episodes.dr1<- function(episodedf){
+  length.of.episode<- episodedf$end_date[1]-episodedf$start_date[1]
+  patients<- levels(as.factor(as.character(out$uniPatID)))
+  out.list<- list()
+  for(i in seq_along(patients)){
+    pat_i<- patients[i]
+    dates<- sort(episodedf$start_date[episodedf$uniPatID==pat_i])
+    l<- length(dates)
+    merge.choice<- diff(dates)>length.of.episode
+    episode.matrix<- matrix(NA,nrow = 1+!merge.choice, ncol = 2)
+    episode.matrix[1,1]<- dates[1]
+    ticker<- 1
+    for(j in seq_along(merge.choice)){
+      if(merge.choice[j]){
+        episode.matrix[ticker,2]<- dates[1+j]+length.of.episode
+      }else{
+        ticker<- ticker+1
+        episode.matrix[ticker,1]<- dates[1+j]
+        episode.matrix[ticker,1]<- dates[1+j]+length.of.episode
+    }
+  }
+  out.list[[i]]<- cbind(rep(pat_i,nrow(episode.matrix)),episode.matrix)
+  }
+  out<- as.data.frame(sapply(out.list,rbind))
+  colnames(out)<- c("uniPatID","start_date","end_date")
+  return(out)
+}
+episodes_r1_3<- episodes.dr1(episodes)
+x<- episodes.overlap.finder(episodes_r1_3)
+sum(x$overlap)
+
+merge_overlapping_intervals <- function(episodedf) {
+  episodedf <- episodedf[order(episodedf$uniPatID, episodedf$start_date), ]
+  episodedf$group <- cumsum(c(1, diff(episodedf$start_date) > 0))
+  merged_df <- aggregate(cbind(start_date = start_date, end_date = end_date) ~ uniPatID + group, data = episodedf, FUN = range)
+  merged_df$group <- NULL
+  return(merged_df)
+}
+x<- merge_overlapping_intervals(episodes)
+y<- episodes.overlap.finder(x)
+sum(y$overlap)
+
+episodes_r1_3<- episodes.dr1(episodes,50,TRUE)
+sum(episodes_r1_3[[1]]$overlap)
+
+x<- 1:20
+y<- numeric(length(x))
+for(i in seq_along(x)){
+  episodes_r1_3<- episodes.dr1(episodes,i,TRUE)
+  y[i]<- sum(episodes_r1_3[[1]]$overlap)
+}
+
+episodes_r1_3<- episodes.overlap.finder(episodes_r1_3)
+```
+
+
+
+
+```{r}
+add.dataset<- function(episodedf, adddata,name.dataset){
+  #matches the entries from any suitable dataset to the ones from an episode data frame.
+  #episodedf is the episode data frame, as produced by episodes.drx
+  #adddata is any of the cleaned and prepared datasets except for Stammdaten
+  #name.dataset is a character string to name the number of matches variable.
+  #The function returns an episode data frame with the first and last matches of the added dataset, and the number of entries in adddata that are a match for this episode.
+  patients<- levels(as.factor(as.character(episodedf$uniPatID)))
+  adddata$uniPatID<- as.character(adddata$uniPatID)
+  n<- nrow(episodedf)
+  no.matches<- numeric(n)
+  first.match<- as.data.frame(matrix(NA,nrow = n, ncol = ncol(adddata)))
+  last.match<- as.data.frame(matrix(NA,nrow = n, ncol = ncol(adddata)))
+  for(j in seq_along(patients)){
+    pat_i<- patients[j]
+    rows_episode<- which(episodedf$uniPatID==pat_i)
+    match.data<- adddata|>
+      filter(uniPatID==pat_i)|>
+      arrange(TG_DateNum)
+    if(nrow(match.data)>0){
+      for(i in seq_along(rows_episode)){
+        sd<- episodedf$start_date[rows_episode[i]]
+        ed<- episodedf$end_date[rows_episode[i]]
+        matches<- which(match.data$TG_DateNum>=sd & match.data$TG_DateNum<=ed)
+        if(length(matches)>0){
+          no.matches[rows_episode[i]]<- length(matches)
+          first.match[rows_episode[i],]<- match.data[min(matches),]
+          last.match[rows_episode[i],]<- match.data[max(matches),]
+        }
+      }
+    }
+  }
+  colnames(first.match)<- paste0("first_",colnames(adddata))
+  colnames(last.match)<- paste0("last_",colnames(adddata))
+  col.selector<- colnames(adddata)!= "uniPatID" & colnames(adddata)!= "TG_DateNum"
+  out<- cbind(episodedf, first.match[,col.selector],last.match[,col.selector],no.matches)
+  colnames(out)[ncol(out)]<- paste0("no.matches_",name.dataset)
+  return(out)
+}
+
+```
+
+```{r}
+#add stammdata
+
+
+add.stamm<- function(episodedf, stamm){
+  #adds stamm data to the episode data frame by matching entries.
+  #episodedf is a data frame created through one of the decision rules episodes.drx
+  #stamm is a cleaned and prepared stamm data frame (e.g. stamm.up_2)
+  #The function returns an episode data frame with the Stamm data matched to the episodes. There is also a variable called stamm_is_there, which is 1 if a Stamm entry was able to be matched, and 0 if no Stamm entry was able to be matched to that patient/ episode.
+  n<- nrow(episodedf)
+  p<- ncol(episodedf)
+  p_out<- p+ncol(stamm)
+  out<- as.data.frame(matrix(NA, nrow = n, ncol = p_out))
+  stamm$uniPatID<- as.character(stamm$uniPatID)
+  stamm.is.there<- numeric(n)
+  for(i in seq(1,n)){
+    pat_i<- as.character(episodedf$uniPatID[i])
+    pat.rows<- which(stamm$uniPatID==pat_i)
+    if(length(pat.rows)>0){
+      dates<- stamm$TG_DateNum[pat.rows]
+      im<- dates<=episodedf$start_date[i]
+      if(all(!im)){
+        #if no Stamm data has been recorded prior to the first coughing (i.e. first visit of clinic), this might be due to the patient being at the clinic for the first time and the doctor back dated the start of coughing (i.e. first health incident, which occurred before the visit visit at the clinic).
+        loc<- pat.rows[1]
+      }else{
+        loc<- pat.rows[sum(im)]
+      }
+      out[i,seq(p+1,p_out)]<- stamm[loc,]
+      stamm.is.there[i]<- 1
+    }
+  }
+  unipat.col<- p+which(colnames(stamm)=="uniPatID")
+  #remove duplicate uniPatID column
+  out<- out[,-(unipat.col)]
+  out[,1:p]<- episodedf
+  out<- cbind(out,stamm.is.there)
+  colnames(out)<- c(colnames(episodedf),colnames(stamm),"stamm_is_there")[-unipat.col]
+  stamm_date.col<- which(colnames(out)=="TG_DateNum")
+  colnames(out)[stamm_date.col]<- "Stamm_date"
+  return(as.data.frame(out))
+}
+
+```
+```{r}
+episodes_r1_stamm<- add.stamm(episodes_r1,stamm.up)
+episodes_r2_stamm<- add.stamm(episodes_r2,stamm.up)
+episodes_r3_stamm<- add.stamm(episodes_r3,stamm.up)
+```
+```{r}
+#extract summary statistics
+summary.stats<- function(episodedf){
+  no.patients<- length(levels(as.factor(episodedf$uniPatID)))
+  no.episodes<- nrow(episodedf)
+  numbers<- list(
+    no.episodes= nrow(episodedf),
+    no.patients= length(levels(as.factor(episodedf$uniPatID))),
+    no.stammdata.there= sum(episodedf$stamm_is_there, na.rm = TRUE),
+    earliest.recorded.cough= TG_DateNum2date(min(episodedf$start_date)),
+    latest.recorded.cough= TG_DateNum2date(max(episodedf$start_date)),
+    no.males=sum(episodedf$Maennl, na.rm = TRUE),
+    no.females=sum(episodedf$Weibl, na.rm = TRUE),
+    no.transgender=sum(episodedf$Transgen, na.rm = TRUE),
+    no.undefined.sex=sum(episodedf$Geschlechtundef, na.rm = TRUE),
+    
+    average.no.visit.per.patient=nrow(episodedf)/no.patients,
+    percentage.stammdata.there= sum(episodedf$stamm_is_there, na.rm = TRUE)/no.episodes,
+    percentage.males=sum(episodedf$Maennl, na.rm = TRUE)/no.episodes,
+    percentage.females=sum(episodedf$Weibl, na.rm = TRUE)/no.episodes,
+    percentage.transgender=sum(episodedf$Transgen, na.rm = TRUE)/no.episodes,
+    percentage.undefined.sex=sum(episodedf$Geschlechtundef, na.rm = TRUE)/no.episodes,
+    percentage.private.insurance= mean(episodedf$PKV, na.rm= TRUE),
+    percentageretired= mean(episodedf$Status_R, na.rm= TRUE)
+  )
+  return(numbers)
+}
+summary.plots<- function(episodedf){
+  earliest.TG_Date<- min(episodedf$start_date)
+  latest.TG_Date<- max(episodedf$start_date)
+  earliest.year.POSIXlt<- year(TG_DateNum2date(earliest.TG_Date))
+  latest.year.POSIXlt<- year(TG_DateNum2date(latest.TG_Date))
+  no.years<- latest.year.POSIXlt-earliest.year.POSIXlt
+  pandemic.start<- date2TG_DateNum("2020-01-01")
+  pandemic.end<- date2TG_DateNum("2023-01-01")
+  #no visits
+  x<- round(as.vector((table(episodedf$uniPatID)/no.years)),3)
+  d<- as.data.frame(table(x))
+  p<- ggplot(d, aes(x=x,y=Freq)) +
+    geom_bar(stat = "identity", fill="skyblue") +
+    labs(title = "How often did patients attend their GP?",x = "Number of visits per year", y= "Frequency")
+  
+  ggsave("no_visits.png", plot = p, path = getwd(), device = "png")
+  browser()
+  #age
+  x<- as.numeric(year(TG_DateNum2date(episodedf$start_date)))-episodedf$Geburtsjahr
+  max.age<- max(c(100,max(x)))
+  d<- as.data.frame(table(x))
+  d$Freq<- d$Freq/sum(d$Freq)
+  d_copy<- data.frame(seq(1,max.age), numeric(max.age))
+  colnames(d_copy)<- colnames(d)
+  for(i in seq(1, nrow(d))){
+    age<- d[i,1]
+    freq<- d[i,2]
+    d_copy[age,2]<- freq
+  }
+  d<- d_copy
+  y<- age.weights(1,max.age)
+  p<- ggplot(d, aes(x=x,y=Freq)) +
+    geom_bar(stat = "identity", fill="skyblue") +
+    geom_line(aes(y = y), color = "red") +
+    scale_x_discrete(labels = function(z) ifelse(as.numeric(z) %% 10 ==0, as.character(z),"")) +
+    labs(title = "How old were the patients who had cough?",x = "Age in years", y= "Frequency")
+  ggsave("age.png", plot = p, path = getwd(), device = "png")
+  
+  #no. visits with/out pandemic
+  before.pandemic<- episodedf[episodedf$start_date<pandemic.start,]
+  only.pandemic<- episodedf[episodedf$start_date>=pandemic.start & episodedf$start_date<pandemic.end,]
+  length.pandemic<- 3
+  
+  x<- round(as.vector((table(before.pandemic$uniPatID)/(no.years-length.pandemic))),3)#change to correct no of years, and make it annual
+  d<- as.data.frame(table(x))
+  p<- ggplot(d, aes(x=x,y=Freq)) +
+    geom_bar(stat = "identity", fill="skyblue") +
+    labs(title = "How often did patients attend their GP before the pandemic?",x = "Number of visits per year", y= "Frequency")
+  
+  ggsave("no_visits_before_pandemic.png", plot = p, path = getwd(), device = "png")
+  
+  x<- round(as.vector((table(only.pandemic$uniPatID)/no.years)),3)#change to correct no of years, and make it annual
+  d<- as.data.frame(table(x))
+  p<- ggplot(d, aes(x=x,y=Freq)) +
+    geom_bar(stat = "identity", fill="skyblue") +
+    labs(title = "How often did patients attend their GP during the pandemic?",x = "Number of visits per year", y= "Frequency")
+  
+  ggsave("no_visits_during_pandemic.png", plot = p, path = getwd(), device = "png")
+}
+
+summary.plots(episodes_r1_stamm)
+
+x<- as.vector(table(episodes_r1_stamm$uniPatID))
+
+table(as.vector(table(episodes_r1_stamm$uniPatID)))
+
+barplot(table(as.vector(table(episodes_r1_stamm$uniPatID))))
+d<- as.data.frame(table(x))
+ggplot(d, aes(x=x,y=)) +
+  geom_bar(stat = "identity", fill="skyblue") +
+  labs(title = "plot w ggplot2",x = "x-axis", y= "Frequency")
+```
+
+```{r}
+summary.stats(episodedf = episodes_r1_stamm)
+summary.stats(episodedf = episodes_r2_stamm)
+```
+```{r}
+
+```
+
+```{r}
+#new stats and plots for Steinhäuser
+pkv.summaries<- list()
+pkv.summaries[[1]]<- summmary(stamm.up$PKV)
+ticker<-2
+clinic.ids<- levels(as.factor(stamm.up$PraxisID))
+for(i in seq_along(clinic.ids)){
+  pkv.summaries[[ticker]]<- summary(stamm.up$PKV[stamm.up$PraxisID==clinic.ids[i]])
+}
+pkv.summaries
+#for overview, add data on the location of the clinic
+
+altersstruktur_deutschland <- read_excel("altersstruktur deutschland.xlsx")
+
+
+
+```
+```{r}
+date2TG_DateNum<- function(date) as.numeric(as.Date(date)) +719529
+date2TG_DateNum("0000-01-01")
+```
+```{r}
+age.weights<- function(startage,endage){
+  
+  if(startage<1) stop("By default, the start age has to be at least one year.")
+  if(startage>85) stop("All ages are dropped due to the start age being too high. Please select a lower start age.")
+  if(endage<1) stop("The end age is too low. It has to be no lower than one year.")
+  if(endage>84) warning("Please note that the data provided by the statistical office is placed into a single bin from age 85 on. All ages from that bin are therefore treated as equally distributed across the range from 85 to the end date.")
+  vector<- altersstruktur_deutschland[,2]
+  if(endage<=84){
+    out<- vector[seq(startage+1,endage+1)]
+  }else{
+    l<- endage-84
+    im<- vector[seq(startage+1,85)]
+    out<- c(im,rep(vector[86]/l,l))
+  }
+  out<- out/sum(out)
+  return(out)
+}
+age.weights(1,100)
+```
+

@@ -1,0 +1,267 @@
+---
+title: "12.09.23"
+author: "Raphael Kroes"
+date: "2023-09-12"
+output: html_document
+---
+
+Procedure:
+1. Clear work space & load packages
+2. Read in all functions (external functions.R file)
+3. Read in data
+4. Preprocessing I: create correct columns
+5. Check whether multiple entries for the same date/ patient are in the data sets
+6. Preprocessing II: Deal with multiple entries
+7. Create list of data frames
+8. Merge data sets
+```{r}
+# 1-2
+rm(list=ls())
+library(dplyr)
+library(parallel)
+# now read in all functions from functions.R file (CTRL+A, CTRL+Enter)
+```
+
+```{r}
+# 3
+# Read in data
+setwd("N:/StudentischeHilfskraefte/_Kroes (Christoph)/Routinedaten/01_Husten/DB")
+
+names.vec<- c("Diag3","Impf3","IPC23","Labor3","LU3","PZN3","Stamm3","Ueberweis3")
+
+
+for (i in seq(1,length(names.vec))) {
+  file.name<- paste0("DB_",names.vec[i],"_v03",".csv")
+  im.file<- read.csv(file = file.name, header = TRUE, sep = ";")
+
+  assign(names.vec[i],im.file)
+
+}
+# remove duplicate file and unnecessary name
+rm(file.name,im.file)
+
+# adapt this part
+ListeKrankenkassen<- read.csv(file = "ListeKrankenkassen.csv", header = TRUE, sep = ";")
+```
+
+```{r}
+# 4
+diag.up<- Diag3 |> 
+  select(uniPatID,TG_DateNum,DiagTyp,icd10)|>
+  distinct()
+
+impf.up<- Impf3|> 
+  select(uniPatID,TG_DateNum,Influenza,starts_with("Cov"))|>
+  distinct()
+
+ipc.up<- IPC23 |>
+  select(uniPatID,TG_DateNum,AnamnTyp,ipc2)
+
+labor.up<- Labor3|>
+  select(uniPatID,TG_DateNum,Untersuchung,Wertnum,NormLB,NormUB) |>
+  filter(Untersuchung=="KREA")
+labor.up$KREA_unter<- as.numeric(labor.up$Wertnum<labor.up$NormLB)
+labor.up$KREA_ueber<- as.numeric(labor.up$Wertnum>labor.up$NormUB)
+labor.up<- labor.up|>
+  select(uniPatID,TG_DateNum,KREA_unter,KREA_ueber)|>
+  distinct()
+
+lu.up<- LU3|> 
+  select(uniPatID,TG_DateNum)|>
+  distinct()
+lu.up$lu.dummy<- 1
+
+pzn.up<- PZN3 |> 
+  select(uniPatID,TG_DateNum,PZN) |> 
+  filter(TG_DateNum>0)|>
+  distinct()
+
+stamm.up<- Stamm3
+stamm.up$PKV<- IK2PKV(stamm.up$IK)
+stamm.up<- stamm.up|> 
+  filter(IK>0)|>
+  select(-PatID,-index_i,-IK,-Kasse,-PLZ)|>
+  distinct()
+
+ueberweis.up<- Ueberweis3|>
+  select(uniPatID,TG_DateNum,Uberw_Pneumo,Uberw_Radiol,Uberw_KH) |>
+  filter(Uberw_Pneumo>0|Uberw_Radiol>0|Uberw_KH>0)|>
+  distinct()
+```
+```{r}
+# 5
+contains.multiple.entries(diag.up)
+contains.multiple.entries(impf.up)
+contains.multiple.entries(ipc.up)
+contains.multiple.entries(labor.up)
+contains.multiple.entries(lu.up)
+contains.multiple.entries(pzn.up)
+contains.multiple.entries(stamm.up)
+contains.multiple.entries(ueberweis.up)
+
+```
+
+STOP: the difference between number of rows and patient/ time combinations must be 0. We believe diag.up, ipc.up, and pzn.up have multiple entries by design. We believe impf.up, labor.up, stamm.up, and ueberweis.up should have only one line per patient/ time combination. In #6.1 we remedy the presumed errors by selecting the last entry for each patient/ time combination. In #6.2 we write the multiple data points of diag.up, ipc.up, and pzn.up in additional columns. Both procedures leave us with unique date/ time combinations for each data set.
+In #6.2, we do not keep all entries for diag.up and ipc.up. There are a few entreis with unreasonably high numbers of diagnoses or symptoms. Therefore, we truncate the number observations at the 95% quantile of the distribution of entries per combination. If the last sentence is not clear in meaning, please run the commented code to gain better insight.
+```{r}
+# 6.1
+impf.up<- data.repair(impf.up)
+contains.multiple.entries(impf.up)
+
+labor.up<- data.repair(labor.up)
+contains.multiple.entries(labor.up)
+
+stamm.up<- data.repair(stamm.up)
+contains.multiple.entries(stamm.up)
+
+ueberweis.up<- data.repair(ueberweis.up)
+contains.multiple.entries(ueberweis.up)
+
+```
+```{r}
+# 6.2
+x_diag<- quantile(table(paste0(diag.up$uniPatID,diag.up$TG_DateNum)), probs= 0.95)
+x_ipc<- quantile(table(paste0(ipc.up$uniPatID,ipc.up$TG_DateNum)), probs= 0.95)
+x_pzn<- quantile(table(paste0(pzn.up$uniPatID,pzn.up$TG_DateNum)), probs= 1)
+
+# table(paste0(diag.up$uniPatID,diag.up$TG_DateNum)
+# quantile(table(paste0(diag.up$uniPatID,diag.up$TG_DateNum)))
+
+
+tic()
+diag.up_2<- aligner(diag.up, x_diag)
+contains.multiple.entries(diag.up)
+toc()
+
+tic()
+ipc.up<- aligner(ipc.up, x_ipc)
+contains.multiple.entries(ipc.up)
+toc()
+
+tic()
+pzn.up<- aligner(pzn.up, x_pzn)
+contains.multiple.entries(pzn.up)
+toc()
+```
+
+
+```{r}
+# 7
+merger.list<- list(
+  ipc.up,
+  labor.up,
+  ueberweis.up,
+  stamm.up,
+  diag.up,
+  lu.up,
+  impf.up,
+  pzn.up
+)
+
+```
+
+```{r}
+# 8
+merged.data.set<- par.patient.file(merger.list)
+```
+
+
+
+
+
+```{r}
+contains.multiple.entries(trial.outcome[[1]])
+```
+
+
+```{r}
+tic()
+trial.outcome<- aligner(trial.diag, 5, TRUE)
+toc()
+```
+
+
+```{r}
+aligner<- function(df,x, debugging=FALSE, progressbar=FALSE){
+  raw.combinations<- paste0(df$uniPatID,df$TG_DateNum)
+  combinations<- levels(as.factor(raw.combinations))
+  l<- length(combinations)
+  memory<- matrix(c(combinations,rep(NA,2*l)),ncol = 3)
+  colnames(memory)<- c("combination","no. seen before","last seen in row")
+  
+  out<- matrix(0, nrow = l, ncol = 2+x*(ncol(df)-2))
+  
+  ticker<- 1 #answer to "In which row in out are we right now?"
+  
+  partial.row<- colnames(df)!= "uniPatID" & colnames(df)!= "TG_DateNum"
+  colnames(out)<- c(colnames(df),
+                    paste(rep(colnames(df)[partial.row],x-1),sort(rep(1:(ncol(df)-2),x-1)),sep = "_"))
+  
+  if(progressbar==TRUE) {
+    progress.bar<- txtProgressBar(max = nrow(df),style = 3)
+    for(i in seq(1,nrow(df))){
+      setTxtProgressBar(progress.bar,i)
+      case<- raw.combinations[i]
+      location<- which(combinations==case)
+
+      if(is.na(memory[location,2])){
+        out[ticker,1:ncol(df)]<- as.matrix(df[i,])
+        memory[location,2]<- 1
+        memory[location,3]<- ticker
+        ticker<- ticker+1
+      }else{
+        no.seen<- as.numeric(memory[location,2])
+        last.seen<- as.numeric(memory[location,3])
+        if(no.seen<x){
+          sel.col<-seq(1,ncol(df)-2)+no.seen*(ncol(df)-2)+2
+          sel.data<- as.matrix(df[i,partial.row])
+          out[last.seen,sel.col]<- sel.data
+          memory[location,2]<- as.numeric(memory[location,2])+1
+        }
+      }
+    }
+  }else{
+    for(i in seq(1,nrow(df))){
+      setTxtProgressBar(progress.bar,i)
+      case<- raw.combinations[i]
+      location<- which(combinations==case)
+  
+      if(is.na(memory[location,2])){
+        out[ticker,1:ncol(df)]<- as.matrix(df[i,])
+        memory[location,2]<- 1
+        memory[location,3]<- ticker
+        ticker<- ticker+1
+      }else{
+        no.seen<- as.numeric(memory[location,2])
+        last.seen<- as.numeric(memory[location,3])
+        if(no.seen<x){
+          sel.col<-seq(1,ncol(df)-2)+no.seen*(ncol(df)-2)+2
+          sel.data<- as.matrix(df[i,partial.row])
+          out[last.seen,sel.col]<- sel.data
+          memory[location,2]<- as.numeric(memory[location,2])+1
+        }
+      }
+    }
+  }
+                
+  
+  if(debugging==TRUE){
+    return(list(as.data.frame(out),memory))
+  }else{
+    return(as.data.frame(out))
+  }
+}
+```
+
+```{r}
+aligner.parallel<- function(){
+  
+}
+```
+
+```{r}
+
+```
+
+
+

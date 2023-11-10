@@ -1,0 +1,441 @@
+---
+title: "19.09.23"
+author: "Raphael Kroes"
+date: "2023-09-14"
+output: html_document
+---
+
+Procedure:
+1. Clear work space & load packages
+2. Read in all functions (external functions.R file)
+3. Read in data
+4. Preprocessing I: create correct columns
+5. Check whether multiple entries for the same date/ patient are in the data sets
+6. Preprocessing II: Deal with multiple entries
+7. Create list of data frames
+8. Merge data sets
+```{r}
+# 1-2
+rm(list=ls())
+library(dplyr)
+library(parallel)
+# now read in all functions from functions.R file (CTRL+A, CTRL+Enter)
+```
+
+```{r}
+# 3
+# Read in data
+setwd("N:/StudentischeHilfskraefte/_Kroes (Christoph)/Routinedaten/01_Husten/DB")
+
+names.vec<- c("Diag3","Impf3","IPC23","Labor3","LU3","PZN3","Stamm3","Ueberweis3")
+
+
+for (i in seq(1,length(names.vec))) {
+  file.name<- paste0("DB_",names.vec[i],"_v03",".csv")
+  im.file<- read.csv(file = file.name, header = TRUE, sep = ";")
+
+  assign(names.vec[i],im.file)
+
+}
+# remove duplicate file and unnecessary name
+rm(file.name,im.file)
+
+# adapt this part
+ListeKrankenkassen<- read.csv(file = "ListeKrankenkassen.csv", header = TRUE, sep = ";")
+```
+
+```{r}
+# 4
+diag.up<- Diag3 |> 
+  select(uniPatID,TG_DateNum,DiagTyp,icd10)|>
+  distinct()
+diag.up$uniPatID<- as.factor(diag.up$uniPatID)
+diag.up$DiagTyp<- as.factor(diag.up$DiagTyp)
+
+impf.up<- Impf3|> 
+  select(uniPatID,TG_DateNum,Influenza,starts_with("Cov"))|>
+  distinct()
+impf.up$uniPatID<- as.factor(impf.up$uniPatID)
+
+ipc.up<- IPC23 |>
+  select(uniPatID,TG_DateNum,AnamnTyp,ipc2)
+ipc.up$uniPatID<- as.factor(ipc.up$uniPatID)
+ipc.up$AnamnTyp<- as.factor(ipc.up$AnamnTyp)
+
+labor.up<- Labor3|>
+  select(uniPatID,TG_DateNum,Untersuchung,Wertnum,NormLB,NormUB) |>
+  filter(Untersuchung=="KREA")
+labor.up$KREA_unter<- as.numeric(labor.up$Wertnum<labor.up$NormLB)
+labor.up$KREA_ueber<- as.numeric(labor.up$Wertnum>labor.up$NormUB)
+labor.up<- labor.up|>
+  select(uniPatID,TG_DateNum,KREA_unter,KREA_ueber)|>
+  distinct()
+labor.up$uniPatID<- as.factor(labor.up$uniPatID)
+
+lu.up<- LU3|> 
+  select(uniPatID,TG_DateNum)|>
+  distinct()
+lu.up$lu.dummy<- 1
+lu.up$uniPatID<- as.factor(lu.up$uniPatID)
+
+pzn.up<- PZN3 |> 
+  select(uniPatID,TG_DateNum,PZN) |> 
+  filter(TG_DateNum>0)|>
+  distinct()
+pzn.up$uniPatID<- as.factor(pzn.up$uniPatID)
+pzn.up$PZN<- as.factor(pzn.up$PZN)
+
+stamm.up<- Stamm3
+stamm.up$PKV<- IK2PKV(stamm.up$IK)
+stamm.up<- stamm.up|> 
+  filter(IK>0)|>
+  select(-PatID,-index_i,-IK,-Kasse,-PLZ)|>
+  distinct()
+stamm.up$uniPatID<- as.factor(stamm.up$uniPatID)
+
+ueberweis.up<- Ueberweis3|>
+  select(uniPatID,TG_DateNum,Uberw_Pneumo,Uberw_Radiol,Uberw_KH) |>
+  filter(Uberw_Pneumo>0|Uberw_Radiol>0|Uberw_KH>0)|>
+  distinct()
+ueberweis.up$uniPatID<- as.factor(ueberweis.up$uniPatID)
+```
+```{r}
+# 5
+contains.multiple.entries(diag.up)
+contains.multiple.entries(impf.up)
+contains.multiple.entries(ipc.up)
+contains.multiple.entries(labor.up)
+contains.multiple.entries(lu.up)
+contains.multiple.entries(pzn.up)
+contains.multiple.entries(stamm.up)
+contains.multiple.entries(ueberweis.up)
+
+```
+
+STOP: the difference between number of rows and patient/ time combinations must be 0. We believe diag.up, ipc.up, and pzn.up have multiple entries by design. We believe impf.up, labor.up, stamm.up, and ueberweis.up should have only one line per patient/ time combination. In #6.1 we remedy the presumed errors by selecting the last entry for each patient/ time combination. In #6.2 we write the multiple data points of diag.up, ipc.up, and pzn.up in additional columns. Both procedures leave us with unique date/ time combinations for each data set.
+In #6.2, we do not keep all entries for diag.up and ipc.up. There are a few entreis with unreasonably high numbers of diagnoses or symptoms. Therefore, we truncate the number observations at the 95% quantile of the distribution of entries per combination. If the last sentence is not clear in meaning, please run the commented code to gain better insight.
+```{r}
+# 6.1
+impf.up<- data.repair(impf.up)
+contains.multiple.entries(impf.up)
+
+labor.up<- data.repair(labor.up)
+contains.multiple.entries(labor.up)
+
+stamm.up<- data.repair(stamm.up)
+contains.multiple.entries(stamm.up)
+
+ueberweis.up<- data.repair(ueberweis.up)
+contains.multiple.entries(ueberweis.up)
+
+```
+```{r}
+# 6.2
+x_diag<- quantile(table(paste(diag.up$uniPatID,diag.up$TG_DateNum)), probs= 0.95)
+x_ipc<- quantile(table(paste(ipc.up$uniPatID,ipc.up$TG_DateNum)), probs= 0.95)
+x_pzn<- quantile(table(paste(pzn.up$uniPatID,pzn.up$TG_DateNum)), probs= 1)
+
+# table(paste0(diag.up$uniPatID,diag.up$TG_DateNum)
+# quantile(table(paste0(diag.up$uniPatID,diag.up$TG_DateNum)))
+
+
+diag.up_2<- aligner(diag.up, x_diag)
+contains.multiple.entries(diag.up)
+
+ipc.up_2<- aligner(ipc.up, x_ipc)
+contains.multiple.entries(ipc.up)
+
+pzn.up_2<- aligner(pzn.up, x_pzn)
+contains.multiple.entries(pzn.up)
+```
+
+```{r}
+# For some reason, some of the dates were changed from their original numeric class to the character class. This chunk remedies this error.
+diag.up_2$TG_DateNum<- as.numeric(diag.up_2$TG_DateNum)
+ipc.up_2$TG_DateNum<- as.numeric((ipc.up_2$TG_DateNum))
+```
+
+
+```{r}
+case.creating.fun<- function(ipc.data, add.data.list, i_diag=1, i_pzn=2, i_stamm=3, i_impf=4, i_labor=5, i_lu=6, i_ueberweis=7, start.time=0,length.of.episode,start.date="all",end.date="all", par.factor=1L){
+  #a function which generates health incidents from the data. 
+  #ipc.data is the data with IPC2 codes needed for finding the patients who had coughing (IPC2 code R05) as a symptom.
+  #add.data.list is a list of data frames that are merged with the ipc data.
+  #i_diag, i_pzn,  etc. are indicators which list element the diagnosis [pzn] data is (e.g. add.list.data[[x]]= diag.up => i_diag=x). If a dataset is to be excluded, set the respective indicator to NA.
+  #start.time is the number of days before the patient went to their GP with coughing symptoms in which other health incidents may be recorded. It is currently redundand.
+  #length.of.episode is the number of days after the patient went to their doctor for the first time that are analysed.
+  #start.date is a specified TG_DateNum-value which marks the earliest date we want to analyse in the data, i.e. if we do not want to analyse all of the data but set a specific start date.
+  #end.date is a specified TG_DateNum-value which marks the latest date we want to analyse in the data, i.e. if we do not want to analyse all of the data but set a specific end date.
+  #par.factor is a factor that determines in how many chunks the data is separated in the process. Several functions scale (necessarily) in O(n^2), increasing par.factor might be able to speed up the process as the chunking up of the data set scales only in O(n).
+  
+  # error handles for function inputs
+  if(all(sort(c(i_diag,i_pzn,i_stamm,i_impf,i_labor,i_lu,i_ueberweis))!=seq(1,length(add.data.list)))){
+    stop("There is an error in the add.data.list or specification which data frame is where. The i_x variables should taken together create a sequence from 1 to the number of data frames in add.data.list. The function stops because this error would prove critical later on in the execution of the function.")
+  }
+  
+  if(start.date!="all"){
+    if(is.numeric(start.date)){
+      if(start.date<min(as.numeric(ipc.data$TG_DateNum))) warning("Start date is earlier than the earliest incident in the dataset. The constraint is thus non-binding!")
+    }else{
+      stop("start date must be either 'all' or take a numeric value")
+    }
+  }
+  
+  if(end.date!="all"){
+    if(is.numeric(end.date)){
+      if(end.date>max(as.numeric(ipc.data$TG_DateNum))) warning("End date is later than the latest incident in the dataset. The constraint is thus non-binding!")
+    }else{
+      stop("End date must be either 'all' or take a numeric value")
+    }
+  }
+  if(is.numeric(start.date) & is.numeric(end.date)){
+    if(start.date>end.date) stop("The end date as entered into the function is before the start date.")
+  }
+  
+  if(is.numeric(length.of.episode)){
+    if(length.of.episode!=round(length.of.episode)) stop("length.of.episode must take an integer value!")
+    if(length.of.episode>56) warning("length.of.episode is selected such that it looks at cases more than 56 days after the patient went to their GP with cough for the first time. Beware that past these eight weeks we must consider that the cough is chronic. Also beware that the longer the time frame, the higher the likelihood that medically unconnected incidents are connected by this function.")
+  }else{
+    stop("length.of.episode must be numeric!")
+  }
+  
+
+  # 1. step: enforce time limits
+  # 1.1. enforce start date
+  if(start.date!="all"){
+    # 1.1.1. enforce start date for ipc.data
+    ipc.data<- ipc.data[as.numeric(ipc.data$TG_DateNum)>=start.date,]
+    if(nrow(ipc.data)==0) stop("There are no entries in ipc.data that correspond to this start.date request- after enforcing it, no rows were left!")
+    
+    # 1.1.2. enforce start date for all other data sets
+    # ...for all other data sets
+    rm.data.set<- c()
+    for(i in seq(1,length(add.data.list))){
+      ds<- add.data.list[[i]][as.numeric(add.data.list[[i]]$TG_DateNum)>=start.date,]
+      if(nrow(ds)==0){
+        rm.data.set<- c(rm.data.set,i)
+      }else{
+        add.data.list[[i]]<- ds
+      }
+    }
+    if(length(rm.data.set)>1){
+      warning(paste("Some data set(s) is/ are being dropped from the analysis because the start.date rule sets the number of rows in the corresponding dataset(s) to 0. Please have a look at the dataset(s) no°s",rm.data.set))
+      add.data.list<- add.data.list[-rm.data.set]
+    }
+  }
+  
+  # 1.2. enforce end date
+  if(end.date!="all"){
+    # 1.1.1. enforce end date for ipc.data
+    ipc.data<- ipc.data[as.numeric(ipc.data$TG_DateNum)<=end.date,]
+    if(nrow(ipc.data)==0) stop("There are no entries in ipc.data that correspond to this end.date request- after enforcing it, no rows were left!")
+    
+    # 1.1.2. enforce end date for all other data sets
+    # ...for all other data sets
+    rm.data.set<- c()
+    for(i in seq(1,length(add.data.list))){
+      ds<- add.data.list[[i]][as.numeric(add.data.list[[i]]$TG_DateNum)<=end.date,]
+      if(nrow(ds)==0){
+        rm.data.set<- c(rm.data.set,i)
+      }else{
+        add.data.list[[i]]<- ds
+      }
+    }
+    if(length(rm.data.set)>1){
+      warning(paste("Some data set(s) is/ are being dropped from the analysis because the end.date rule sets the number of rows in the corresponding dataset(s) to 0. Please have a look at the dataset(s) no°s",rm.data.set))
+      add.data.list<- add.data.list[-rm.data.set]
+    }
+  }
+  
+  
+  
+  # 2. step: filter out all patients who never coughed
+  # ...for ipc.data
+  cols<- seq(1,ncol(ipc.data))[grepl("ipc2", colnames(ipc.data))]
+  selector.cough<- logical(nrow(ipc.data))
+  for(i in seq(1,nrow(ipc.data))){
+    ipc.string<- paste0(ipc.data[i,cols], collapse = "")
+    selector.cough[i]<- grepl("R05",ipc.string)
+  }
+  
+  patients.who.ever.coughed<- levels(as.factor(ipc.data$uniPatID[selector.cough]))
+  ipc.data_2<- ipc.data[ipc.data$uniPatID %in% patients.who.ever.coughed,]
+
+  #error handle: Are there any entries in the newly created data frame?
+  if(nrow(ipc.data_2)==0) stop("There are no patients who ever coughed recorded in the dataset for this configuration.")
+  
+  # ...for all other data sets
+  
+  rm.data.set<- c()
+  for(i in seq(1,length(add.data.list))){
+    ds<- add.data.list[[i]]
+    ds<-ds[ds$uniPatID %in% patients.who.ever.coughed,] #here
+    if(nrow(ds)==0){
+      rm.data.set<- c(rm.data.set,i)
+    }else{
+      add.data.list[[i]]<- ds
+    }
+  }
+  if(length(rm.data.set)>1){
+    warning(paste("Some data set(s) is/ are being dropped from the analysis because the patients in the dataset never went to their GP coughing. Please have a look at the dataset(s) no°s",rm.data.set))
+    add.data.list<- add.data.list[-rm.data.set]
+  }
+  
+
+  # 3. step: merge diagnosis data to ipc data
+  no.cores<- detectCores()
+
+  ipc.chunks<- chunk.data(ipc.data,no.cores*par.factor)
+  diag.chunks<- list()
+  dd<- add.data.list[[i_diag]]
+  for (i in seq(1,no.cores*par.factor)) {
+    patients<- ipc.chunks[[i]]$uniPatID
+    diag.chunks[[i]]<- dd[dd$uniPatID %in% patients,]
+  }
+  rm(dd)
+  
+  # tic()
+  # merger.cluster<- makeCluster(no.cores)
+  # distinct.environment<- environment()
+  # clusterExport(cl = merger.cluster, varlist = c("ipc.chunks","diag.chunks"), envir = distinct.environment)
+  # merge_1<- parSapply(cl = merger.cluster, seq(1,no.cores*par.factor), function(i){
+  #   ipc<- ipc.chunks[[i]]
+  #   diag<- diag.chunks[[i]]
+  # 
+  #   ipc.id<- as.factor(paste(ipc$uniPatID, ipc$TG_DateNum))
+  #   diag.id<- as.factor(paste(diag$uniPatID, diag$TG_DateNum))
+  # 
+  #   in.vec<- diag.id %in% ipc.id
+  #   
+  #   diag_2<- diag[,colnames(diag)!="uniPatID" & colnames(diag)!="TG_DateNum"]
+  # 
+  #   merge.matrix<- matrix(NA, nrow = nrow(ipc), ncol = ncol(ipc)+ncol(diag_2))
+  #   merge.matrix[,1:ncol(ipc)]<- ipc
+  #   for(j in seq(1,length(in.vec))){
+  #     if(in.vec[j]){
+  #       row<- which(ipc.id==diag.id[j])
+  #       merge.matrix[row,seq(ncol(ipc)+1,ncol(merge.matrix))]<- diag_2[j,]
+  #     }
+  #   }
+  #   return(merge.matrix)
+  # })
+  # stopCluster()
+  
+  # merge_1<- sapply(merge_1, rbind)
+  # loop.time<- toc()
+  # browser()
+  # drop cases with no diagnosis
+  
+  if(start.time==0){
+    case.cluster<- makeCluster(no.cores)
+    distinct.environment<- environment()
+    clusterExport(cl = case.cluster, varlist = c("ipc.chunks","diag.chunks","length.of.episode"), envir = distinct.environment)
+  case_1<- parSapply(cl = case.cluster, seq(1,no.cores*par.factor), function(i){
+    ipc<- ipc.chunks[[i]]
+    ipc$case.id<- NA
+    diag<- diag.chunks[[i]]
+    #create case matrix: patient, start date of incident, last diagnosis, number of diagnoses
+    case.matrix<- matrix(NA, nrow = nrow(ipc), ncol = 4)
+    colnames(case.matrix)<- c("uniPatID","TG_Start_Date","final_diagnosis","patient_did_cough")
+    
+    patients<- levels(ipc$uniPatID)
+    
+    for (j in seq(1,length(patients))) {
+      sel.patient<- patients[j]
+      entry.selection_ipc<- ipc$uniPatID==sel.patient
+      entry.selection_diag<- diag$uniPatID==sel.patient
+      dates.ipc<- ipc$TG_DateNum[entry.selection_ipc]
+      dates.diag<- diag$TG_DateNum[entry.selection_diag]
+      
+      #select cases when patient coughs
+      
+      
+      d<- as.numeric(abs(diff(dates.sel.patient))>=length.of.episode)
+      d_2<- 1+cumsum(d)
+      d_3<- c(1,d_2)
+      df$case.id[entry.selection]<- as.factor(paste(sel.patient,d_3))
+    }
+    return(df)
+  })
+  stopCluster()
+  case_1<- sapply(case_1,rbind)
+  
+  }else{
+    #start.time!=0 what then?
+  }
+  browser()
+  
+  if(start.time==0){
+    case.chunks<- chunk.up(merge_1, no.cores*par.factor)
+    case.cluster<- makeCluster(no.cores)
+    distinct.environment<- environment()
+    clusterExport(cl = case.cluster, varlist = c("case.chunks","length.of.episode"), envir = distinct.environment)
+  case_1<- parSapply(cl = case.cluster, seq(1,no.cores*par.factor), function(i){
+    df<- case.chunks[[i]]
+    df$case.id<- NA
+    
+    patients<- levels(df$uniPatID)
+    for (j in seq(1,length(patients))) {
+      sel.patient<- patients[j]
+      entry.selection<- df$uniPatID==sel.patient
+      dates.sel.patient<- df$TG_DateNum[entry.selection]
+      d<- as.numeric(abs(diff(dates.sel.patient))>=length.of.episode)
+      d_2<- 1+cumsum(d)
+      d_3<- c(1,d_2)
+      df$case.id[entry.selection]<- as.factor(paste(sel.patient,d_3))
+    }
+    return(df)
+  })
+  stopCluster()
+  case_1<- sapply(case_1,rbind)
+  
+  }else{
+    #start.time!=0 what then?
+  }
+  
+  #merge ipc with diag data, create cases, select cases that contain coughing, insert all into data frame, add all other information on the patients
+}
+```
+
+```{r}
+dl<- list(diag.up_2, pzn.up_2, stamm.up_2, impf.up, labor.up, lu.up, ueberweis.up)
+```
+
+
+```{r}
+case.creating.fun(ipc.data = ipc.up_2, 
+                  add.data.list = dl,
+                  length.of.episode = 56,
+                  #start.date = (min(as.numeric(ipc.up_2$TG_DateNum))-100),
+                  #start.date = (max(as.numeric(ipc.up_2$TG_DateNum))+110),
+                  end.date = (max(as.numeric(ipc.up_2$TG_DateNum))+100))
+
+#i_diag=1, i_pzn=2, i_stamm=3, i_impf=4, i_labor=5, i_lu=6, i_ueberweis=7
+```
+
+
+
+```{r}
+boot.simple<- function(df, seed){
+  set.seed(seed)
+  n<- dim(df)[1]
+  p<- dim(df)[2]
+  out<- df
+  out$uniPatID<- sample(out$uniPatID)
+  out$TG_DateNum<- sample(out$TG_DateNum)
+}
+boot.ipc<- boot.simple(ipc.up_2,3434543)
+boot.diag<- boot.simple(diag.up_2)
+
+bootstrap.dag<- function(df, dag.from, dag.to){
+  # Uses a directed acyclic graph to create a semiparametric bootstrap sample from the data.
+  # df is the dataset to be sampled from
+  # dag.from, dag.to are vectors. A number in either of these vectors corresponds to a vertex, the number corresponds to the column number. I.e. if there are three columns A, B, and C, 2 would be the vertex for B.
+  # The function (1) identifies the independent variables and draws them randomly from the ECDF of corresponding the variable. Then, it finds the start point(s) of the graph
+  n<- nrow(df)
+  
+}
+
+```
+
+
