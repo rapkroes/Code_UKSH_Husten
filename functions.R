@@ -845,12 +845,10 @@ add.dataset<- function(episodedf, adddata,name.dataset){
   adddata$uniPatID<- as.character(adddata$uniPatID)
   n<- nrow(episodedf)
   no.matches<- numeric(n)
+  preselector<- as.character(adddata$uniPatID) %in% patients
+  adddata<- adddata[preselector,]
   
-  column.is.numeric<- numeric(ncol(adddata))
-  for(i in seq_along(colnames(adddata))){
-    column.is.numeric[i]<- is.numeric(adddata[,i])
-  }
-  adddata<- as.character(adddata[,!column.is.numeric])
+  adddata<- transform.data_character(adddata)
   
   first.match<- as.data.frame(matrix(NA,nrow = n, ncol = ncol(adddata)))
   last.match<- as.data.frame(matrix(NA,nrow = n, ncol = ncol(adddata)))
@@ -880,14 +878,9 @@ add.dataset<- function(episodedf, adddata,name.dataset){
   col.selector<- colnames(adddata)!= "uniPatID"
   out<- cbind(episodedf, first.match[,col.selector],last.match[,col.selector],no.matches)
   colnames(out)[ncol(out)]<- paste0("no.matches_",name.dataset)
-  for(i in seq_along(colnames(out))){
-    im<- as.numeric(out[,i])
-    if(all(is.na(im))){
-      out[,i]<- as.factor(out[,i])
-    }else{
-      out[,i]<- as.numeric(out[,i])
-    }
-  }
+  
+  out<- transform.data_factor(out)
+  
   return(out)
 }
 
@@ -958,3 +951,45 @@ block.no2chapter.name<- function(dv){
   }
   return(out)
 }
+
+# no. 30
+transform.data_factor <- function(df) {
+  # This ChatGPT 3.5 created function takes a data frame and turns its columns into numeric columns if they contain only numbers and into factors if a column contains not only numbers.
+  # Step 1: Transform every entry in df to character strings
+  df <- as.data.frame(lapply(df, as.character))
+  
+  # Step 2: Column-wise check for numbers and transform columns
+  for (col in names(df)) {
+    # Check if only numbers are contained in the column
+    if (all(grepl("^\\d+\\.?\\d*$", df[[col]], ignore.case = TRUE))) {
+      # Transform the column to numeric if only numbers are present
+      df[[col]] <- as.numeric(df[[col]])
+    } else {
+      # Otherwise, transform the column to a factor
+      df[[col]] <- as.factor(df[[col]])
+    }
+  }
+  
+  # Step 3: Return the transformed data frame
+  return(df)
+}
+
+# no. 31
+transform.data_character <- function(df) {
+  # This ChatGPT 3.5 created function takes a data frame and turns its columns into numeric columns if they contain only numbers and into factors if a column contains not only numbers.
+  # Step 1: Transform every entry in df to character strings
+  df <- as.data.frame(lapply(df, as.character))
+  
+  # Step 2: Column-wise check for numbers and transform columns
+  for (col in names(df)) {
+    # Check if only numbers are contained in the column
+    if (all(grepl("^\\d+\\.?\\d*$", df[[col]], ignore.case = TRUE))) {
+      # Transform the column to numeric if only numbers are present
+      df[[col]] <- as.numeric(df[[col]])
+    }
+  }
+  
+  # Step 3: Return the transformed data frame
+  return(df)
+}
+

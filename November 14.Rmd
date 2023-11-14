@@ -439,7 +439,14 @@ add.dataset.new<- function(episodedf, adddata, no.splits, no.cores, suffix){
   }
   return(out)
 }
-
+dataset.addition<- function(episodedf, df){
+  patients.episodedf<- levels(as.factor(as.character(episodedf$uniPatID)))
+  preselector<- as.character(adddata$uniPatID) %in% patients.episodedf
+  adddata<- df[preselector,]
+  episodedf<- episodedf|>
+    arrange(uniPatID,start_date)
+  
+}
 ```
 
 
