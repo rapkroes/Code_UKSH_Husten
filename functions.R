@@ -845,6 +845,13 @@ add.dataset<- function(episodedf, adddata,name.dataset){
   adddata$uniPatID<- as.character(adddata$uniPatID)
   n<- nrow(episodedf)
   no.matches<- numeric(n)
+  
+  column.is.numeric<- numeric(ncol(adddata))
+  for(i in seq_along(colnames(adddata))){
+    column.is.numeric[i]<- is.numeric(adddata[,i])
+  }
+  adddata<- as.character(adddata[,!column.is.numeric])
+  
   first.match<- as.data.frame(matrix(NA,nrow = n, ncol = ncol(adddata)))
   last.match<- as.data.frame(matrix(NA,nrow = n, ncol = ncol(adddata)))
   for(j in seq_along(patients)){

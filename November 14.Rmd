@@ -47,6 +47,9 @@ ListeKrankenkassen<- read.csv(file = "ListeKrankenkassen.csv", header = TRUE, se
 altersstruktur_deutschland <- read_excel("altersstruktur deutschland.xlsx")
 icd10_blocks <- read_excel("icd10_blocks.xlsx")
 
+source("//fileserver1.uni-luebeck.de/ifa_homes/raphaelkroes/Documents/GitHub/Code_UKSH_Husten/functions.R")
+
+
 ```
 
 ```{r}
@@ -227,14 +230,7 @@ episode.fun.new(ipc.up_2,56)
 
 ```{r}
 #create episodes based on the data
-library(tictoc)
-tic()
-episodes_2<- episode.fun.new(ipc.up_2,56)
-a<- toc()
-episodes<- episode.fun(ipc.up_2,56)
-# tic()
-# episodes<- episode.fun(ipc.up_2,56)
-# b<- toc()
+episodes<- episode.fun.new(ipc.up_2,56)
 ```
 
 There must be no overlap in the timing of the episodes in order to map diagnoses and treatments to the episodes.
@@ -376,20 +372,16 @@ sum(episodes.overlap.finder(episodes_r4)$overlap)
 
 ```
 
-
-
 ```{r}
-episodes_r1_stamm<- add.stamm(episodes_r1,stamm.up)
-episodes_r2_stamm<- add.stamm(episodes_r2,stamm.up)
-#episodes_r3_stamm<- add.stamm(episodes_r3,stamm.up)
-episodes_r4_stamm<- add.stamm(episodes_r4,stamm.up)
-```
-```{r}
+episodes_r1<- add.stamm(episodes_r1,stamm.up)
+episodes_r2<- add.stamm(episodes_r2,stamm.up)
+#episodes_r3<- add.stamm(episodes_r3,stamm.up)
+episodes_r4<- add.stamm(episodes_r4,stamm.up)
 #create full data episode data frames
-rules<- c(1,2,4)
+rules<- c(1)
 ticker<- 0
 for(i in rules){#right now, only four decision rules are available
-  im<- add.dataset(get(paste0("episodes_r",i,"_stamm")),diag.up_2,"diagnoses")
+  im<- add.dataset(get(paste0("episodes_r",i)),diag.up_2,"diagnoses")
   ticker<- ticker+1
   print(ticker)
   im<- add.dataset(im,impf.up,"impf")
@@ -412,7 +404,44 @@ for(i in rules){#right now, only four decision rules are available
 }
 #rm(im)
 
+df<- add.dataset(episodedf = episodes_r1,diag.up_2, "diagnoses")
 ```
+
+```{r}
+add.dataset.new<- function(episodedf, adddata, no.splits, no.cores, suffix){
+  patients.episodedf<- levels(as.factor(as.character(episodedf$uniPatID)))
+  preselector<- as.character(adddata$uniPatID) %in% patients.episodedf
+  im<- adddata[preselector,]
+  im<- chunk.data(im,no.splits)
+  
+  distinct.environment<- environment()
+  adddata.cluster<- makeCluster(no.cores)
+  clusterExport(adddata.cluster, varlist = c("im"), envir = distinct.environment)
+  result.list<- parSapply(adddata.cluster,seq(1,no.splits),function(i){
+    new.data<- im[[i]]
+    entry.match<- numeric(nrow(new.data))
+    for(i in seq_along(entry.match)){
+      pat<- episodedf$uniPatID==new.data$uniPatID[i]
+      start.check<- episodedf$start_date<=new.data$TG_DateNum
+      end.check<- episodedf$end_date>=new.data$TG_DateNum
+      entry.match[i]<- which(pat&start.check&end.check)
+    }
+    return(entry.match)
+  })
+  out<- cbind(episodedf,as.data.frame(matrix(NA,nrow = nrow(episodedf), ncol = ncol(adddata)-2)))
+  col.selector<- colnames(adddata)!= "uniPatID" & colnames(adddata)!= "TG_DateNum"
+  for(i in seq(1,no.splits)){
+    for (j in seq(1,length(result.list[[i]]))) {
+      if(result.list[[i]][j]!=0){
+        out[,4:ncol(out)]<- im[[i]][j,col.selector]
+      }
+    }
+  }
+  return(out)
+}
+
+```
+
 
 ```{r}
 #extract summary statistics
@@ -1017,11 +1046,13 @@ error.vec.month<- as.numeric(id==id_lag & na.rmvr & mnths)
 
 ```{r}
 #list of diseases by icd-10 code
-decision.rules<- 1:4
+decision.rules<- c(1,2,4)
 icd10.codes.3<- c()
-for(i in seq_along(decision.rules)){
-  im<- get(paste0("fulld.data.episodes_r",i))
-  icd10.codes.3<- c(icd10.codes.3,substr(im$first_icd10,1,3),substr(im$first_icd10,1,3))
+for(i in decision.rules){
+  im<- get(paste0("full.data.episodes_r",i))
+  im<- as.vector(im[,grepl("icd10",colnames(im))])
+  print(str(im))
+  icd10.codes.3<- c(icd10.codes.3,substr(im,1,3),substr(im,1,3))
 }
 icd10.codes.3<- levels(as.factor(icd10.codes.3))
 all.diagnosed.bocks<- icd10.to.block(icd10.codes.3)
