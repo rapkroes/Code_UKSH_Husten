@@ -634,38 +634,50 @@ chunk.data_date<- function(df,  no.splits){
 }
 
 # no. 17
-episode.fun<- function(ipc, length.of.episode){
-  #Uses an ipc data frame to create a data frame of episodes.
-  #length.of.episode is a a parameter how many days after the coughing was reported the diagnoses are still considered part of it.
-  patients<- levels(as.factor(as.character(ipc$uniPatID)))
-  out<- matrix(0,nrow = nrow(ipc), ncol = 3)
-  ticker<- 1
-  ipc.cols<- grepl("ipc2", colnames(ipc))
-  ipc$all_ipc<- ipc[,which(ipc.cols)[1]]
-  for(i in seq(2,sum(ipc.cols))){
-    ipc$all_ipc<- paste(ipc$all_ipc,ipc[,which(ipc.cols)[i]], sep = ";")
+# episode.fun<- function(ipc, length.of.episode){
+#   #Uses an ipc data frame to create a data frame of episodes.
+#   #length.of.episode is a a parameter how many days after the coughing was reported the diagnoses are still considered part of it.
+#   patients<- levels(as.factor(as.character(ipc$uniPatID)))
+#   out<- matrix(0,nrow = nrow(ipc), ncol = 3)
+#   ticker<- 1
+#   ipc.cols<- grepl("ipc2", colnames(ipc))
+#   ipc$all_ipc<- ipc[,which(ipc.cols)[1]]
+#   for(i in seq(2,sum(ipc.cols))){
+#     ipc$all_ipc<- paste(ipc$all_ipc,ipc[,which(ipc.cols)[i]], sep = ";")
+#   }
+#   
+#   progress.bar<- txtProgressBar(min = 0, max = length(patients), initial = 0) 
+#   for (l in seq(1,length(patients))) {
+#     setTxtProgressBar(progress.bar,l)
+#     par.data<- ipc |>
+#       filter(uniPatID==patients[l]) |>
+#       arrange(TG_DateNum)
+#     for (m in seq(1,nrow(par.data))) {
+#       if(grepl("R05",par.data$all_ipc[m])){
+#         out[ticker,]<- c(patients[l], par.data$TG_DateNum[m], par.data$TG_DateNum[m]+length.of.episode)
+#         ticker<- ticker+1
+#       }
+#     }
+#   }
+#   close(progress.bar)
+#   out<- out[1:(ticker-1),]
+#   #out<- data.frame(out[,1], as.numeric(out[,2]), as.numeric(out[,3]))
+#   colnames(out)<- c("uniPatID","start_date","end_date")
+#   out$uniPatID<- as.factor(out$uniPatID)
+#   out$start_date<- as.numeric(out$start_date)
+#   out$end_date<- as.numeric(out$end_date)
+#   return(out)
+# }
+episode.fun.new<- function(df, length.of.episode){
+  ipc.cols<- which(grepl("ipc2", colnames(df)))
+  im<- df[,ipc.cols]
+  for(i in seq(1,ncol(im))){
+    im[,i]<- grepl("R05",im[,i])
   }
-  
-  progress.bar<- txtProgressBar(min = 0, max = length(patients), initial = 0) 
-  for (l in seq(1,length(patients))) {
-    setTxtProgressBar(progress.bar,l)
-    par.data<- ipc |>
-      filter(uniPatID==patients[l]) |>
-      arrange(TG_DateNum)
-    for (m in seq(1,nrow(par.data))) {
-      if(grepl("R05",par.data$all_ipc[m])){
-        out[ticker,]<- c(patients[l], par.data$TG_DateNum[m], par.data$TG_DateNum[m]+length.of.episode)
-        ticker<- ticker+1
-      }
-    }
-  }
-  close(progress.bar)
-  out<- out[1:(ticker-1),]
-  #out<- data.frame(out[,1], as.numeric(out[,2]), as.numeric(out[,3]))
-  colnames(out)<- c("uniPatID","start_date","end_date")
-  out$uniPatID<- as.factor(out$uniPatID)
-  out$start_date<- as.numeric(out$start_date)
-  out$end_date<- as.numeric(out$end_date)
+  im<- rowSums(im)>0
+  out<- data.frame(uniPatID=df$uniPatID[im],
+                   start_date=df$TG_DateNum[im],
+                   end_date=df$TG_DateNum[im]+length.of.episode)
   return(out)
 }
 
