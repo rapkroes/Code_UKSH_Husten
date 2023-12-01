@@ -588,7 +588,7 @@ aligner.parallel.new<- function(df,x,no.splits,no.cores){
     if(is.numeric(result.list[[i]])){
       out[,i]<- as.numeric(out[,i])
     }else{
-      out[,i]<- as.factor(out[,i])
+      out[,i]<- as.character(out[,i])
     }
   }
   colnames(out)<- c(colnames(df),paste(rep(colnames(df)[colnames(df)!= "uniPatID" & colnames(df)!= "TG_DateNum"],x-1),sort(rep(1:(x-1),ncol(df)-2)),sep = "_"))
@@ -726,7 +726,7 @@ episodes.dr2<- function(episodedf){
   for(i in seq(2,n)){
     if(episodedf$uniPatID[i]==episodedf$uniPatID[i-1]){
       if(episodedf$end_date[i-1]>episodedf$start_date[i]){
-        out$end_date[i-1]<- out$start_date[i-1]-1
+        out$end_date[i-1]<- out$start_date[i]-1
       }
     }
   }
@@ -873,6 +873,7 @@ add.stamm.new<- function(episodedf, stamm){
   }
   out<- cbind(episodedf,im,stamm.is.there)
   colnames(out)<- c(colnames(episodedf),colnames(stamm),"stamm.is.there")
+  out<- out[,-4]
   return(out)
 }
 
