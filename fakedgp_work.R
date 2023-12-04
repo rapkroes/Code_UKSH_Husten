@@ -3,9 +3,10 @@
 library(readxl)
 altersstruktur_deutschland <- read_excel("C:/Users/Raphael (limited)/Downloads/altersstruktur deutschland.xlsx")
 ListeKrankenkassen <- read.csv("C:/Users/Raphael (limited)/Downloads/ListeKrankenkassen_up.csv")
-icd10_blocks <- read_excel("icd10_blocks.xlsx")
-Impf3 <- read.csv("C:/Users/Raphael (limited)/Downloads/RS_DB_v02/RS_DB_Impf3_v02.csv", sep=";")
-Labor3 <- read.csv2("C:/Users/Raphael (limited)/Downloads/RS_DB_v02/RS_DB_Labor3_v02.csv")
+icd10_blocks <- read_excel("C:/Users/Raphael (limited)/Documents/GitHub/Code_UKSH_Husten/icd10_blocks.xlsx")
+icd10_description<- read_excel("C:/Users/Raphael (limited)/Documents/GitHub/Code_UKSH_Husten/icd10_description.xlsx")
+Impf3 <- read.csv("C:/Users/Raphael (limited)/Documents/GitHub/Code_UKSH_Husten/RS_DB_v02/RS_DB_Impf3_v02.csv", sep=";")
+Labor3 <- read.csv2("C:/Users/Raphael (limited)/Documents/GitHub/Code_UKSH_Husten/RS_DB_v02/RS_DB_Labor3_v02.csv")
 
 art.data<- function(n){
   #creates a list of data frames with n entries, with entries trying to emulate the original data sets. 
