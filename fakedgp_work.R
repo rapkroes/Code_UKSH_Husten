@@ -7,6 +7,7 @@ icd10_blocks <- read_excel("C:/Users/Raphael (limited)/Documents/GitHub/Code_UKS
 icd10_description<- read_excel("C:/Users/Raphael (limited)/Documents/GitHub/Code_UKSH_Husten/icd10_description.xlsx")
 Impf3 <- read.csv("C:/Users/Raphael (limited)/Documents/GitHub/Code_UKSH_Husten/RS_DB_v02/RS_DB_Impf3_v02.csv", sep=";")
 Labor3 <- read.csv2("C:/Users/Raphael (limited)/Documents/GitHub/Code_UKSH_Husten/RS_DB_v02/RS_DB_Labor3_v02.csv")
+selected.lab.descriptions<- read_excel("GitHub/Code_UKSH_Husten/freitextanalyse.xlsx")
 
 art.data<- function(n){
   #creates a list of data frames with n entries, with entries trying to emulate the original data sets. 

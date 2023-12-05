@@ -163,6 +163,9 @@ contains.multiple.entries(ueberweis.up)
 
 STOP: Every patient/date combination must be unique. The difference between number of rows and patient/ time combinations must therefore be 0. This is what contains.multiple.entries checks for. We believe diag.up, ipc.up, and pzn.up have multiple entries for the same date by design. We believe stamm.up, impf.up, labor.up, and ueberweis.up should have only one line per patient/ time combination. In #6.1 we remedy the presumed errors by selecting the last entry for each patient/ time combination. In #6.2 we write the multiple data points of diag.up, ipc.up, and pzn.up in additional columns. Both procedures leave us with unique date/ time combinations for each data set.
 In #6.2, we do not keep all entries for diag.up and ipc.up. There are a few entries with unreasonably high numbers of diagnoses or symptoms. Therefore, we truncate the number observations at the 95% quantile of the distribution of entries per combination. If the last sentence is not clear in meaning, please run the commented code in chunk #6.2 to gain better insight.
+
+
+
 ```{r}
 # 5.1
 # impf.up<- data.repair(impf.up)
@@ -293,6 +296,47 @@ for(k in rules){
 rm(im)
 ```
 
+```{r}
+chunk.adddata<- function(chunkeddl, adddata){
+  l<- length(chunkeddl)
+  adddata$uniPatID<- as.character(adddata$uniPatID)
+  chunked.adddata<- list()
+  for(i in seq(1,l)){
+    ids<- as.character(chunkeddl[[i]]$uniPatID)
+    chunked.adddata[[i]]<- adddata|>
+      filter(uniPatID %in% ids)
+  }
+  return(chunked.adddata)
+}
+# add.lab
+add.lab<- function(episodedf, lab, no.splits){
+  dl_1<- chunk.data(episodedf)
+  dl_2<- chunk.addata(dl_1,lab)
+  for(k in seq(1,length(dl_1)){
+    df_1<- dl_1[[k]]|>
+      arrange(uniPatID)
+    df_2<- dl_2[[k]]
+    out<- matrix(NA,ncol(nrow(df_1),ncol=7))
+    pat<- df_1$uniPatID[1]
+    im<- df_2|>
+      filter(uniPatID==pat)
+    if(nrow(im)>0){
+      im_2 <- im |>
+        filter(TG_DateNum>=df_1$start_date[1] & TG_DateNum<=df_1$end_date[1])|>
+        arrange(TG_DateNum)
+      
+      for(j in seq(1,nrow(im_2))){
+        
+      }
+    }
+    
+    for(i in seq(2,nrow(df_1))){
+      
+      
+    }
+  }
+}
+```
 
 
 
