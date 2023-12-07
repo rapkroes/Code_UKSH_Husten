@@ -1222,4 +1222,17 @@ discovery.tool<- function(decision.rule, pandemic="none", dependent.variable, re
   }
 }
 
+#no. 33
+chunk.adddata<- function(chunkeddl, adddata){
+  #Takes the result of the chunk.data-function and another dataset and chunks the other dataset in the same way as the chunked dataset.
+  l<- length(chunkeddl)
+  adddata$uniPatID<- as.character(adddata$uniPatID)
+  chunked.adddata<- list()
+  for(i in seq(1,l)){
+    ids<- as.character(chunkeddl[[i]]$uniPatID)
+    chunked.adddata[[i]]<- adddata|>
+      filter(uniPatID %in% ids)
+  }
+  return(chunked.adddata)
+}
 

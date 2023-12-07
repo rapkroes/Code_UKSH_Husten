@@ -834,7 +834,29 @@ pkv.summaries
 l.unipat.episodes<- levels(as.factor(episodes$uniPatID))
 l.unipat.stamm<- levels(as.factor(stamm.up$uniPatID))
 has.stamm.actually.there<- l.unipat.episodes %in% l.unipat.stamm
-print(l.unipat.episodes[has.stamm.actually.there])
+#print(l.unipat.episodes[has.stamm.actually.there])
+mean(has.stamm.actually.there)
+
+l.unipat.episodes<- levels(as.factor(episodes_r1$uniPatID))
+l.unipat.stamm<- levels(as.factor(stamm.up$uniPatID))
+has.stamm.actually.there<- l.unipat.episodes %in% l.unipat.stamm
+#print(l.unipat.episodes[has.stamm.actually.there])
+mean(has.stamm.actually.there)
+
+l.unipat.episodes<- levels(as.factor(episodes_r2$uniPatID))
+l.unipat.stamm<- levels(as.factor(stamm.up$uniPatID))
+has.stamm.actually.there<- l.unipat.episodes %in% l.unipat.stamm
+#print(l.unipat.episodes[has.stamm.actually.there])
+mean(has.stamm.actually.there)
+l.unipat.episodes<- levels(as.factor(episodes_r3$uniPatID))
+l.unipat.stamm<- levels(as.factor(stamm.up$uniPatID))
+has.stamm.actually.there<- l.unipat.episodes %in% l.unipat.stamm
+mean(has.stamm.actually.there)
+l.unipat.episodes<- levels(as.factor(episodes_r4$uniPatID))
+l.unipat.stamm<- levels(as.factor(stamm.up$uniPatID))
+has.stamm.actually.there<- l.unipat.episodes %in% l.unipat.stamm
+mean(has.stamm.actually.there)
+
 ```
 
 
