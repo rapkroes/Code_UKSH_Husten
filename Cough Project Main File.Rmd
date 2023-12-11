@@ -21,10 +21,9 @@ library(writexl)
 ```{r}
 # 2
 # Read in data
-real.data<- FALSE
+real.data<- TRUE
 if(real.data){
   setwd("N:/StudentischeHilfskraefte/_Kroes (Christoph)/Routinedaten/01_Husten/R/DB")
-#names.vec<- c("Diag3","Impf3","IPC23","Labor3","LU3","PZN3","Stamm3","Ueberweis3")
 names.vec<- c("Diag3","IPC23","Labor3","Stamm3","Ueberweis3")
 
 for (i in seq(1,length(names.vec))) {
@@ -137,8 +136,6 @@ In #6.2, we do not keep all entries for diag.up and ipc.up. There are a few entr
 
 ```{r}
 # 5.1
-# impf.up<- data.repair(impf.up)
-# contains.multiple.entries(impf.up)
 
 labor.up<- data.repair(labor.up)
 contains.multiple.entries(labor.up)
@@ -216,25 +213,43 @@ full_r2<- full_r2[,!duplicated(colnames(full_r2))]
 summary.stats<- function(episodedf){
   no.patients<- length(levels(as.factor(episodedf$uniPatID)))
   no.episodes<- nrow(episodedf)
+  age<- year(TG_DateNum2date(episodedf$start_date)) - episodedf$Geburtsjahr
+  length.of.episode<- episodedf$end_date-episodedf$start_date
+  
   numbers<- list(
     no.episodes= nrow(episodedf),
     no.patients= length(levels(as.factor(episodedf$uniPatID))),
-    no.stammdata.there= sum(episodedf$stamm_is_there, na.rm = TRUE),
-    earliest.recorded.cough= TG_DateNum2date(min(episodedf$start_date)),
-    latest.recorded.cough= TG_DateNum2date(max(episodedf$start_date)),
+    no.stammdata.there= sum(episodedf$stamm.is.there, na.rm = TRUE),
+    earliest.recorded.episode.start= TG_DateNum2date(min(episodedf$start_date)),
+    latest.recorded.episode.start= TG_DateNum2date(max(episodedf$start_date)),
     no.males=sum(episodedf$Maennl, na.rm = TRUE),
     no.females=sum(episodedf$Weibl, na.rm = TRUE),
     no.transgender=sum(episodedf$Transgen, na.rm = TRUE),
     no.undefined.sex=sum(episodedf$Geschlechtundef, na.rm = TRUE),
     
+    percentage.chronically.diseased.patients= mean(as.character(levels(as.factor(episodedf$uniPatID))) %in% chronic.patients$chronic.patients),
+    percentage.episodes.of.chronically.diseased= mean(episodedf$uniPatID %in% chronic.patients$chronic.patients),
+    percentage.copd.patients= mean(as.character(levels(as.factor(episodedf$uniPatID))) %in% copd.vec),
+    percentage.episodes.of.copd.patients= mean(episodedf$uniPatID %in% copd.vec),
+    min.age= min(age, na.rm = TRUE),
+    mean.age= mean(age, na.rm= TRUE),
+    median.age= median(age, na.rm = TRUE),
+    max.age= max(age, na.rm = TRUE),
+    percentage.episodes.minors= mean(age<18, na.rm=TRUE),
+    percentage.patients.minors= mean((age<18)[!duplicated(episodedf$uniPatID)], na.rm=TRUE),
+    min.length.of.episode= min(length.of.episode),
+    mean.length.of.episode= mean(length.of.episode),
+    max.length.of.episode= max(length.of.episode),
+    
     average.no.visit.per.patient=nrow(episodedf)/no.patients,
     percentage.stammdata.there= sum(episodedf$stamm_is_there, na.rm = TRUE)/no.episodes,
-    percentage.males=sum(episodedf$Maennl, na.rm = TRUE)/no.episodes,
-    percentage.females=sum(episodedf$Weibl, na.rm = TRUE)/no.episodes,
-    percentage.transgender=sum(episodedf$Transgen, na.rm = TRUE)/no.episodes,
-    percentage.undefined.sex=sum(episodedf$Geschlechtundef, na.rm = TRUE)/no.episodes,
+    percentage.males.episodes=mean(episodedf$Maennl, na.rm = TRUE),
+    percentage.females.episodes=mean(episodedf$Weibl, na.rm = TRUE),
+    percentage.males.patients=mean(episodedf$Maennl[!duplicated(episodedf$uniPatID)], na.rm = TRUE),
+    percentage.females.patients=mean(episodedf$Weibl[!duplicated(episodedf$uniPatID)], na.rm = TRUE),
     percentage.private.insurance= mean(episodedf$PKV, na.rm= TRUE),
-    percentageretired= mean(episodedf$Status_R, na.rm= TRUE)
+    percentage.retired.patients= mean(episodedf$Status_R[!duplicated(episodedf$uniPatID)], na.rm= TRUE),
+    percentage.retired.episodes= mean(episodedf$Status_R, na.rm= TRUE)
   )
   return(numbers)
 }
@@ -256,18 +271,18 @@ discovery.tool<- function(decision.rule, pandemic="none", dependent.variable, re
   # constraint.list is a list of constraints what cases are to be selected.
   # research.question is the question that the plot/ table aims to answer. It is used as label for the plot and is used to name the generated files. Therefore, it must not contain any kind of punctuation (only underline permitted)! The function adds a question mark automatically at the end of each label with the research question!
   
-  
+  browser()
   # 1. setup of parameters and data
   if(decision.rule==1){
-    episodedf<- full.data.episodes_r1
+    episodedf<- full_r1
   }else if(decision.rule==2){
-    episodedf<- full.data.episodes_r2
+    episodedf<- full_r2
   }else if(decision.rule==3){
-    episodedf<- full.data.episodes_r3
+    episodedf<- full_r3
   }else if(decision.rule==4){
-    episodedf<- full.data.episodes_r4
+    episodedf<- full_r4
   }else if(decision.rule==5){
-    episodedf<- full.data.episodes_r5
+    episodedf<- full_r5
   }else{
     stop("The decision rule must be an integer between 1 and 5!")
   }
@@ -305,6 +320,7 @@ discovery.tool<- function(decision.rule, pandemic="none", dependent.variable, re
     
     all.diagnoses<- all.diagnoses[!is.na(all.diagnoses)]
     all.diagnoses<- all.diagnoses[all.diagnoses!="0"]
+    all.diagnoses<- all.diagnoses[!which(all.diagnoses=="1")] #remove presumed typographical error by some practitioner
     
     chapters<- icd10.to.chapter(all.diagnoses)[,2]
     im<- table(chapters)
@@ -317,6 +333,7 @@ discovery.tool<- function(decision.rule, pandemic="none", dependent.variable, re
     
     
     blocks<- icd10.to.block(all.diagnoses)
+    blocks<- blocks[blocks$number!=0,]
     im<- table(blocks[,1])
     blocks.no<- as.numeric(names(im))
     names(im)<- NULL
@@ -345,6 +362,8 @@ discovery.tool<- function(decision.rule, pandemic="none", dependent.variable, re
     ggsave(paste0(research.question,"_block_description.png"), plot = p, path = getwd(), device = "png")
     
     write_xlsx(data.frame(no=1:241,description=icd10_blocks$description, probability=prob),paste0(research.question,".xlsx"))
+    
+    return(getwd())
     
     #####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age
     
@@ -432,6 +451,16 @@ discovery.tool<- function(decision.rule, pandemic="none", dependent.variable, re
     ggsave(paste0(research.question,".png"), plot = p, path = getwd(), device = "png")
   }
 }
+```
+
+```{r}
+diag.parameters<- list(initial.or.last= "initial",type= 1)
+discovery.tool(1, dependent.variable = "diag", research.question = "Welche Diagnosen wurden zuerst gestellt, R1")
+discovery.tool(2, dependent.variable = "diag", research.question = "Welche Diagnosen wurden zuerst gestellt, R2")
+
+diag.parameters<- list(initial.or.last= "last",type= 1)
+discovery.tool(1, dependent.variable = "diag", research.question = "Welche Diagnosen wurden zuletzt gestellt, R1")
+discovery.tool(2, dependent.variable = "diag", research.question = "Welche Diagnosen wurden zuletzt gestellt, R2")
 
 ```
 

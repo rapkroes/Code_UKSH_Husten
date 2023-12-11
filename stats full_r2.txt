@@ -1,0 +1,93 @@
+> summary.stats(episodedf = full_r2)
+$no.episodes
+[1] 11541
+
+$no.patients
+[1] 7023
+
+$no.stammdata.there
+[1] 11139
+
+$earliest.recorded.episode.start
+[1] "2016-01-03"
+
+$latest.recorded.episode.start
+[1] "2022-04-01"
+
+$no.males
+[1] 4747
+
+$no.females
+[1] 6392
+
+$no.transgender
+[1] 0
+
+$no.undefined.sex
+[1] 0
+
+$percentage.chronically.diseased.patients
+[1] 0.8297024
+
+$percentage.episodes.of.chronically.diseased
+[1] 0.868209
+
+$percentage.copd.patients
+[1] 0.09298021
+
+$percentage.episodes.of.copd.patients
+[1] 0.1278919
+
+$min.age
+[1] 1
+
+$mean.age
+[1] 53.03816
+
+$median.age
+[1] 54
+
+$max.age
+[1] 105
+
+$percentage.episodes.minors
+[1] 0.02109894
+
+$percentage.patients.minors
+[1] 0.02709543
+
+$min.length.of.episode
+[1] 0
+
+$mean.length.of.episode
+[1] 49.82567
+
+$max.length.of.episode
+[1] 56
+
+$average.no.visit.per.patient
+[1] 1.643315
+
+$percentage.stammdata.there
+[1] 0
+
+$percentage.males.episodes
+[1] 0.4261603
+
+$percentage.females.episodes
+[1] 0.5738397
+
+$percentage.males.patients
+[1] 0.4356951
+
+$percentage.females.patients
+[1] 0.5643049
+
+$percentage.private.insurance
+[1] 0.01202981
+
+$percentage.retired.patients
+[1] 0.3176541
+
+$percentage.retired.episodes
+[1] 0.3455427
