@@ -1019,7 +1019,7 @@ transform.data_factor <- function(df) {
 
 # no. 31
 transform.data_character <- function(df) {
-  # This ChatGPT 3.5 created function takes a data frame and turns its columns into numeric columns if they contain only numbers and into factors if a column contains not only numbers.
+  # This ChatGPT 3.5 created function takes a data frame and turns its columns into numeric columns if they contain only numbers and into character strings if a column contains not only numbers.
   # Step 1: Transform every entry in df to character strings
   df <- as.data.frame(lapply(df, as.character))
   
@@ -1236,3 +1236,240 @@ chunk.adddata<- function(chunkeddl, adddata){
   return(chunked.adddata)
 }
 
+#no. 34
+add.stamm.new.par<- function(edf,sdf, no.splits,no.workers){
+  #parallelised version of add.stamm.new
+  dl_e<- chunk.data(edf,no.splits)
+  dl_stamm<- chunk.adddata(dl_e,sdf)
+  par.cl<- makeCluster(no.workers)
+  dist.env<- environment()
+  clusterExport(par.cl,varlist = c("dl_e","dl_stamm","filter","arrange"), envir = dist.env)
+  
+  result<- parLapply(par.cl,1:no.splits,function(k){
+    episodedf<- dl_e[[k]]
+    stamm<- dl_stamm[[k]]
+    n<- nrow(episodedf)
+    im<- as.data.frame(matrix(NA,nrow = n, ncol = ncol(stamm)))
+    colnames(im)<- colnames(stamm)
+    stamm.is.there<- numeric(n)
+    for(i in seq(1,n)){
+      pat<- episodedf$uniPatID[i]
+      start_date<- episodedf$start_date[i]
+      patient.stamm<- stamm|>
+        filter(uniPatID==pat)|>
+        arrange(TG_DateNum)
+      if(nrow(patient.stamm)==1){
+        stamm.is.there[i]<- 1
+        im[i,]<- patient.stamm
+      }else if(nrow(patient.stamm)>1){
+        stamm.is.there[i]<- 1
+        before.episode.start<- patient.stamm$TG_DateNum<=start_date
+        if(all(before.episode.start)){
+          im[i,]<- patient.stamm[nrow(patient.stamm),]
+        }else if(!all(before.episode.start)){
+          im[i,]<- patient.stamm[1,]
+        }else{
+          im[i,]<- patient.stamm[max(which(before.episode.start)),]
+        }
+      }
+    }
+    col.selector<- colnames(im)!="uniPatID" & colnames(im)!="TG_DateNum"
+    im<- im[,col.selector]
+    out<- cbind(episodedf,im,stamm.is.there)
+    colnames(out)<- c(colnames(episodedf),colnames(im),"stamm.is.there")
+    
+    return(out)
+  })
+  out<- as.data.frame(matrix(NA, nrow = nrow(edf), ncol = length(colnames(result[[1]]))))
+  colnames(out)<- colnames(result[[1]])
+  ticker<- 1
+  for(j in seq(1,length(result))){
+    out[seq(ticker,ticker-1+nrow(result[[j]])),]<- result[[j]]
+    ticker<- ticker+nrow(result[[j]])
+  }
+  return(out)
+}
+
+#no. 35
+add.lab.par<- function(episodedf, lab, no.splits, no.workers){
+  dl_e<- chunk.data(episodedf,no.splits)
+  dl_lab<- chunk.adddata(dl_e,lab)
+  par.cl<- makeCluster(no.workers)
+  dist.env<- environment()
+  clusterExport(par.cl,varlist = c("dl_e","dl_lab","filter","arrange"), envir = dist.env)
+  
+  result<- parLapply(cl=par.cl, 1:no.splits,function(k){
+    edf<- dl_e[[k]] |>
+      arrange(uniPatID)
+    labdf<- dl_lab[[k]]
+    out<- matrix(NA,nrow = nrow(edf), ncol = 7)
+    
+    pat<- edf$uniPatID[1]
+    im_lab<- labdf|>
+      filter(uniPatID==pat)
+    if(nrow(im_lab)>0){
+      for(i in seq(1, nrow(im_lab))){
+        if (im_lab$TG_DateNum[i]>=edf$start_date[1] && im_lab$TG_DateNum[i]<=edf$end_date[1]) {
+          selector<- max(which(im_lab[i,]==1))-4 #max because we want to select the last column
+          out[1,selector]<- im_lab$TG_DateNum[i]
+        }
+      }
+    }
+    
+    for(j in seq(2,nrow(edf))){
+      pat<- edf$uniPatID[j]
+      if(edf$uniPatID[j-1]!=pat){
+        im_lab<- labdf|>
+          filter(uniPatID==pat)
+      }
+      if(nrow(im_lab)>0){
+        for(i in seq(1, nrow(im_lab))){
+          if (im_lab$TG_DateNum[i]>=edf$start_date[j] && im_lab$TG_DateNum[i]<=edf$end_date[j]) {
+            selector<- max(which(im_lab[i,]==1))-4 #max because we want to select the last column
+            out[j,selector]<- im_lab$TG_DateNum[i]
+          }
+        }
+      }
+    }
+    out<- as.data.frame(cbind(edf,out))
+    colnames(out)<- c(colnames(edf),colnames(labdf)[-(1:4)])
+    return(out)
+  })
+  out<- as.data.frame(matrix(NA,nrow = nrow(episodedf), ncol = ncol(episodedf)+7))
+  colnames(out)<- colnames(result[[1]])
+  ticker<- 1
+  for(j in seq(1,length(result))){
+    out[seq(ticker,ticker-1+nrow(result[[j]])),]<- result[[j]]
+    ticker<- ticker+nrow(result[[j]])
+  }
+  return(out)
+}
+
+#no. 36
+add.ueberweis.par<- function(episodedf, ueberweis, no.splits, no.workers){
+  dl_e<- chunk.data(episodedf,no.splits)
+  dl_ueberweis<- chunk.adddata(dl_e,ueberweis)
+  par.cl<- makeCluster(no.workers)
+  dist.env<- environment()
+  clusterExport(par.cl,varlist = c("dl_e","dl_ueberweis","filter","arrange"), envir = dist.env)
+  
+  result<- parLapply(cl=par.cl, 1:no.splits,function(k){
+    edf<- dl_e[[k]] |>
+      arrange(uniPatID)
+    ueberweisdf<- dl_ueberweis[[k]]
+    out<- matrix(NA,nrow = nrow(edf), ncol = 3)
+    
+    pat<- edf$uniPatID[1]
+    im_ueberweis<- ueberweisdf|>
+      filter(uniPatID==pat)
+    if(nrow(im_ueberweis)>0){
+      for(i in seq(1, nrow(im_ueberweis))){
+        if (im_ueberweis$TG_DateNum[i]>=edf$start_date[1] && im_ueberweis$TG_DateNum[i]<=edf$end_date[1]) {
+          selector<- max(which(im_ueberweis[i,]==1))-2 #max because we want to select the last column
+          out[1,selector]<- im_ueberweis$TG_DateNum[i]
+        }
+      }
+    }
+    
+    for(j in seq(2,nrow(edf))){
+      pat<- edf$uniPatID[j]
+      if(edf$uniPatID[j-1]!=pat){
+        im_ueberweis<- ueberweisdf|>
+          filter(uniPatID==pat)
+      }
+      if(nrow(im_ueberweis)>0){
+        for(i in seq(1, nrow(im_ueberweis))){
+          if (im_ueberweis$TG_DateNum[i]>=edf$start_date[j] && im_ueberweis$TG_DateNum[i]<=edf$end_date[j]) {
+            selector<- max(which(im_ueberweis[i,]==1))-4 #max because we want to select the last column
+            out[j,selector]<- im_ueberweis$TG_DateNum[i]
+          }
+        }
+      }
+    }
+    out<- as.data.frame(cbind(edf,out))
+    colnames(out)<- c(colnames(edf),colnames(ueberweisdf)[-(1:2)])
+    return(out)
+  })
+  out<- as.data.frame(matrix(NA,nrow = nrow(episodedf), ncol = ncol(episodedf)+3))
+  colnames(out)<- colnames(result[[1]])
+  ticker<- 1
+  for(j in seq(1,length(result))){
+    out[seq(ticker,ticker-1+nrow(result[[j]])),]<- result[[j]]
+    ticker<- ticker+nrow(result[[j]])
+  }
+  return(out)
+}
+
+#no. 37
+add.diag.par<- function(episodedf, adddata, no.splits, no.workers){
+  edl<- chunk.data(episodedf, no.splits)
+  adddl<- chunk.adddata(edl,adddata)
+  par.cl<- makeCluster(no.workers)
+  dist.env<- environment()
+  clusterExport(par.cl,varlist = c("edl","adddl","arrange","filter","select"), envir = dist.env)
+  
+  result<- parLapply(par.cl,1:no.splits, function(k){
+    edf<- edl[[k]]|>
+      arrange(uniPatID)
+    diag<- adddl[[k]]
+    out<- as.data.frame(matrix(NA,nrow = nrow(edf),ncol = 2*ncol(diag)-4))
+    no.matches_diag<- numeric(nrow(edf))
+    
+    pat<- edf$uniPatID[1]
+    im_diag<- diag|>
+      filter(uniPatID==pat)
+    im_diag_2<- im_diag|>
+      select(-uniPatID,-TG_DateNum)
+    no.matches<- 0
+    if(nrow(im_diag)>0){
+      for(i in seq(1,nrow(im_diag))){
+        if(im_diag$TG_DateNum[i]>=edf$start_date[1] && im_diag$TG_DateNum[i]<=edf$end_date[1]){
+          if(no.matches==0){
+            out[1,]<-rep(im_diag_2[i,],2)
+            no.matches<- 1
+          }else{
+            out[1,seq(ncol(diag)+1,ncol(out))]<- im_diag_2[i,]
+            no.matches<- no.matches+1
+          }
+        }
+      }
+    }
+    no.matches_diag[1]<- no.matches
+    
+    for(j in seq(2, nrow(edf))){
+      pat<- edf$uniPatID[j]
+      if(edf$uniPatID[j-1]!=pat){
+        im_diag<- diag|>
+          filter(uniPatID==pat)
+        im_diag_2<- im_diag|>
+          select(-uniPatID,-TG_DateNum)
+      }
+      no.matches<- 0
+      if(nrow(im_diag)>0){
+        for(i in seq(1,nrow(im_diag))){
+          if(im_diag$TG_DateNum[i]>=edf$start_date[j] && im_diag$TG_DateNum[i]<=edf$end_date[j]){
+            if(no.matches==0){
+              out[j,]<-rep(im_diag_2[i,],2)
+              no.matches<- 1
+            }else{
+              out[1,seq(ncol(diag)+1,ncol(out))]<- im_diag_2[i,]
+              no.matches<- no.matches+1
+            }
+          }
+        }
+      }
+      no.matches_diag[j]<- no.matches
+    }
+    out<- cbind(edf,out,no.matches_diag)
+    colnames(out)<- c(colnames(edf),paste0("first_",colnames(im_diag_2)),paste0("last_",colnames(im_diag_2)),"no.matches_diag")
+    return(out)
+  })
+  out<- as.data.frame(matrix(NA,nrow = nrow(episodedf),ncol = ncol(result[[1]])))
+  colnames(out)<- colnames(result[[1]])
+  ticker<- 1
+  for(j in seq(1,length(result))){
+    out[seq(ticker,ticker-1+nrow(result[[j]])),]<- result[[j]]
+    ticker<- ticker+nrow(result[[j]])
+  }
+  return(out)
+}

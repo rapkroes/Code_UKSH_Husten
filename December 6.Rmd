@@ -188,7 +188,6 @@ contains.multiple.entries(ueberweis.up)
 # 5.2
 x_diag<- quantile(table(paste(diag.up$uniPatID,diag.up$TG_DateNum)), probs= 0.95)
 x_ipc<- quantile(table(paste(ipc.up$uniPatID,ipc.up$TG_DateNum)), probs= 0.95)
-#x_pzn<- quantile(table(paste(pzn.up$uniPatID,pzn.up$TG_DateNum)), probs= 1)
 
 # table(paste0(diag.up$uniPatID,diag.up$TG_DateNum)
 # quantile(table(paste0(diag.up$uniPatID,diag.up$TG_DateNum)))
@@ -198,11 +197,6 @@ contains.multiple.entries(diag.up_2)
 
 ipc.up_2<- aligner.parallel.new(ipc.up, x_ipc,100,4)
 contains.multiple.entries(ipc.up_2)
-
-# pzn.up_2<- aligner.parallel.new(pzn.up, x_pzn,100,4)
-# contains.multiple.entries(pzn.up_2)
-
-
 
 ```
 
@@ -538,7 +532,7 @@ add.diag.par<- function(episodedf, adddata, no.splits, no.workers){
     edf<- edl[[k]]|>
       arrange(uniPatID)
     diag<- adddl[[k]]
-    out<- as.data.frame(matrix(NA,nrow = nrow(edf),ncol = 2*ncol(diag)))
+    out<- as.data.frame(matrix(NA,nrow = nrow(edf),ncol = 2*ncol(diag)-4))
     no.matches_diag<- numeric(nrow(edf))
     
     pat<- edf$uniPatID[1]
@@ -599,7 +593,6 @@ add.diag.par<- function(episodedf, adddata, no.splits, no.workers){
   }
   return(out)
 }
-#number of columns seems off-> check it out!
 attempt_4<- add.diag.par(episodes_r1,diag.up_2,50,2)
 ```
 

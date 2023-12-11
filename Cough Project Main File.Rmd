@@ -1,0 +1,437 @@
+---
+title: "Cough Project Main File"
+author: "Raphael Kroes"
+date: "2023-12-07"
+output: html_document
+---
+
+Procedure:
+
+```{r}
+# 1 Clear work space & load packages
+rm(list=ls())
+library(readxl)
+library(dplyr)
+library(parallel)
+library(lubridate)
+library(ggplot2)
+library(writexl)
+```
+
+```{r}
+# 2
+# Read in data
+real.data<- FALSE
+if(real.data){
+  setwd("N:/StudentischeHilfskraefte/_Kroes (Christoph)/Routinedaten/01_Husten/R/DB")
+#names.vec<- c("Diag3","Impf3","IPC23","Labor3","LU3","PZN3","Stamm3","Ueberweis3")
+names.vec<- c("Diag3","IPC23","Labor3","Stamm3","Ueberweis3")
+
+for (i in seq(1,length(names.vec))) {
+  file.name<- paste0("DB_",names.vec[i],"_v03",".csv")
+
+  im.file<- read.csv(file = file.name, header = TRUE, sep = ";")
+
+  assign(names.vec[i],im.file)
+
+}
+# remove duplicate file and unnecessary name
+rm(file.name,im.file)
+
+# Read in supplementary data
+ListeKrankenkassen<- read.csv(file = "ListeKrankenkassen.csv", header = TRUE, sep = ";")
+altersstruktur_deutschland <- read_excel("altersstruktur deutschland.xlsx")
+icd10_blocks <- read_excel("icd10_blocks.xlsx")
+icd10_description<- read_excel("icd10_description.xlsx")
+selected.lab.descriptions<- read_excel("freitextanalyse.xlsx")
+
+# read in functions
+source("//fileserver1.uni-luebeck.de/ifa_homes/raphaelkroes/Documents/GitHub/Code_UKSH_Husten/functions.R")
+
+}else{
+  source("fakedgp_work.R")
+}
+```
+
+```{r}
+# 3
+# The patient with unipatID 2 (PatID=1 and index=1) has two dates of birth and shows the hallmarks of a test patient (e.g. for testing new computer equipment). Whatever the reason for the two different dates, we remove them from further data analysis.
+
+diag.up<- Diag3 |> 
+  select(uniPatID,TG_DateNum,DiagTyp,icd10)|>
+  distinct()
+diag.up<- diag.up[diag.up$uniPatID!=2,]
+diag.up$chronic<- as.character(diag.up$DiagTyp)
+
+#add variable for chronic disease
+diag.up$chronic[diag.up$chronic=="DD"]<- 1
+diag.up$chronic[diag.up$chronic!="1"]<- 0
+diag.up$chronic<- as.numeric(diag.up$chronic)
+diag.up$chronic[is.na(diag.up$chronic)]<- 0
+
+#find patients with Chronic Pulmonary Obstructive Disease (COPD)
+copd.vec<- as.character(levels(as.factor(diag.up$uniPatID[grepl("J44",diag.up$icd10)])))
+
+# find all other chronically diseased people
+im<- diag.up|>
+  select(uniPatID,DiagTyp,icd10)|>
+  distinct()
+chronic.patients<- im$uniPatID[im$DiagTyp=="DD"]
+chronic.patients<- as.data.frame(table(chronic.patients))
+rm(im)
+
+ipc.up<- IPC23 |>
+  select(uniPatID,TG_DateNum,AnamnTyp,ipc2)
+ipc.up<- ipc.up[ipc.up$uniPatID!=2,]
+
+labor.up<- Labor3
+labor.up$labtest<- 1
+labor.up<- labor.up|>
+  select(uniPatID,TG_DateNum,Untersuchung,Unterstext,labtest)|>
+  distinct()
+detail.mat<- matrix(NA,ncol=6,nrow=nrow(labor.up))
+for(i in 1:6){
+  text.vec<- selected.lab.descriptions$text_description[selected.lab.descriptions[,2+i]==1]
+  text.vec<- text.vec[!is.na(text.vec)]
+  detail.mat[,i]<- as.numeric(labor.up$Unterstext %in% text.vec)
+}
+detail.mat<- as.data.frame(detail.mat)
+colnames(detail.mat)<- colnames(selected.lab.descriptions)[-c(1,2)]
+labor.up<- cbind(labor.up,detail.mat)
+labor.up<- labor.up[labor.up$uniPatID!=2,]
+
+stamm.up<- Stamm3
+stamm.up$PKV<- IK2PKV(stamm.up$IK)
+stamm.up<- stamm.up|> 
+  filter(IK>0)|>
+  select(-PatID,-index_i,-IK,-Kasse,-PLZ)|>
+  distinct()|>
+  arrange(uniPatID,desc(TG_DateNum))
+stamm.up<- stamm.up[stamm.up$uniPatID!=2,]
+
+ueberweis.up<- Ueberweis3|>
+  select(uniPatID,TG_DateNum,Uberw_Pneumo,Uberw_Radiol,Uberw_KH) |>
+  filter(Uberw_Pneumo>0|Uberw_Radiol>0|Uberw_KH>0)|>
+  distinct()
+ueberweis.up<- ueberweis.up[ueberweis.up$uniPatID!=2,]
+```
+
+
+```{r}
+# 4 free up memory by clearing the original, raw datasets out
+rm(list = names.vec)
+```
+
+```{r}
+# 5
+contains.multiple.entries(diag.up)
+contains.multiple.entries(ipc.up)
+contains.multiple.entries(labor.up)
+contains.multiple.entries(stamm.up)
+contains.multiple.entries(ueberweis.up)
+
+```
+
+STOP: Every patient/date combination must be unique. The difference between number of rows and patient/ time combinations must therefore be 0. This is what contains.multiple.entries checks for. We believe diag.up, ipc.up, and pzn.up have multiple entries for the same date by design. We believe stamm.up, impf.up, labor.up, and ueberweis.up should have only one line per patient/ time combination. In #6.1 we remedy the presumed errors by selecting the last entry for each patient/ time combination. In #6.2 we write the multiple data points of diag.up, ipc.up, and pzn.up in additional columns. Both procedures leave us with unique date/ time combinations for each data set.
+In #6.2, we do not keep all entries for diag.up and ipc.up. There are a few entries with unreasonably high numbers of diagnoses or symptoms. Therefore, we truncate the number observations at the 95% quantile of the distribution of entries per combination. If the last sentence is not clear in meaning, please run the commented code in chunk #6.2 to gain better insight.
+
+```{r}
+# 5.1
+# impf.up<- data.repair(impf.up)
+# contains.multiple.entries(impf.up)
+
+labor.up<- data.repair(labor.up)
+contains.multiple.entries(labor.up)
+
+stamm.up<- data.repair(stamm.up)
+contains.multiple.entries(stamm.up)
+
+ueberweis.up<- data.repair(ueberweis.up)
+contains.multiple.entries(ueberweis.up)
+
+```
+
+```{r}
+# 5.2
+x_diag<- quantile(table(paste(diag.up$uniPatID,diag.up$TG_DateNum)), probs= 0.95)
+x_ipc<- quantile(table(paste(ipc.up$uniPatID,ipc.up$TG_DateNum)), probs= 0.95)
+
+# table(paste0(diag.up$uniPatID,diag.up$TG_DateNum)
+# quantile(table(paste0(diag.up$uniPatID,diag.up$TG_DateNum)))
+
+diag.up_2<- aligner.parallel.new(diag.up, x_diag,100,4)
+contains.multiple.entries(diag.up_2)
+
+ipc.up_2<- aligner.parallel.new(ipc.up, x_ipc,100,4)
+contains.multiple.entries(ipc.up_2)
+
+```
+
+```{r}
+# 6 create episodes based on the data
+episodes<- episode.fun.new(ipc.up_2,56)
+```
+
+There must be no overlap in the timing of the episodes in order to map diagnoses and treatments to the episodes.
+There is no decision rule we can enforce that distinguishes perfectly whether episodes match or match not. Therefore, we implement different decision rules.
+
+```{r}
+# 7 create non-overlapping episodes
+
+#decision rule 1: If the timing of episodes overlaps, we treat them as one episode
+#decision rule 2: If the timing of episodes overlaps, we treat them as two distinct episodes. The last day of the earlier episode is the day before the new episode begins.
+
+episodes_r1<- episodes.dr1(episodes)
+episodes_r2<- episodes.dr2(episodes)
+
+# test for how many overlaps there are
+sum(episodes.overlap.finder(episodes_r1)$overlap)
+sum(episodes.overlap.finder(episodes_r2)$overlap)
+```
+
+```{r}
+#create complete datasets
+episodes.stamm_r1<- add.stamm.new.par(episodes_r1,stamm.up,50,2)
+episodes.diag_r1<- add.diag.par(episodes_r1,diag.up_2,50,2)
+episodes.labor_r1<- add.lab.par(episodes_r1,labor.up,50,2)
+episodes.ueberweis_1<- add.ueberweis.par(episodes_r1,ueberweis.up,50,2)
+full_r1<- cbind(episodes.stamm_r1,episodes.diag_r1,episodes.labor_r1,episodes.ueberweis_1)
+
+#remove duplicate columns
+full_r1<- full_r1[,!duplicated(colnames(full_r1))]
+
+#same procedure for decision rule 2
+episodes.stamm_r2<- add.stamm.new.par(episodes_r2,stamm.up,50,2)
+episodes.diag_r2<- add.diag.par(episodes_r2,diag.up_2,50,2)
+episodes.labor_r2<- add.lab.par(episodes_r2,labor.up,50,2)
+episodes.ueberweis_2<- add.ueberweis.par(episodes_r2,ueberweis.up,50,2)
+full_r2<- cbind(episodes.stamm_r2,episodes.diag_r2,episodes.labor_r2,episodes.ueberweis_2)
+
+full_r2<- full_r2[,!duplicated(colnames(full_r2))]
+
+```
+
+```{r}
+# 9 extract summary statistics
+summary.stats<- function(episodedf){
+  no.patients<- length(levels(as.factor(episodedf$uniPatID)))
+  no.episodes<- nrow(episodedf)
+  numbers<- list(
+    no.episodes= nrow(episodedf),
+    no.patients= length(levels(as.factor(episodedf$uniPatID))),
+    no.stammdata.there= sum(episodedf$stamm_is_there, na.rm = TRUE),
+    earliest.recorded.cough= TG_DateNum2date(min(episodedf$start_date)),
+    latest.recorded.cough= TG_DateNum2date(max(episodedf$start_date)),
+    no.males=sum(episodedf$Maennl, na.rm = TRUE),
+    no.females=sum(episodedf$Weibl, na.rm = TRUE),
+    no.transgender=sum(episodedf$Transgen, na.rm = TRUE),
+    no.undefined.sex=sum(episodedf$Geschlechtundef, na.rm = TRUE),
+    
+    average.no.visit.per.patient=nrow(episodedf)/no.patients,
+    percentage.stammdata.there= sum(episodedf$stamm_is_there, na.rm = TRUE)/no.episodes,
+    percentage.males=sum(episodedf$Maennl, na.rm = TRUE)/no.episodes,
+    percentage.females=sum(episodedf$Weibl, na.rm = TRUE)/no.episodes,
+    percentage.transgender=sum(episodedf$Transgen, na.rm = TRUE)/no.episodes,
+    percentage.undefined.sex=sum(episodedf$Geschlechtundef, na.rm = TRUE)/no.episodes,
+    percentage.private.insurance= mean(episodedf$PKV, na.rm= TRUE),
+    percentageretired= mean(episodedf$Status_R, na.rm= TRUE)
+  )
+  return(numbers)
+}
+
+summary.stats(episodedf = full_r1)
+summary.stats(episodedf = full_r2)
+
+```
+
+```{r}
+# create plots
+
+# no. 32
+discovery.tool<- function(decision.rule, pandemic="none", dependent.variable, research.question){
+  # Tool to create plots and tables for specific data requests.
+  # decision.rule is an integer between 1 and 5 giving the decision rule for how to deal with overlaps in the data set.
+  # pandemic: if specified, set it to TRUE if only pandemic data is to be analysed, and to false if only data before the pandemic is to be included.
+  # dependent.variable specifies the dependent variable to be looked at.
+  # constraint.list is a list of constraints what cases are to be selected.
+  # research.question is the question that the plot/ table aims to answer. It is used as label for the plot and is used to name the generated files. Therefore, it must not contain any kind of punctuation (only underline permitted)! The function adds a question mark automatically at the end of each label with the research question!
+  
+  
+  # 1. setup of parameters and data
+  if(decision.rule==1){
+    episodedf<- full.data.episodes_r1
+  }else if(decision.rule==2){
+    episodedf<- full.data.episodes_r2
+  }else if(decision.rule==3){
+    episodedf<- full.data.episodes_r3
+  }else if(decision.rule==4){
+    episodedf<- full.data.episodes_r4
+  }else if(decision.rule==5){
+    episodedf<- full.data.episodes_r5
+  }else{
+    stop("The decision rule must be an integer between 1 and 5!")
+  }
+  
+  earliest.TG_Date<- min(episodedf$start_date)
+  latest.TG_Date<- max(episodedf$start_date)
+  earliest.year.POSIXlt<- year(TG_DateNum2date(earliest.TG_Date))
+  latest.year.POSIXlt<- year(TG_DateNum2date(latest.TG_Date))
+  no.years<- latest.year.POSIXlt-earliest.year.POSIXlt
+  pandemic.start<- date2TG_DateNum("2020-01-01")
+  pandemic.end<- date2TG_DateNum("2023-01-01")
+  length.pandemic<- 3
+  
+  if(pandemic==TRUE){
+    episodedf<- episodedf[episodedf$start_date>=pandemic.start & episodedf$start_date<pandemic.end,]
+  }else if(pandemic==FALSE){
+    episodedf<- episodedf[episodedf$start_date<pandemic.start,]
+  }else if(pandemic=="none"){
+    #nothing happens
+  }else{
+    stop("pandemic must be specified as TRUE, FALSE, or be non-specified.")
+  }
+  
+  #creating plots and tables
+  
+  #####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag
+  if(dependent.variable=="diag"){
+    if(diag.parameters[["initial.or.last"]]=="last"){
+      all.diagnoses<- as.vector(as.matrix(episodedf[,grepl("last_icd10", colnames(episodedf))]))
+    }else if(diag.parameters[["initial.or.last"]]=="initial"){
+      all.diagnoses<- as.vector(as.matrix(episodedf[,grepl("first_icd10", colnames(episodedf))]))
+    }else{
+      stop("initial.or.last in diag.parameters is incorrectly specified")
+    }
+    
+    all.diagnoses<- all.diagnoses[!is.na(all.diagnoses)]
+    all.diagnoses<- all.diagnoses[all.diagnoses!="0"]
+    
+    chapters<- icd10.to.chapter(all.diagnoses)[,2]
+    im<- table(chapters)
+    chapter.no<- as.numeric(names(im))
+    names(im)<- NULL
+    prob<- numeric(22)
+    prob[chapter.no]<- im
+    prob<- prob/sum(prob)
+    d.chapter<- data.frame(x=1:22,prob=prob)
+    
+    
+    blocks<- icd10.to.block(all.diagnoses)
+    im<- table(blocks[,1])
+    blocks.no<- as.numeric(names(im))
+    names(im)<- NULL
+    prob<- numeric(241)
+    prob[blocks.no]<- im
+    prob<- prob/sum(prob)
+    d.block_num<- data.frame(x=1:241,prob=prob)
+    d.block_description<- data.frame(x=icd10_blocks$description, prob=prob)
+    
+    p<- ggplot(d.chapter, aes(x=x, y=prob)) +
+      geom_bar(stat = "identity", fill="skyblue") +
+      scale_y_continuous(labels = scales::percent_format()) +
+      labs(title = paste0(research.question,"?"),x = "ICD10 chapter", y= "percentage")
+    ggsave(paste0(research.question,"_chapter.png"), plot = p, path = getwd(), device = "png")
+    
+    p<- ggplot(d.block_num, aes(x=x, y=prob)) +
+      geom_bar(stat = "identity", fill="skyblue") +
+      scale_y_continuous(labels = scales::percent_format()) +
+      labs(title = paste0(research.question,"?"),x = "ICD10 block", y= "percentage")
+    ggsave(paste0(research.question,"_block_num.png"), plot = p, path = getwd(), device = "png")
+    
+    p<- ggplot(d.block_description, aes(x=x, y=prob)) +
+      geom_bar(stat = "identity", fill="skyblue") +
+      scale_y_continuous(labels = scales::percent_format()) +
+      labs(title = paste0(research.question,"?"),x = "ICD10 block", y= "percentage")
+    ggsave(paste0(research.question,"_block_description.png"), plot = p, path = getwd(), device = "png")
+    
+    write_xlsx(data.frame(no=1:241,description=icd10_blocks$description, probability=prob),paste0(research.question,".xlsx"))
+    
+    #####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age#####age
+    
+  }else if(dependent.variable=="age"){
+    
+    x<- as.numeric(year(TG_DateNum2date(episodedf$start_date)))-episodedf$Geburtsjahr
+    if(sum(is.na(x))>0){
+      warning(paste("There are",sum(is.na(x)),"entries where no birth date is available. This corresponds to",round(sum(is.na(x))/length(x),2)*100), "% of all entries. The NA results are dropped in the following.")
+      x<- x[!is.na(x)]
+    }
+    max.age<- max(c(100,max(x)))
+    im<- table(x)
+    ages<- as.numeric(names(im))
+    names(im)<- NULL
+    prob<- numeric(max.age)
+    prob[ages]<- im
+    prob<- prob/sum(prob)
+    d<- data.frame(x=seq(1,max.age),prob=prob)
+    
+    d$y<- age.weights(1,max.age)
+    
+    p<- ggplot(d, aes(x = x)) +
+      geom_bar(aes(y = prob, fill = "Patient age"), stat = "identity") +
+      geom_line(aes(y = y, color = "Age distribution of Germany")) +
+      scale_y_continuous(labels = scales::percent_format()) +
+      labs(title = paste0(research.question,"?"),
+           x = "Age in years",
+           y = "Percentage") +
+      scale_fill_manual(values = c("skyblue"), labels = c("Patient age")) +
+      scale_color_manual(values = c("red"), labels = c("Age distribution of Germany")) +
+      theme(legend.position = "bottom")
+    
+    ggsave(paste0(research.question,".png"), plot = p, path = getwd(), device = "png")
+    
+    #####escalation#####escalation#####escalation#####escalation#####escalation#####escalation#####escalation#####escalation#####escalation#####escalation#####escalation#####escalation
+    
+  }else if(dependent.variable=="escalation"){
+    
+    if(escalation.parameters[["type"]]==1){
+      #blood test
+      x<- episodedf$first_TG_DateNumlab-episodedf$start_date
+      x<- x[!is.na(x)]
+      warning(paste("There are", length(x), "patients whose blood was tested for Kreatinin levels."))
+    }else if(escalation.parameters[["type"]]==2){
+      #referral to specialist care
+      x<- episodedf$first_TG_DateNumueberweis-episodedf$start_date
+      x<- x[!is.na(x)]
+      warning(paste("There are", length(x), "patients who were referred to a specialist."))
+    }else if(escalation.parameters[["type"]]==3){
+      #referral pulmonologist
+      x<- episodedf$first_TG_DateNumueberweis-episodedf$start_date
+      x<- x[episodedf$first_Uberw_Pneumo==1]
+      x<- x[!is.na(x)]
+      warning(paste("There are", length(x), "patients who were referred to a pulmonologist."))
+    }else if(escalation.parameters[["type"]]==4){
+      #referral radiologist
+      x<- episodedf$first_TG_DateNumueberweis-episodedf$start_date
+      x<- x[episodedf$first_Uberw_Radiol==1]
+      x<- x[!is.na(x)]
+      warning(paste("There are", length(x), "patients who were referred to a radiologist."))
+    }else if(escalation.parameters[["type"]]==5){
+      #referral hospital
+      x<- episodedf$first_TG_DateNumueberweis-episodedf$start_date
+      x<- x[episodedf$first_Uberw_KH==1]
+      x<- x[!is.na(x)]
+      warning(paste("There are", length(x), "patients who were referred to a hospital."))
+    }
+    
+    im<- table(x)
+    allocation<- as.numeric(names(im))
+    names(im)<- NULL
+    prob<- numeric(max(allocation)+1)
+    prob[allocation+1]<- im
+    prob<- prob/sum(prob)
+    d<- data.frame(x=seq(0,max(allocation)),prob=prob)
+    
+    
+    p<- ggplot(d, aes(x=x, y=prob)) +
+      geom_bar(stat = "identity", fill="skyblue") +
+      scale_y_continuous(labels = scales::percent_format()) +
+      labs(title = paste0(research.question,"?"),
+           x = "number of days since initial cough", 
+           y= "percentage",
+           subtitle = paste("based on the observations of", length(x), "patients"))
+    ggsave(paste0(research.question,".png"), plot = p, path = getwd(), device = "png")
+  }
+}
+
+```
+
