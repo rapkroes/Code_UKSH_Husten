@@ -137,7 +137,7 @@ icd10.to.chapter<- function(vector){
     }else if(first[i]=="U"){
       output[i]<- 22
     }else{
-      stop("The function is not able to map at least one entry to its chapter.")
+      stop(paste("The function is not able to map entry no.", i,"=",vector[i], "to a chapter."))
     }
   }
   out<- cbind(vector,output)
@@ -1306,7 +1306,8 @@ add.lab.par<- function(episodedf, lab, no.splits, no.workers){
     
     pat<- edf$uniPatID[1]
     im_lab<- labdf|>
-      filter(uniPatID==pat)
+      filter(uniPatID==pat)|>
+      arrange(TG_DateNum)
     if(nrow(im_lab)>0){
       for(i in seq(1, nrow(im_lab))){
         if (im_lab$TG_DateNum[i]>=edf$start_date[1] && im_lab$TG_DateNum[i]<=edf$end_date[1]) {
@@ -1320,7 +1321,8 @@ add.lab.par<- function(episodedf, lab, no.splits, no.workers){
       pat<- edf$uniPatID[j]
       if(edf$uniPatID[j-1]!=pat){
         im_lab<- labdf|>
-          filter(uniPatID==pat)
+          filter(uniPatID==pat)|>
+          arrange(TG_DateNum)
       }
       if(nrow(im_lab)>0){
         for(i in seq(1, nrow(im_lab))){
@@ -1361,7 +1363,8 @@ add.ueberweis.par<- function(episodedf, ueberweis, no.splits, no.workers){
     
     pat<- edf$uniPatID[1]
     im_ueberweis<- ueberweisdf|>
-      filter(uniPatID==pat)
+      filter(uniPatID==pat)|>
+      arrange(TG_DateNum)
     if(nrow(im_ueberweis)>0){
       for(i in seq(1, nrow(im_ueberweis))){
         if (im_ueberweis$TG_DateNum[i]>=edf$start_date[1] && im_ueberweis$TG_DateNum[i]<=edf$end_date[1]) {
@@ -1375,7 +1378,8 @@ add.ueberweis.par<- function(episodedf, ueberweis, no.splits, no.workers){
       pat<- edf$uniPatID[j]
       if(edf$uniPatID[j-1]!=pat){
         im_ueberweis<- ueberweisdf|>
-          filter(uniPatID==pat)
+          filter(uniPatID==pat)|>
+          arrange(TG_DateNum)
       }
       if(nrow(im_ueberweis)>0){
         for(i in seq(1, nrow(im_ueberweis))){
@@ -1400,6 +1404,59 @@ add.ueberweis.par<- function(episodedf, ueberweis, no.splits, no.workers){
   return(out)
 }
 
+# add.ueberweis.par<- function(episodedf, ueberweis, no.splits, no.workers){
+#   dl_e<- chunk.data(episodedf,no.splits)
+#   dl_ueberweis<- chunk.adddata(dl_e,ueberweis)
+#   par.cl<- makeCluster(no.workers)
+#   dist.env<- environment()
+#   clusterExport(par.cl,varlist = c("dl_e","dl_ueberweis","filter","arrange"), envir = dist.env)
+#   
+#   result<- parLapply(cl=par.cl, 1:no.splits,function(k){
+#     edf<- dl_e[[k]]|>
+#       arrange(uniPatID)
+#     udf<- dl_ueberweis[[k]]
+#     
+#     out<- matrix(NA,nrow = nrow(edf), ncol = 3)
+#     
+#     im_u<- udf|>
+#       filter(uniPatID==edf$uniPatID[1])
+#     im_u2<- im_u|>
+#       filter(TG_DateNum<=edf$end_date[1],TG_DateNum>=edf$start_date[1])
+#     if(nrow(im_u2)>0){
+#       for(j in 1:3){
+#         if(colSums(im_u2[,1+j], na.rm = TRUE)>0){
+#           out[1,j]<- min(im_u2$TG_DateNum[im_u2[,1+j]==1])
+#         }
+#       }
+#     }
+#     
+#     for(i in seq(2,nrow(edf))){
+#       if(edf$uniPatID[i-1]!=edf$uniPatID[i]){
+#         im_u<- udf|>
+#           filter(uniPatID==edf$uniPatID[i])
+#       }
+#       im_u2<- im_u|>
+#         filter(TG_DateNum<=edf$end_date[i],TG_DateNum>=edf$start_date[i])
+#       if(nrow(im_u2)>0){
+#         for(j in 1:3){
+#           if(colSums(im_u2[,1+j], na.rm = TRUE)>0){
+#             out[i,j]<- min(im_u2$TG_DateNum[im_u2[,1+j]==1])
+#           }
+#         }
+#       }
+#     }
+#     return(out)
+#   })
+#   out<- as.data.frame(matrix(NA,nrow = nrow(episodedf), ncol = ncol(episodedf)+3))
+#   colnames(out)<- colnames(result[[1]])
+#   ticker<- 1
+#   for(j in seq(1,length(result))){
+#     out[seq(ticker,ticker-1+nrow(result[[j]])),]<- result[[j]]
+#     ticker<- ticker+nrow(result[[j]])
+#   }
+#   return(out)
+# }
+
 #no. 37
 add.diag.par<- function(episodedf, adddata, no.splits, no.workers){
   edl<- chunk.data(episodedf, no.splits)
@@ -1417,7 +1474,8 @@ add.diag.par<- function(episodedf, adddata, no.splits, no.workers){
     
     pat<- edf$uniPatID[1]
     im_diag<- diag|>
-      filter(uniPatID==pat)
+      filter(uniPatID==pat)|>
+      arrange(TG_DateNum)
     im_diag_2<- im_diag|>
       select(-uniPatID,-TG_DateNum)
     no.matches<- 0
@@ -1440,7 +1498,8 @@ add.diag.par<- function(episodedf, adddata, no.splits, no.workers){
       pat<- edf$uniPatID[j]
       if(edf$uniPatID[j-1]!=pat){
         im_diag<- diag|>
-          filter(uniPatID==pat)
+          filter(uniPatID==pat)|>
+          arrange(TG_DateNum)
         im_diag_2<- im_diag|>
           select(-uniPatID,-TG_DateNum)
       }
