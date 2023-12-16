@@ -234,22 +234,41 @@ for(k in 1:2){
   rm(im)
 }
 
-#uncertain diagnosis
-check.v.icd10<- function(icd10vec) {
-  if (!is.character(icd10vec)) {
-    stop("Input vector must be a character vector.")
-  }
-  out <- ifelse(substr(icd10vec, nchar(icd10vec), nchar(icd10vec)) == "V", 1, 0)
-  return(out)
-}
 
 for(k in 1:2){
   im<- get(paste0("full_r",k))
+  
+  #find cases where at least one initial diagnosis was preliminary
   first.cols<- grep("first_icd10",colnames(im))
   last.cols<- grep("last_icd10",colnames(im))
   
-  #####
+  im_first<- apply(im[,first.cols],2,FUN = function(dv){
+    im_dv<- substr(dv,nchar(dv),nchar(dv))
+    return(grepl("V",im_dv))
+  })
+  im_last<- apply(im[,last.cols],2,FUN = function(dv){
+    im_dv<- substr(dv,nchar(dv),nchar(dv))
+    return(grepl("V",im_dv))
+  })
+  
+  im$first_diag_V_present<- rowSums(im_first)>0
+  im$last_diag_V_present<- rowSums(im_last)>0
+  
+  
+  #find cases where an AUB was issued on the first visit
+  AUB.cols<- grepl("first_DiagTyp",colnames(im))
+  im_2<- apply(im[,AUB.cols],2,FUN = function(dv){grepl("AUB",dv)})
+  im$AUB_issued<- rowSums(im_2)>0
+  
+  #add start month/ quarter
+  im$start_month<- month(TG_DateNum2date(im$start_date))
+  im$start_quarter<- quarter(TG_DateNum2date(im$start_date))
+  ###
+  assign(paste0("full_r",k),im)
+  rm(im)
 }
+
+
 ```
 
 ```{r}
@@ -307,7 +326,7 @@ summary.stats(episodedf = full_r2)
 # create plots
 
 # no. 32
-discovery.tool<- function(decision.rule, insurance=c("all","GKV","PKV")[1], remove.copd=FALSE, lims.chronic.diseases=c(0,100), pandemic="none", dependent.variable, research.question){
+discovery.tool<- function(decision.rule, insurance=c("all","GKV","PKV")[1], remove.copd=FALSE, lims.chronic.diseases=c(0,100), pandemic="none", preliminary.diag=c(NA,TRUE,FALSE)[1], AUB=c(NA,TRUE,FALSE)[1], quarter.selection=1:4, month.selection=1:12, dependent.variable, research.question){
   # Tool to create plots and tables for specific data requests.
   # decision.rule is an integer between 1 and 5 giving the decision rule for how to deal with overlaps in the data set. Can currently only be set to 1 or 2.
   # insurance can be selected as "GKV" or "PKV" in order to restrict the patients to being insured by a public/ private insurer
@@ -376,6 +395,34 @@ discovery.tool<- function(decision.rule, insurance=c("all","GKV","PKV")[1], remo
     #nothing happens
   }else{
     stop("pandemic must be specified as TRUE, FALSE, or be non-specified.")
+  }
+  
+  if(preliminary.diag==TRUE){
+    episodedf<- episodedf[episodedf$first_diag_V_present,]
+  }else if(preliminary.diag==FALSE){
+    episodedf<- episodedf[!episodedf$first_diag_V_present,]
+  }
+  
+  if(nrow(episodedf)==0){
+    stop("Due to the parameter configuration there are no episodes left after accounting for preliminary.diag")
+  }
+  
+  if(AUB==TRUE){
+    episodedf<- episodedf[episodedf$AUB_issued,]
+  }else if(AUB==FALSE){
+    episodedf<- episodedf[!episodedf$AUB_issued,]
+  }
+  
+  if(nrow(episodedf)==0){
+    stop("Due to the parameter configuration there are no episodes left after accounting for AUB")
+  }
+  
+  episodedf<- episodedf|>
+    filter(quarter %in% quarter.selection)|>
+    filter(month %in% month.selection)
+  
+  if(nrow(episodedf)==0){
+    stop("Due to the parameter configuration there are no episodes left after accounting for quarter.selection and month.selection")
   }
   
   #creating plots and tables
@@ -606,4 +653,21 @@ discovery.tool(1,dependent.variable = "escalation_ueberweis",research.question =
 escalation.parameters_ueberweis<- list(type="4")
 discovery.tool(1,dependent.variable = "escalation_ueberweis",research.question = "Wann wurden Patienten ins Krankenhaus geschickt, R1")
 ```
+
+```{r}
+diag.parameters<- list(initial.or.last= "initial",type= 1)
+discovery.tool(1, dependent.variable = "diag", AUB=TRUE, research.question = "Welche Diagnosen wurden zuerst gestellt in AUB-Fällen, R1")
+discovery.tool(2, dependent.variable = "diag", AUB=TRUE, research.question = "Welche Diagnosen wurden zuerst gestellt in AUB-Fällen, R2")
+discovery.tool(1, dependent.variable = "diag", AUB=FALSE, research.question = "Welche Diagnosen wurden zuerst gestellt in nicht-AUB-Fällen, R1")
+discovery.tool(2, dependent.variable = "diag", AUB=FALSE, research.question = "Welche Diagnosen wurden zuerst gestellt in nicht-AUB-Fällen, R2")
+discovery.tool(1, dependent.variable = "diag", quarter.selection = 1, research.question = "Welche Diagnosen wurden zuerst gestellt in Q1, R1")
+discovery.tool(2, dependent.variable = "diag", quarter.selection = 1, research.question = "Welche Diagnosen wurden zuerst gestellt in Q1, R2")
+discovery.tool(1, dependent.variable = "diag", quarter.selection = 2, research.question = "Welche Diagnosen wurden zuerst gestellt in Q2, R1")
+discovery.tool(2, dependent.variable = "diag", quarter.selection = 2, research.question = "Welche Diagnosen wurden zuerst gestellt in Q2, R2")
+discovery.tool(1, dependent.variable = "diag", quarter.selection = 3, research.question = "Welche Diagnosen wurden zuerst gestellt in Q3, R1")
+discovery.tool(2, dependent.variable = "diag", quarter.selection = 3, research.question = "Welche Diagnosen wurden zuerst gestellt in Q3, R2")
+discovery.tool(1, dependent.variable = "diag", quarter.selection = 4, research.question = "Welche Diagnosen wurden zuerst gestellt in Q4, R1")
+discovery.tool(2, dependent.variable = "diag", quarter.selection = 4, research.question = "Welche Diagnosen wurden zuerst gestellt in Q4, R2")
+```
+
 
