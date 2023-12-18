@@ -192,10 +192,10 @@ episodes.stamm_r1<- add.stamm.new.par(episodes_r1,stamm.up,50,2)
 episodes.diag_r1<- add.diag.par(episodes_r1,diag.up_2,50,2)
 episodes.labor_r1<- add.lab.par(episodes_r1,labor.up,50,2)
 episodes.ueberweis_1<- add.ueberweis.par(episodes_r1,ueberweis.up,50,2)
-full_r1<- cbind(arrange(episodes.stamm_r1,uniPatID),
-                arrange(episodes.diag_r1,uniPatID),
-                arrange(episodes.labor_r1,uniPatID),
-                arrange(episodes.ueberweis_1,uniPatID))
+full_r1<- cbind(arrange(episodes.stamm_r1,uniPatID,start_date),
+                arrange(episodes.diag_r1,uniPatID,start_date),
+                arrange(episodes.labor_r1,uniPatID,start_date),
+                arrange(episodes.ueberweis_1,uniPatID,start_date))
 
 #remove duplicate columns
 full_r1<- full_r1[,!duplicated(colnames(full_r1))]
@@ -205,10 +205,10 @@ episodes.stamm_r2<- add.stamm.new.par(episodes_r2,stamm.up,50,2)
 episodes.diag_r2<- add.diag.par(episodes_r2,diag.up_2,50,2)
 episodes.labor_r2<- add.lab.par(episodes_r2,labor.up,50,2)
 episodes.ueberweis_2<- add.ueberweis.par(episodes_r2,ueberweis.up,50,2)
-full_r2<- cbind(arrange(episodes.stamm_r2,uniPatID),
-                arrange(episodes.diag_r2,uniPatID),
-                arrange(episodes.labor_r2,uniPatID),
-                arrange(episodes.ueberweis_2,uniPatID))
+full_r2<- cbind(arrange(episodes.stamm_r2,uniPatID,start_date),
+                arrange(episodes.diag_r2,uniPatID,start_date),
+                arrange(episodes.labor_r2,uniPatID,start_date),
+                arrange(episodes.ueberweis_2,uniPatID,start_date))
 
 full_r2<- full_r2[,!duplicated(colnames(full_r2))]
 
@@ -310,6 +310,7 @@ summary.stats<- function(episodedf){
     percentage.females.episodes=mean(episodedf$Weibl, na.rm = TRUE),
     percentage.males.patients=mean(episodedf$Maennl[!duplicated(episodedf$uniPatID)], na.rm = TRUE),
     percentage.females.patients=mean(episodedf$Weibl[!duplicated(episodedf$uniPatID)], na.rm = TRUE),
+    no.private.insurance= sum(episodedf$PKV, na.rm= TRUE),
     percentage.private.insurance= mean(episodedf$PKV, na.rm= TRUE),
     percentage.retired.patients= mean(episodedf$Status_R[!duplicated(episodedf$uniPatID)], na.rm= TRUE),
     percentage.retired.episodes= mean(episodedf$Status_R, na.rm= TRUE)
@@ -326,7 +327,7 @@ summary.stats(episodedf = full_r2)
 # create plots
 
 # no. 32
-discovery.tool<- function(decision.rule, insurance=c("all","GKV","PKV")[1], remove.copd=FALSE, lims.chronic.diseases=c(0,100), pandemic="none", preliminary.diag=c(NA,TRUE,FALSE)[1], AUB=c(NA,TRUE,FALSE)[1], quarter.selection=1:4, month.selection=1:12, dependent.variable, research.question){
+discovery.tool<- function(decision.rule, agelims=c(0,150), insurance=c("all","GKV","PKV")[1], remove.copd=FALSE, lims.chronic.diseases=c(0,100), pandemic="none", preliminary.diag=c(NA,TRUE,FALSE)[1], AUB=c(NA,TRUE,FALSE)[1], quarter.selection=1:4, month.selection=1:12, dependent.variable, research.question){
   # Tool to create plots and tables for specific data requests.
   # decision.rule is an integer between 1 and 5 giving the decision rule for how to deal with overlaps in the data set. Can currently only be set to 1 or 2.
   # insurance can be selected as "GKV" or "PKV" in order to restrict the patients to being insured by a public/ private insurer
@@ -351,6 +352,13 @@ discovery.tool<- function(decision.rule, insurance=c("all","GKV","PKV")[1], remo
     episodedf<- full_r5
   }else{
     stop("The decision rule must be an integer between 1 and 5!")
+  }
+  
+  #age
+  if(all(agelims!=c(0,150))){
+    age.vec<- as.numeric(year(TG_DateNum2date(episodedf$start_date)))-episodedf$Geburtsjahr
+    age.selector<- agelims[1]<= age.vec & agelims[2]>= age.vec
+    age.selector[is.na(age.selector)]<- FALSE
   }
   
   #insurance
@@ -397,20 +405,24 @@ discovery.tool<- function(decision.rule, insurance=c("all","GKV","PKV")[1], remo
     stop("pandemic must be specified as TRUE, FALSE, or be non-specified.")
   }
   
-  if(preliminary.diag==TRUE){
-    episodedf<- episodedf[episodedf$first_diag_V_present,]
-  }else if(preliminary.diag==FALSE){
-    episodedf<- episodedf[!episodedf$first_diag_V_present,]
+  if(!is.na(preliminary.diag)){
+      if(preliminary.diag==TRUE){
+      episodedf<- episodedf[episodedf$first_diag_V_present,]
+    }else if(preliminary.diag==FALSE){
+      episodedf<- episodedf[!episodedf$first_diag_V_present,]
+    }
   }
   
   if(nrow(episodedf)==0){
     stop("Due to the parameter configuration there are no episodes left after accounting for preliminary.diag")
   }
   
-  if(AUB==TRUE){
-    episodedf<- episodedf[episodedf$AUB_issued,]
-  }else if(AUB==FALSE){
-    episodedf<- episodedf[!episodedf$AUB_issued,]
+  if(!is.na(AUB)){
+      if(AUB==TRUE){
+      episodedf<- episodedf[episodedf$AUB_issued,]
+    }else if(AUB==FALSE){
+      episodedf<- episodedf[!episodedf$AUB_issued,]
+    }
   }
   
   if(nrow(episodedf)==0){
@@ -418,8 +430,8 @@ discovery.tool<- function(decision.rule, insurance=c("all","GKV","PKV")[1], remo
   }
   
   episodedf<- episodedf|>
-    filter(quarter %in% quarter.selection)|>
-    filter(month %in% month.selection)
+    filter(start_quarter %in% quarter.selection)|>
+    filter(start_month %in% month.selection)
   
   if(nrow(episodedf)==0){
     stop("Due to the parameter configuration there are no episodes left after accounting for quarter.selection and month.selection")
@@ -540,15 +552,33 @@ discovery.tool<- function(decision.rule, insurance=c("all","GKV","PKV")[1], remo
   }else if(dependent.variable=="escalation_lab"){
     
     if(escalation.parameters_lab[["type"]]==1){
-      #blood test
-      x<- episodedf$first_TG_DateNumlab-episodedf$start_date
+      #lab test, generally
+      x<- episodedf$labtest-episodedf$start_date
       x<- x[!is.na(x)]
-      warning(paste("There are", length(x), "patients whose blood was tested for Kreatinin levels."))
     }else if(escalation.parameters_lab[["type"]]==2){
-      #referral to specialist care
-      x<- episodedf$first_TG_DateNumueberweis-episodedf$start_date
+      #normal blood
+      x<- episodedf$blood_normal-episodedf$start_date
       x<- x[!is.na(x)]
-      warning(paste("There are", length(x), "patients who were referred to a specialist."))
+    }else if(escalation.parameters_lab[["type"]]==3){
+      #differential blood test
+      x<- episodedf$blood_large_test-episodedf$start_date
+      x<- x[!is.na(x)]
+    }else if(escalation.parameters_lab[["type"]]==4){
+      #CRP
+      x<- episodedf$CRP-episodedf$start_date
+      x<- x[!is.na(x)]
+    }else if(escalation.parameters_lab[["type"]]==5){
+      #erythocytes
+      x<- episodedf$ery-episodedf$start_date
+      x<- x[!is.na(x)]
+    }else if(escalation.parameters_lab[["type"]]==6){
+      #leucocytes
+      x<- episodedf$leuko-episodedf$start_date
+      x<- x[!is.na(x)]
+    }else if(escalation.parameters_lab[["type"]]==7){
+      #procalcitonin
+      x<- episodedf$procalcitonin-episodedf$start_date
+      x<- x[!is.na(x)]
     }
     
     im<- table(x)
@@ -566,7 +596,7 @@ discovery.tool<- function(decision.rule, insurance=c("all","GKV","PKV")[1], remo
       labs(title = paste0(research.question,"?"),
            x = "number of days since initial cough", 
            y= "percentage",
-           subtitle = paste("based on the observations of", length(x), "patients"))
+           subtitle = paste("based on", length(x), "episodes"))
     ggsave(paste0(research.question,".png"), plot = p, path = getwd(), device = "png")
     
     
@@ -584,22 +614,22 @@ discovery.tool<- function(decision.rule, insurance=c("all","GKV","PKV")[1], remo
     }
   })
       x<- x[!is.na(x)]
-      warning(paste("There are", length(x), "patients who were referred to a specialist."))
+      warning(paste("There were", length(x), "episodes when patients were referred to a specialist."))
     }else if(escalation.parameters_ueberweis[["type"]]==2){
       #referral pulmonologist
       x<- episodedf$Uberw_Pneumo-episodedf$start_date
       x<- x[!is.na(x)]
-      warning(paste("There are", length(x), "patients who were referred to a pulmonologist."))
+      warning(paste("There were", length(x), "episodes when patients were referred to a pulmonologist."))
     }else if(escalation.parameters_ueberweis[["type"]]==3){
       #referral radiologist
       x<- episodedf$Uberw_Radiol-episodedf$start_date
       x<- x[!is.na(x)]
-      warning(paste("There are", length(x), "patients who were referred to a radiologist."))
+      warning(paste("There were", length(x), "episodes when patients were referred to a radiologist."))
     }else if(escalation.parameters_ueberweis[["type"]]==4){
       #referral hospital
       x<- episodedf$Uberw_KH-episodedf$start_date
       x<- x[!is.na(x)]
-      warning(paste("There are", length(x), "patients who were referred to a hospital."))
+      warning(paste("There were", length(x), "episodes when patients were referred to a hospital."))
     }
     
     im<- table(x)
@@ -617,7 +647,7 @@ discovery.tool<- function(decision.rule, insurance=c("all","GKV","PKV")[1], remo
       labs(title = paste0(research.question,"?"),
            x = "number of days since initial cough", 
            y= "percentage",
-           subtitle = paste("based on the observations of", length(x), "patients"))
+           subtitle = paste("based on", length(x), "episodes"))
     ggsave(paste0(research.question,".png"), plot = p, path = getwd(), device = "png")
   }
 }
@@ -668,6 +698,24 @@ discovery.tool(1, dependent.variable = "diag", quarter.selection = 3, research.q
 discovery.tool(2, dependent.variable = "diag", quarter.selection = 3, research.question = "Welche Diagnosen wurden zuerst gestellt in Q3, R2")
 discovery.tool(1, dependent.variable = "diag", quarter.selection = 4, research.question = "Welche Diagnosen wurden zuerst gestellt in Q4, R1")
 discovery.tool(2, dependent.variable = "diag", quarter.selection = 4, research.question = "Welche Diagnosen wurden zuerst gestellt in Q4, R2")
+```
+```{r}
+#escalation lab plots
+escalation.parameters_lab<- list(type=1)
+discovery.tool(1,dependent.variable = "escalation_lab", research.question = "Wann wurde (irgend-) ein Labortest angeordnet, R1")
+discovery.tool(2,dependent.variable = "escalation_lab", research.question = "Wann wurde (irgend-) ein Labortest angeordnet, R2")
+escalation.parameters_lab<- list(type=2)
+discovery.tool(1,dependent.variable = "escalation_lab", research.question = "Wann wurde ein Blutbild angeordnet, R1")
+discovery.tool(2,dependent.variable = "escalation_lab", research.question = "Wann wurde ein Blutbild angeordnet, R2")
+escalation.parameters_lab<- list(type=4)
+discovery.tool(1,dependent.variable = "escalation_lab", research.question = "Wann wurde auf C-reaktives Protein getestet, R1")
+discovery.tool(2,dependent.variable = "escalation_lab", research.question = "Wann wurde auf C-reaktives Protein getestet, R2")
+escalation.parameters_lab<- list(type=6)
+discovery.tool(1,dependent.variable = "escalation_lab", research.question = "Wann wurden Leukozyten gemessen, R1")
+discovery.tool(2,dependent.variable = "escalation_lab", research.question = "Wann wurden Leukozyten gemessen, R2")
+escalation.parameters_lab<- list(type=7)
+discovery.tool(1,dependent.variable = "escalation_lab", research.question = "Wann wurde auf Procalcitonin getestet, R1")
+discovery.tool(2,dependent.variable = "escalation_lab", research.question = "Wann wurde auf Procalcitonin getestet, R2")
 ```
 
 
