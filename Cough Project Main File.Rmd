@@ -166,7 +166,8 @@ contains.multiple.entries(ipc.up_2)
 
 ```{r}
 # 6 create episodes based on the data
-episodes<- episode.fun.new(ipc.up_2,56)
+#episodes<- episode.fun.new(ipc.up_2,56)
+episodes<- episode.fun.alt(ipc.up, 56)
 ```
 
 There must be no overlap in the timing of the episodes in order to map diagnoses and treatments to the episodes.

@@ -681,6 +681,16 @@ episode.fun.new<- function(df, length.of.episode){
   return(out)
 }
 
+episode.fun.alt<- function(df, length.of.episode){
+  ipc.cols<- which(grepl("ipc2", colnames(df)))
+  im<- as.vector(df[,ipc.cols])
+  selector<- grepl("R05", im)
+  start.dates<- df$TG_DateNum[selector]
+  out<- data.frame(uniPatID=df$uniPatID[selector],
+                   start_date=start.dates,
+                   end_dates=start.dates+length.of.episode)
+}
+
 # no. 18
 episodes.dr1<- function(episodedf){
   # Applies decision rule 1 to a raw (i.e. containing overlapping episodes) episode data frame.
