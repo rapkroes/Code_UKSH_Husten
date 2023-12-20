@@ -380,6 +380,7 @@ IK2PKV<- function(IK.vector){
   # depends on ListeKrankenkassen
   out<- ListeKrankenkassen$PKV[match(IK.vector,ListeKrankenkassen$IK)]
   out[is.na(out)]<- 1
+  out[out==1]<- 1
   return(out)
 }
 
@@ -948,7 +949,7 @@ age.weights<- function(startage,endage){
   if(startage>85) stop("All ages are dropped due to the start age being too high. Please select a lower start age.")
   if(endage<1) stop("The end age is too low. It has to be no lower than one year.")
   if(endage>84) warning("Please note that the data provided by the statistical office is placed into a single bin from age 85 on. All ages from that bin are therefore treated as equally distributed across the range from 85 to the end date.")
-  vector<- altersstruktur_deutschland$`Bevölkerungsstand (Anzahl)`
+  vector<- altersstruktur_deutschland$bevoelkerungsstand
   if(endage<=84){
     out<- vector[seq(startage+1,endage+1)]
   }else{
@@ -1551,4 +1552,10 @@ data.repair.new<- function(df){
   selector<- !duplicated(out$uniPatID)
   out<- out[selector,]
   return(out)
+}
+
+icd10.to.3St<- function(icd10vec){
+  codes<- substr(icd10vec,1,3)
+  description<- ICD3St$text[match(codes,ICD3St$code)]
+  return(data.frame(codes=codes,description=description))
 }
