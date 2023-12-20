@@ -688,7 +688,7 @@ episode.fun.alt<- function(df, length.of.episode){
   start.dates<- df$TG_DateNum[selector]
   out<- data.frame(uniPatID=df$uniPatID[selector],
                    start_date=start.dates,
-                   end_dates=start.dates+length.of.episode)
+                   end_date=start.dates+length.of.episode)
 }
 
 # no. 18
@@ -1540,5 +1540,15 @@ add.diag.par<- function(episodedf, adddata, no.splits, no.workers){
     out[seq(ticker,ticker-1+nrow(result[[j]])),]<- result[[j]]
     ticker<- ticker+nrow(result[[j]])
   }
+  return(out)
+}
+
+
+data.repair.new<- function(df){
+  #browser()
+  out<- df|>
+    arrange(uniPatID,desc(TG_DateNum))
+  selector<- !duplicated(out$uniPatID)
+  out<- out[selector,]
   return(out)
 }

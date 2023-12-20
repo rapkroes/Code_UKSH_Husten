@@ -137,13 +137,13 @@ In #6.2, we do not keep all entries for diag.up and ipc.up. There are a few entr
 ```{r}
 # 5.1
 
-labor.up<- data.repair(labor.up)
+labor.up<- data.repair.new(labor.up)
 contains.multiple.entries(labor.up)
 
-stamm.up<- data.repair(stamm.up)
+stamm.up<- data.repair.new(stamm.up)
 contains.multiple.entries(stamm.up)
 
-ueberweis.up<- data.repair(ueberweis.up)
+ueberweis.up<- data.repair.new(ueberweis.up)
 contains.multiple.entries(ueberweis.up)
 
 ```
@@ -151,7 +151,7 @@ contains.multiple.entries(ueberweis.up)
 ```{r}
 # 5.2
 x_diag<- quantile(table(paste(diag.up$uniPatID,diag.up$TG_DateNum)), probs= 0.95)
-x_ipc<- quantile(table(paste(ipc.up$uniPatID,ipc.up$TG_DateNum)), probs= 0.95)
+#x_ipc<- quantile(table(paste(ipc.up$uniPatID,ipc.up$TG_DateNum)), probs= 0.95)
 
 # table(paste0(diag.up$uniPatID,diag.up$TG_DateNum)
 # quantile(table(paste0(diag.up$uniPatID,diag.up$TG_DateNum)))
@@ -159,8 +159,8 @@ x_ipc<- quantile(table(paste(ipc.up$uniPatID,ipc.up$TG_DateNum)), probs= 0.95)
 diag.up_2<- aligner.parallel.new(diag.up, x_diag,100,4)
 contains.multiple.entries(diag.up_2)
 
-ipc.up_2<- aligner.parallel.new(ipc.up, x_ipc,100,4)
-contains.multiple.entries(ipc.up_2)
+# ipc.up_2<- aligner.parallel.new(ipc.up, x_ipc,100,4)
+# contains.multiple.entries(ipc.up_2)
 
 ```
 
@@ -732,5 +732,48 @@ discovery.tool(2,dependent.variable = "escalation_lab", research.question = "Wan
 #probably necessary to adjust the function
 discovery.tool(1, dependent.variable = "age", agelims = c(18,150), research.question = "Wie alt waren die Patienten, ohne Minderjährige, R1")
 discovery.tool(2, dependent.variable = "age", agelims = c(18,150), research.question = "Wie alt waren die Patienten, ohne Minderjährige, R2")
+```
+
+```{r}
+complete.table<- function(dv){
+  browser()
+  im<- table(dv)
+  days<- as.numeric(names(im))
+  Freq<- numeric(max(days))
+  Freq[days]<- as.data.frame(im)$dv
+  prob<- Freq/sum(Freq)
+  return(cbind(seq(1,max(days)),Freq,prob))
+}
+
+complete.table(full_r1$no.matches_diag)
+
+table(full_r1$no.matches_diag)
+prop.table(table(full_r1$no.matches_diag))
+table(full_r2$no.matches_diag)
+prop.table(table(full_r2$no.matches_diag))
+
+table(-full_r1$start_date+full_r1$labtest)
+table(-full_r2$start_date+full_r2$labtest)
+
+table(-full_r1$start_date+full_r1$blood_normal)
+table(-full_r2$start_date+full_r2$blood_normal)
+
+table(-full_r1$start_date+full_r1$CRP)
+table(-full_r2$start_date+full_r2$CRP)
+
+table(-full_r1$start_date+full_r1$procalcitonin)
+table(-full_r2$start_date+full_r2$procalcitonin)
+
+table(-full_r1$start_date+full_r1$leuko)
+table(-full_r2$start_date+full_r2$leuko)
+
+table(-full_r1$start_date+full_r1$Uberw_Pneumo)
+table(-full_r2$start_date+full_r2$Uberw_Pneumo)
+
+table(-full_r1$start_date+full_r1$Uberw_Radiol)
+table(-full_r2$start_date+full_r2$Uberw_Radiol)
+
+table(-full_r1$start_date+full_r1$Uberw_KH)
+table(-full_r2$start_date+full_r2$Uberw_KH)
 ```
 
