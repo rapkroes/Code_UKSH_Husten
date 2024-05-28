@@ -23,11 +23,11 @@ library(writexl)
 # Read in data
 real.data<- TRUE
 if(real.data){
-  setwd("N:/StudentischeHilfskraefte/_Kroes (Christoph)/Routinedaten/01_Husten/R/DB")
-names.vec<- c("Diag3","IPC23","Labor3","Stamm3","Ueberweis3")
+  setwd("N:/StudentischeHilfskraefte/_Kroes (Christoph)/Routinedaten/03_Hitze/DB")
+names.vec<- c("Diag1","ICPC1","Labor1","Stamm1","Ueberweis3")
 
 for (i in seq(1,length(names.vec))) {
-  file.name<- paste0("DB_",names.vec[i],"_v03",".csv")
+  file.name<- paste0("DB_",names.vec[i],"_v01",".csv")
 
   im.file<- read.csv(file = file.name, header = TRUE, sep = ";")
 
@@ -57,7 +57,7 @@ source("//fileserver1.uni-luebeck.de/ifa_homes/raphaelkroes/Documents/GitHub/Cod
 # 3
 # The patient with unipatID 2 (PatID=1 and index=1) has two dates of birth and shows the hallmarks of a test patient (e.g. for testing new computer equipment). Whatever the reason for the two different dates, we remove them from further data analysis.
 
-diag.up<- Diag3 |> 
+diag.up<- Diag1 |> 
   select(uniPatID,TG_DateNum,DiagTyp,icd10)|>
   distinct()
 diag.up<- diag.up[diag.up$uniPatID!=2,]
@@ -80,11 +80,11 @@ chronic.patients<- im$uniPatID[im$DiagTyp=="DD"]
 chronic.patients<- as.data.frame(table(chronic.patients))
 rm(im)
 
-ipc.up<- IPC23 |>
+ipc.up<- ICPC1 |>
   select(uniPatID,TG_DateNum,AnamnTyp,ipc2)
 ipc.up<- ipc.up[ipc.up$uniPatID!=2,]
 
-labor.up<- Labor3
+labor.up<- Labor1
 labor.up$labtest<- 1
 labor.up<- labor.up|>
   select(uniPatID,TG_DateNum,Untersuchung,Unterstext,labtest)|>
@@ -100,7 +100,7 @@ colnames(detail.mat)<- colnames(selected.lab.descriptions)[-c(1,2)]
 labor.up<- cbind(labor.up,detail.mat)
 labor.up<- labor.up[labor.up$uniPatID!=2,]
 
-stamm.up<- Stamm3
+stamm.up<- Stamm1
 stamm.up$PKV<- IK2PKV(stamm.up$IK)
 stamm.up<- stamm.up|> 
   select(-PatID,-index_i,-IK,-Kasse,-PLZ)|>
