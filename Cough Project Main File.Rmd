@@ -23,19 +23,14 @@ library(writexl)
 # Read in data
 real.data<- TRUE
 if(real.data){
-  setwd("N:/StudentischeHilfskraefte/_Kroes (Christoph)/Routinedaten/03_Hitze/DB")
-names.vec<- c("Diag1","ICPC1","Labor1","Stamm1","Ueberweis3")
+  names.vec<- c("Diag","IPC2","Labor","Stamm","Ueberweis")
 
-for (i in seq(1,length(names.vec))) {
-  file.name<- paste0("DB_",names.vec[i],"_v01",".csv")
-
-  im.file<- read.csv(file = file.name, header = TRUE, sep = ";")
-
-  assign(names.vec[i],im.file)
-
-}
-# remove duplicate file and unnecessary name
-rm(file.name,im.file)
+  for (i in seq_along(names.vec)) {
+    file.name<- file.path(paste0("N:/StudentischeHilfskraefte/_Kroes (Christoph)/Routinedaten/01_Husten/DB/DB_",names.vec[i],"3_v03",".csv"))
+    im.file<- read.csv(file = file.name, header = TRUE, sep = ";")
+    assign(names.vec[i],im.file)
+  }
+  rm(file.name,im.file)
 
 # Read in supplementary data
 ListeKrankenkassen<- read.csv(file = "ListeKrankenkassen.csv", header = TRUE, sep = ";")
