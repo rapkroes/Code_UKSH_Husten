@@ -416,129 +416,160 @@ data.repair<- function(problemdata){
 }
 
 # no.14
-aligner<- function(df,x, debugging=FALSE){
-  #finds rows with non-unique uniPatID/ TG_DateNum combinations and writes them all into one row. x specifies the maximum number of rows from df that are framed into a single row in the output data frame. If more than x rows are found in the data set, the first x rows are kept and the other ones are discarded.
-  raw.combinations<- paste0(df$uniPatID,df$TG_DateNum)
-  combinations<- levels(as.factor(raw.combinations))
-  l<- length(combinations)
-  memory<- data.frame(a=combinations, b= NA, c=NA)
-  colnames(memory)<- c("combination","no. seen before","last seen in row")
-  
-  out<- as.data.frame(matrix(0, nrow = l, ncol = 2+x*(ncol(df)-2)))
-  
-  ticker<- 1 #answer to "Onto which row in out do we write right now?"
-  
-  partial.row<- colnames(df)!= "uniPatID" & colnames(df)!= "TG_DateNum"
-  colnames(out)<- c(colnames(df),paste(rep(colnames(df)[partial.row],x-1),sort(rep(1:(x-1),ncol(df)-2)),sep = "_"))
-  
-  progress.bar<- txtProgressBar(min = 0, max = nrow(df), initial = 0) 
-  
-  for(i in seq(1,nrow(df))){
-    setTxtProgressBar(progress.bar,i)
-    case<- raw.combinations[i]
-    location<- which(combinations==case)
-    
-    if(is.na(memory[location,2])){
-      out[ticker,1:ncol(df)]<- df[i,]
-      memory[location,2]<- 1
-      memory[location,3]<- ticker
-      ticker<- ticker+1
-    }else{
-      no.seen<- memory[location,2]
-      if(no.seen<x){
-        last.seen<- memory[location,3]
-        sel.col<-seq(1,ncol(df)-2)+no.seen*(ncol(df)-2)+2
-        sel.data<- df[i,partial.row]
-        #browser()
-        out[last.seen,sel.col]<- sel.data
-        memory[location,2]<- memory[location,2]+1
-      }
-      
-    }
-  }
-  close(progress.bar)
-  if(debugging==TRUE){
-    return(list(as.data.frame(out),memory))
-  }else{
-    return(as.data.frame(out))
-  }
-}
+# aligner<- function(df,x, debugging=FALSE){
+#   #finds rows with non-unique uniPatID/ TG_DateNum combinations and writes them all into one row. x specifies the maximum number of rows from df that are framed into a single row in the output data frame. If more than x rows are found in the data set, the first x rows are kept and the other ones are discarded.
+#   raw.combinations<- paste0(df$uniPatID,df$TG_DateNum)
+#   combinations<- levels(as.factor(raw.combinations))
+#   l<- length(combinations)
+#   memory<- data.frame(a=combinations, b= NA, c=NA)
+#   colnames(memory)<- c("combination","no. seen before","last seen in row")
+#   
+#   out<- as.data.frame(matrix(0, nrow = l, ncol = 2+x*(ncol(df)-2)))
+#   
+#   ticker<- 1 #answer to "Onto which row in out do we write right now?"
+#   
+#   partial.row<- colnames(df)!= "uniPatID" & colnames(df)!= "TG_DateNum"
+#   colnames(out)<- c(colnames(df),paste(rep(colnames(df)[partial.row],x-1),sort(rep(1:(x-1),ncol(df)-2)),sep = "_"))
+#   
+#   progress.bar<- txtProgressBar(min = 0, max = nrow(df), initial = 0) 
+#   
+#   for(i in seq(1,nrow(df))){
+#     setTxtProgressBar(progress.bar,i)
+#     case<- raw.combinations[i]
+#     location<- which(combinations==case)
+#     
+#     if(is.na(memory[location,2])){
+#       out[ticker,1:ncol(df)]<- df[i,]
+#       memory[location,2]<- 1
+#       memory[location,3]<- ticker
+#       ticker<- ticker+1
+#     }else{
+#       no.seen<- memory[location,2]
+#       if(no.seen<x){
+#         last.seen<- memory[location,3]
+#         sel.col<-seq(1,ncol(df)-2)+no.seen*(ncol(df)-2)+2
+#         sel.data<- df[i,partial.row]
+#         #browser()
+#         out[last.seen,sel.col]<- sel.data
+#         memory[location,2]<- memory[location,2]+1
+#       }
+#       
+#     }
+#   }
+#   close(progress.bar)
+#   if(debugging==TRUE){
+#     return(list(as.data.frame(out),memory))
+#   }else{
+#     return(as.data.frame(out))
+#   }
+# }
 # no. 14 b
-aligner.parallel.new<- function(df,x,no.splits,no.cores){
-  dl<- chunk.data(df, no.splits)
-  local.aligner<- function(df,x, debugging=FALSE){
-    #finds rows with non-unique uniPatID/ TG_DateNum combinations and writes them all into one row. x specifies the maximum number of rows from df that are framed into a single row in the output data frame. If more than x rows are found in the data set, the first x rows are kept and the other ones are discarded.
-    raw.combinations<- paste0(df$uniPatID,df$TG_DateNum)
-    combinations<- levels(as.factor(raw.combinations))
-    l<- length(combinations)
-    memory<- data.frame(a=combinations, b= NA, c=NA)
-    colnames(memory)<- c("combination","no. seen before","last seen in row")
-    
-    out<- as.data.frame(matrix(0, nrow = l, ncol = 2+x*(ncol(df)-2)))
-    
-    ticker<- 1 #answer to "Onto which row in out do we write right now?"
-    
-    partial.row<- colnames(df)!= "uniPatID" & colnames(df)!= "TG_DateNum"
-    colnames(out)<- c(colnames(df),paste(rep(colnames(df)[partial.row],x-1),sort(rep(1:(x-1),ncol(df)-2)),sep = "_"))
-    
-    
-    for(i in seq(1,nrow(df))){
-      case<- raw.combinations[i]
-      location<- which(combinations==case)
-      
-      if(is.na(memory[location,2])){
-        out[ticker,1:ncol(df)]<- df[i,]
-        memory[location,2]<- 1
-        memory[location,3]<- ticker
-        ticker<- ticker+1
-      }else{
-        no.seen<- memory[location,2]
-        if(no.seen<x){
-          last.seen<- memory[location,3]
-          sel.col<-seq(1,ncol(df)-2)+no.seen*(ncol(df)-2)+2
-          sel.data<- df[i,partial.row]
-          out[last.seen,sel.col]<- sel.data
-          memory[location,2]<- memory[location,2]+1
-        }
-        
-      }
-    }
-    if(debugging==TRUE){
-      return(list(as.data.frame(out),memory))
-    }else{
-      return(as.data.frame(out))
-    }
+# aligner<- function(df,x,no.splits,no.cores){
+#   dl<- chunk.data(df, no.splits)
+#   local.aligner<- function(df, x, debugging=FALSE){
+#     #finds rows with non-unique uniPatID/ TG_DateNum combinations and writes them all into one row. x specifies the maximum number of rows from df that are framed into a single row in the output data frame. If more than x rows are found in the data set, the first x rows are kept and the other ones are discarded.
+#     raw.combinations<- paste0(df$uniPatID,df$TG_DateNum)
+#     combinations<- levels(as.factor(raw.combinations))
+#     l<- length(combinations)
+#     memory<- data.frame(a=combinations, b= NA, c=NA)
+#     colnames(memory)<- c("combination","no. seen before","last seen in row")
+#     
+#     out<- as.data.frame(matrix(0, nrow = l, ncol = 2+x*(ncol(df)-2)))
+#     
+#     ticker<- 1 #answer to "Onto which row in out do we write right now?"
+#     
+#     partial.row<- colnames(df)!= "uniPatID" & colnames(df)!= "TG_DateNum"
+#     colnames(out)<- c(colnames(df),paste(rep(colnames(df)[partial.row],x-1),sort(rep(1:(x-1),ncol(df)-2)),sep = "_"))
+#     
+#     
+#     for(i in seq(1,nrow(df))){
+#       case<- raw.combinations[i]
+#       location<- which(combinations==case)
+#       
+#       if(is.na(memory[location,2])){
+#         out[ticker,1:ncol(df)]<- df[i,]
+#         memory[location,2]<- 1
+#         memory[location,3]<- ticker
+#         ticker<- ticker+1
+#       }else{
+#         no.seen<- memory[location,2]
+#         if(no.seen<x){
+#           last.seen<- memory[location,3]
+#           sel.col<-seq(1,ncol(df)-2)+no.seen*(ncol(df)-2)+2
+#           sel.data<- df[i,partial.row]
+#           out[last.seen,sel.col]<- sel.data
+#           memory[location,2]<- memory[location,2]+1
+#         }
+#         
+#       }
+#     }
+#     if(debugging==TRUE){
+#       return(list(as.data.frame(out),memory))
+#     }else{
+#       return(as.data.frame(out))
+#     }
+#   }
+#   
+#   local.x<- x
+#   align.cluster<- makeCluster(no.cores)
+#   distinct.environment<- environment()
+#   clusterExport(align.cluster, varlist = c("dl","local.aligner","local.x"), envir = distinct.environment)
+#   result.list<- parSapply(align.cluster,1:no.splits,function(i){local.aligner(dl[[i]],local.x)})
+#   stopCluster(align.cluster)
+#   nc<- 2+x*(ncol(df)-2)
+#   for(i in seq(1,no.splits)){
+#     im<- result.list[[1+(i-1)*nc]]
+#     for(j in seq(2,nc)){
+#       im<- cbind(im, result.list[[j+(i-1)*nc]])
+#     }
+#     im<- as.data.frame(im)
+#     if(i==1){
+#       out<- im
+#     }else{
+#       out<- rbind(out,im)
+#     }
+#   }
+#   for(i in seq(1,ncol(out))){
+#     if(is.numeric(result.list[[i]])){
+#       out[,i]<- as.numeric(out[,i])
+#     }else{
+#       out[,i]<- as.character(out[,i])
+#     }
+#   }
+#   colnames(out)<- c(colnames(df),paste(rep(colnames(df)[colnames(df)!= "uniPatID" & colnames(df)!= "TG_DateNum"],x-1),sort(rep(1:(x-1),ncol(df)-2)),sep = "_"))
+#   
+#   
+#   return(out)
+# }
+
+aligner<- function(inputdf, cutoff, var.name){
+  unipat_date.counts<- table(inputdf$unipat_date)|>
+    as.data.frame()
+  colnames(unipat_date.counts)<- c("unipat_date", "count")
+  df<- left_join(inputdf, unipat_date.counts, by = "unipat_date")|>
+    filter(count <= cutoff)
+  data.list<- list()
+  im<- df|>
+    filter(count == 1)|>
+    select(uniPatID, TG_DateNum, unipat_date, icd10)
+  im_3<- cbind(im, matrix(NA, nrow = nrow(im), ncol = cutoff - 1))
+  colnames(im_3)<- c("uniPatID", "TG_DateNum", "unipat_date", 
+                     paste0(var.name, "_", seq(1, cutoff)))
+  data.list[[1]]<- im_3
+  for(i in seq(2, cutoff)){
+    im<- df|>
+      filter(count == i)|>
+      select(-count)|>
+      arrange(unipat_date)
+    im_2<- matrix(im$icd10, ncol = i)
+    im<- im[seq(1, nrow(im), by = i),]|>
+      select(uniPatID, TG_DateNum, unipat_date)
+    im_3<- cbind(im, im_2, matrix(NA, nrow = nrow(im), ncol = cutoff - i))
+    colnames(im_3)<- c("uniPatID", "TG_DateNum", "unipat_date", 
+                       paste0(var.name, "_", seq(1, cutoff)))
+    data.list[[i]]<- im_3
   }
-  
-  local.x<- x
-  align.cluster<- makeCluster(no.cores)
-  distinct.environment<- environment()
-  clusterExport(align.cluster, varlist = c("dl","local.aligner","local.x"), envir = distinct.environment)
-  result.list<- parSapply(align.cluster,1:no.splits,function(i){local.aligner(dl[[i]],local.x)})
-  stopCluster(align.cluster)
-  nc<- 2+x*(ncol(df)-2)
-  for(i in seq(1,no.splits)){
-    im<- result.list[[1+(i-1)*nc]]
-    for(j in seq(2,nc)){
-      im<- cbind(im, result.list[[j+(i-1)*nc]])
-    }
-    im<- as.data.frame(im)
-    if(i==1){
-      out<- im
-    }else{
-      out<- rbind(out,im)
-    }
-  }
-  for(i in seq(1,ncol(out))){
-    if(is.numeric(result.list[[i]])){
-      out[,i]<- as.numeric(out[,i])
-    }else{
-      out[,i]<- as.character(out[,i])
-    }
-  }
-  colnames(out)<- c(colnames(df),paste(rep(colnames(df)[colnames(df)!= "uniPatID" & colnames(df)!= "TG_DateNum"],x-1),sort(rep(1:(x-1),ncol(df)-2)),sep = "_"))
-  
-  
+  out<- bind_rows(data.list)
   return(out)
 }
 
@@ -613,28 +644,28 @@ chunk.data_date<- function(df,  no.splits){
 #   out$end_date<- as.numeric(out$end_date)
 #   return(out)
 # }
-episode.fun.new<- function(df, length.of.episode){
-  ipc.cols<- which(grepl("ipc2", colnames(df)))
-  im<- df[,ipc.cols]
-  for(i in seq(1,ncol(im))){
-    im[,i]<- grepl("R05",im[,i])
-  }
-  im<- rowSums(im)>0
-  out<- data.frame(uniPatID=df$uniPatID[im],
-                   start_date=df$TG_DateNum[im],
-                   end_date=df$TG_DateNum[im]+length.of.episode)
-  return(out)
-}
-
-episode.fun.alt<- function(df, length.of.episode){
-  ipc.cols<- which(grepl("ipc2", colnames(df)))
-  im<- as.vector(df[,ipc.cols])
-  selector<- grepl("R05", im)
-  start.dates<- df$TG_DateNum[selector]
-  out<- data.frame(uniPatID=df$uniPatID[selector],
-                   start_date=start.dates,
-                   end_date=start.dates+length.of.episode)
-}
+# episode.fun.new<- function(df, length.of.episode){
+#   ipc.cols<- which(grepl("ipc2", colnames(df)))
+#   im<- df[,ipc.cols]
+#   for(i in seq(1,ncol(im))){
+#     im[,i]<- grepl("R05",im[,i])
+#   }
+#   im<- rowSums(im)>0
+#   out<- data.frame(uniPatID=df$uniPatID[im],
+#                    start_date=df$TG_DateNum[im],
+#                    end_date=df$TG_DateNum[im]+length.of.episode)
+#   return(out)
+# }
+# 
+# episode.fun.alt<- function(df, length.of.episode){
+#   icpc.cols<- which(grepl("icpc2", colnames(df)))
+#   im<- as.vector(df[,icpc.cols])
+#   selector<- grepl("R05", im)
+#   start.dates<- df$TG_DateNum[selector]
+#   out<- data.frame(uniPatID=df$uniPatID[selector],
+#                    start_date=start.dates,
+#                    end_date=start.dates+length.of.episode)
+# }
 
 # no. 18
 episodes.dr1<- function(episodedf){
