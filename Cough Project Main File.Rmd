@@ -41,8 +41,8 @@ ListeKrankenkassen<- read.csv("https://github.com/rapkroes/Code_UKSH_Husten/blob
 altersstruktur_deutschland <- read.csv("https://github.com/rapkroes/Code_UKSH_Husten/blob/e67735f206a45437803f01e3fe0b6cacb84d3298/altersstruktur%20deutschland.csv")
 colnames(altersstruktur_deutschland)<- c("altersjahre","bevoelkerungsstand")
 icd10_blocks <- read.csv("https://github.com/rapkroes/Code_UKSH_Husten/blob/bb08bfe63a3a69ff1a2d7fdadf2c6e0dfc9d3785/icd10_blocks.csv")
-icd10_description<- read_excel("icd10_description.xlsx")
-selected.lab.descriptions<- read_excel("freitextanalyse.xlsx")
+icd10_description<- read.csv("https://github.com/rapkroes/Code_UKSH_Husten/blob/288b25aa745f178d2705d990e5106ad6db320a4d/icd10_description.csv")
+selected.lab.descriptions<- read_xlsx("https://github.com/rapkroes/Code_UKSH_Husten/blob/288b25aa745f178d2705d990e5106ad6db320a4d/freitextanalyse.xlsx")
 
 # read in functions
 source("//fileserver1.uni-luebeck.de/ifa_homes/raphaelkroes/Documents/GitHub/Code_UKSH_Husten/functions.R")
@@ -54,39 +54,33 @@ source("//fileserver1.uni-luebeck.de/ifa_homes/raphaelkroes/Documents/GitHub/Cod
 
 ```{r}
 # 3
-# The patient with unipatID 2 (PatID=1 and index=1) has two dates of birth and shows the hallmarks of a test patient (e.g. for testing new computer equipment). Whatever the reason for the two different dates, we remove them from further data analysis.
 
-diag.up<- Diag3 |> 
-  select(uniPatID,TG_DateNum,DiagTyp,icd10)|>
+diag.up<- Diag |> 
+  select(uniPatID, TG_DateNum, Typ, icd10)|>
   distinct()
-diag.up<- diag.up[diag.up$uniPatID!=2,]
-diag.up$chronic<- as.character(diag.up$DiagTyp)
-
-#add variable for chronic disease
+diag.up$chronic<- 0
 diag.up$chronic[diag.up$chronic=="DD"]<- 1
-diag.up$chronic[diag.up$chronic!="1"]<- 0
-diag.up$chronic<- as.numeric(diag.up$chronic)
-diag.up$chronic[is.na(diag.up$chronic)]<- 0
+
 
 #find patients with Chronic Pulmonary Obstructive Disease (COPD)
-copd.vec<- as.character(levels(as.factor(diag.up$uniPatID[grepl("J44",diag.up$icd10)])))
+copd.vec<- unique(diag.up$uniPatID[grepl("J44", diag.up$icd10) | 
+                              grepl("J 44", diag.up$icd10)])
 
 # find all other chronically diseased people
 im<- diag.up|>
-  select(uniPatID,DiagTyp,icd10)|>
+  select(uniPatID, Typ, icd10)|>
   distinct()
-chronic.patients<- im$uniPatID[im$DiagTyp=="DD"]
+chronic.patients<- im$uniPatID[im$Typ=="DD"]
 chronic.patients<- as.data.frame(table(chronic.patients))
 rm(im)
 
-ipc.up<- IPC23 |>
-  select(uniPatID,TG_DateNum,AnamnTyp,ipc2)
-ipc.up<- ipc.up[ipc.up$uniPatID!=2,]
+icpc.up<- ICPC |>
+  select(uniPatID, TG_DateNum, FreitextTyp, icpc2)
 
-labor.up<- Labor3
+labor.up<- Labor
 labor.up$labtest<- 1
 labor.up<- labor.up|>
-  select(uniPatID,TG_DateNum,Untersuchung,Unterstext,labtest)|>
+  select(uniPatID, TG_DateNum, Untersuchung, Unterstext, labtest)|>
   distinct()
 detail.mat<- matrix(NA,ncol=6,nrow=nrow(labor.up))
 for(i in 1:6){
@@ -123,15 +117,15 @@ rm(list = names.vec)
 ```{r}
 # 5
 contains.multiple.entries(diag.up)
-contains.multiple.entries(ipc.up)
+contains.multiple.entries(icpc.up)
 contains.multiple.entries(labor.up)
 contains.multiple.entries(stamm.up)
 contains.multiple.entries(ueberweis.up)
 
 ```
 
-STOP: Every patient/date combination must be unique. The difference between number of rows and patient/ time combinations must therefore be 0. This is what contains.multiple.entries checks for. We believe diag.up, ipc.up, and pzn.up have multiple entries for the same date by design. We believe stamm.up, impf.up, labor.up, and ueberweis.up should have only one line per patient/ time combination. In #6.1 we remedy the presumed errors by selecting the last entry for each patient/ time combination. In #6.2 we write the multiple data points of diag.up, ipc.up, and pzn.up in additional columns. Both procedures leave us with unique date/ time combinations for each data set.
-In #6.2, we do not keep all entries for diag.up and ipc.up. There are a few entries with unreasonably high numbers of diagnoses or symptoms. Therefore, we truncate the number observations at the 95% quantile of the distribution of entries per combination. If the last sentence is not clear in meaning, please run the commented code in chunk #6.2 to gain better insight.
+STOP: Every patient/date combination must be unique. The difference between number of rows and patient/ time combinations must therefore be 0. This is what contains.multiple.entries checks for. We believe diag.up, icpc.up, and pzn.up have multiple entries for the same date by design. We believe stamm.up, impf.up, labor.up, and ueberweis.up should have only one line per patient/ time combination. In #6.1 we remedy the presumed errors by selecting the last entry for each patient/ time combination. In #6.2 we write the multiple data points of diag.up, icpc.up, and pzn.up in additional columns. Both procedures leave us with unique date/ time combinations for each data set.
+In #6.2, we do not keep all entries for diag.up and icpc.up. There are a few entries with unreasonably high numbers of diagnoses or symptoms. Therefore, we truncate the number observations at the 95% quantile of the distribution of entries per combination. If the last sentence is not clear in meaning, please run the commented code in chunk #6.2 to gain better insight.
 
 ```{r}
 # 5.1
@@ -150,7 +144,7 @@ contains.multiple.entries(ueberweis.up)
 ```{r}
 # 5.2
 x_diag<- quantile(table(paste(diag.up$uniPatID,diag.up$TG_DateNum)), probs= 0.95)
-#x_ipc<- quantile(table(paste(ipc.up$uniPatID,ipc.up$TG_DateNum)), probs= 0.95)
+#x_ipc<- quantile(table(paste(icpc.up$uniPatID,icpc.up$TG_DateNum)), probs= 0.95)
 
 # table(paste0(diag.up$uniPatID,diag.up$TG_DateNum)
 # quantile(table(paste0(diag.up$uniPatID,diag.up$TG_DateNum)))
@@ -158,15 +152,15 @@ x_diag<- quantile(table(paste(diag.up$uniPatID,diag.up$TG_DateNum)), probs= 0.95
 diag.up_2<- aligner.parallel.new(diag.up, x_diag,100,4)
 contains.multiple.entries(diag.up_2)
 
-# ipc.up_2<- aligner.parallel.new(ipc.up, x_ipc,100,4)
-# contains.multiple.entries(ipc.up_2)
+# icpc.up_2<- aligner.parallel.new(icpc.up, x_ipc,100,4)
+# contains.multiple.entries(icpc.up_2)
 
 ```
 
 ```{r}
 # 6 create episodes based on the data
-#episodes<- episode.fun.new(ipc.up_2,56)
-episodes<- episode.fun.alt(ipc.up, 21)
+#episodes<- episode.fun.new(icpc.up_2,56)
+episodes<- episode.fun.alt(icpc.up, 21)
 ```
 
 There must be no overlap in the timing of the episodes in order to map diagnoses and treatments to the episodes.

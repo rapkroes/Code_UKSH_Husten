@@ -1,6 +1,5 @@
 #################### functions #########################
 
-
 query.data<- function(data, ipc2.code,
                       date.range=FALSE, 
                       PraxisID=FALSE, 
