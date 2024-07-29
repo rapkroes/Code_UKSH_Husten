@@ -1,60 +1,6 @@
 #################### functions #########################
-#### contained functions:
-#no.1 merge.datasets: merges datasets by patient ID (uniPatID) and date of consultation (TG_DateNum) [largely obsolete]
-#no.2 query.data: selects all relevant incidents with a certain ICD10 code and possibly other restrictions [largely obsolete]
-#no.3 icd10.to.chapter: maps a vector of ICD10 codes to the chapter each code corresponds to. Output is a numeric vector of the chapter number.
-#no.4 code2num: converts a vector of ICD10 codes to numbers that correspond to subchapters. code2num is a necessary accessory function for no.5 icd10.to.subchapter
-#no.5 icd10.to.subchapter: converts a vector of raw ICD10 codes to their respective subchapters
-#no.6 new.plotter_2: Saves a plot to the working directory. The plot that is saved depends on ICD10 codes and may be specified in greater detail.
-#no.7 par.patient.file: A parallelised, memory efficient loop that merges data sets from a list of datasets.
-#no.8 IK2PKV: Takes a vector of IK codes (code individual to a health insurance company in Germany) and returns a dummy vector which specifies whether the individual helath insurance is a private health insurer.
-#no.9 contains.multiple.entries: Checks whether a data frame or matrix contains multiple entries for uniPatID/TG_DateNum combinations. If it returns TRUE, there are multiple entries for at least one combination in that dataset.
-#no.10 
-#no.11 TG_DateNum2date: takes a vector of TG_DateNum dates and converts them to readable dates in a year-month-day fashion
-#no. 12 multiple.entry.analysis:Like contains.multiple.entries, but returns instead diagnostics how many entries are somewhat duplicate
-#no.13 data.repair: For data sets which contain multiple entries for identical patient/ date combinations. Selects the newest entry of the multiple episodes and removes the other one(s).
-#no. 15 chunk.data: Splits a data frame into several data frames. They are returned as a list. The data is split by the uniPatID variable.
-# no. 16 chunk.data_date: Splits a data frame into several data frames. They are returned as a list. The data is split by the TG_DateNum variable.
-# no. 17 episode.fun: Uses an ipc data frame to create a data frame of episodes.
-# no. 18 episodes.dr1: Applies decision rule 1 to a raw (i.e. containing overlapping episodes) episode data frame.
-# no. 19 episodes.dr2: Applies decision rule 2 to a raw (i.e. containing overlapping episodes) episode data frame.
-# no. 20 episodes.dr3: Applies decision rule 3 to a raw (i.e. containing overlapping episodes) episode data frame.
-# no. 21 episodes.dr4: Applies decision rule 4 to a raw (i.e. containing overlapping episodes) episode data frame.
-# no. 22 episodes.dr5: Applies decision rule 5 to a raw (i.e. containing overlapping episodes) episode data frame.
-# no. 23 add.stamm: adds stamm data to the episode data frame by matching entries.
-# no. 24 add.dataset: matches the entries from any suitable dataset to the ones from an episode data frame.
-# no. 25 date2TG_DateNum: transforms a date (yyyy-mm-dd) into a Matlab Serial time code (like TG_DateNum)
-# no. 26 age.weights: Uses data from Genesis data base to create a vector of points of mass from a probability density function of the live age distribution in Germany
-# # no. 27 episodes.overlap.finder: finds overlapping intervals in episode data frames. Used as a debugging function.
 
-#no.1
-merge.datasets <- function(dfs, na.rm=TRUE) {
-  # dfs is a list (!) of data frames which are to be merged
-  # na.rm determines whether incomplete rows are to be omitted in the output data frame (by default they are omitted)
-  # depends on libraries dplyr and purrr
-  
-  intermediate<- reduce(dfs, full_join, by = c("uniPatID", "TG_DateNum"))|>
-    select(uniPatID,PatID.x,TG_DateNum,index_i.x,PraxisID.x,DiagTyp,icd10,AnamnTyp,ipc2,ipc2txt)
-  colnames(intermediate)<- c("uniPatID",
-                             "PatID",
-                             "TG_DateNum",
-                             "index_i",
-                             "PraxisID",
-                             "DiagTyp",
-                             "icd10",
-                             "AnamnTyp",
-                             "ipc2",
-                             "ipc2txt")
-  if(na.rm==TRUE){
-    final<- intermediate[complete.episodes(intermediate),]
-  }else{
-    final<- intermediate
-  }
-  
-  return(final)
-}
 
-# no. 2
 query.data<- function(data, ipc2.code,
                       date.range=FALSE, 
                       PraxisID=FALSE, 
@@ -74,7 +20,6 @@ query.data<- function(data, ipc2.code,
   return(data.out)
 }
 
-# no.3
 icd10.to.chapter<- function(vector){
   #maps a vector of icd10 codes to their respective chapters
   output<- rep(0,length(vector))

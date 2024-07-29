@@ -9,7 +9,6 @@ Procedure:
 
 ```{r}
 # 1 Clear work space & load packages
-rm(list=ls())
 library(readxl)
 library(dplyr)
 library(parallel)
@@ -23,20 +22,25 @@ library(writexl)
 # Read in data
 real.data<- TRUE
 if(real.data){
-  names.vec<- c("Diag","IPC2","Labor","Stamm","Ueberweis")
+  setwd("N:/StudentischeHilfskraefte/_Kroes (Christoph)/Routinedaten/01_Husten/R/DBnew")
+names.vec<- c("Diag","ICPC","Labor","Stamm","Ueberweis")
 
-  for (i in seq_along(names.vec)) {
-    file.name<- file.path(paste0("N:/StudentischeHilfskraefte/_Kroes (Christoph)/Routinedaten/01_Husten/DB/DB_",names.vec[i],"3_v03",".csv"))
-    im.file<- read.csv(file = file.name, header = TRUE, sep = ";")
-    assign(names.vec[i],im.file)
-  }
-  rm(file.name,im.file)
+# for (i in seq(1,length(names.vec))) {
+#   file.name<- paste0("DB_",names.vec[i],"1_v01",".csv")
+# 
+#   im.file<- read.csv(file = file.name, header = TRUE, sep = ";")
+# 
+#   assign(names.vec[i],im.file)
+# 
+# }
+# remove duplicate file and unnecessary name
+# rm(file.name,im.file)
 
 # Read in supplementary data
-ListeKrankenkassen<- read.csv(file = "ListeKrankenkassen.csv", header = TRUE, sep = ";")
+ListeKrankenkassen<- read.csv("https://github.com/rapkroes/Code_UKSH_Husten/blob/700cea83575376203d3baa5afb84d3482006d43a/ListeKrankenkassen.csv")
 altersstruktur_deutschland <- read_excel("altersstruktur deutschland.xlsx")
 colnames(altersstruktur_deutschland)<- c("altersjahre","bevoelkerungsstand")
-icd10_blocks <- read_excel("icd10_blocks.xlsx")
+icd10_blocks <- read.csv("https://github.com/rapkroes/Code_UKSH_Husten/blob/15bb98ade138b003fd3688b88a11b7075b6daa5b/icd10_blocks.csv")
 icd10_description<- read_excel("icd10_description.xlsx")
 selected.lab.descriptions<- read_excel("freitextanalyse.xlsx")
 
@@ -52,7 +56,7 @@ source("//fileserver1.uni-luebeck.de/ifa_homes/raphaelkroes/Documents/GitHub/Cod
 # 3
 # The patient with unipatID 2 (PatID=1 and index=1) has two dates of birth and shows the hallmarks of a test patient (e.g. for testing new computer equipment). Whatever the reason for the two different dates, we remove them from further data analysis.
 
-diag.up<- Diag1 |> 
+diag.up<- Diag3 |> 
   select(uniPatID,TG_DateNum,DiagTyp,icd10)|>
   distinct()
 diag.up<- diag.up[diag.up$uniPatID!=2,]
@@ -75,11 +79,11 @@ chronic.patients<- im$uniPatID[im$DiagTyp=="DD"]
 chronic.patients<- as.data.frame(table(chronic.patients))
 rm(im)
 
-ipc.up<- ICPC1 |>
+ipc.up<- IPC23 |>
   select(uniPatID,TG_DateNum,AnamnTyp,ipc2)
 ipc.up<- ipc.up[ipc.up$uniPatID!=2,]
 
-labor.up<- Labor1
+labor.up<- Labor3
 labor.up$labtest<- 1
 labor.up<- labor.up|>
   select(uniPatID,TG_DateNum,Untersuchung,Unterstext,labtest)|>
@@ -95,7 +99,7 @@ colnames(detail.mat)<- colnames(selected.lab.descriptions)[-c(1,2)]
 labor.up<- cbind(labor.up,detail.mat)
 labor.up<- labor.up[labor.up$uniPatID!=2,]
 
-stamm.up<- Stamm1
+stamm.up<- Stamm3
 stamm.up$PKV<- IK2PKV(stamm.up$IK)
 stamm.up<- stamm.up|> 
   select(-PatID,-index_i,-IK,-Kasse,-PLZ)|>
