@@ -37,8 +37,8 @@ names.vec<- c("Diag","ICPC","Labor","Stamm","Ueberweis")
 # rm(file.name,im.file)
 
 # Read in supplementary data
-ListeKrankenkassen<- read.csv("https://github.com/rapkroes/Code_UKSH_Husten/blob/700cea83575376203d3baa5afb84d3482006d43a/ListeKrankenkassen.csv")
-altersstruktur_deutschland <- read_excel("altersstruktur deutschland.xlsx")
+ListeKrankenkassen<- read.csv("https://github.com/rapkroes/Code_UKSH_Husten/blob/e67735f206a45437803f01e3fe0b6cacb84d3298/ListeKrankenkassen.csv")
+altersstruktur_deutschland <- read.csv("https://github.com/rapkroes/Code_UKSH_Husten/blob/e67735f206a45437803f01e3fe0b6cacb84d3298/altersstruktur%20deutschland.csv")
 colnames(altersstruktur_deutschland)<- c("altersjahre","bevoelkerungsstand")
 icd10_blocks <- read.csv("https://github.com/rapkroes/Code_UKSH_Husten/blob/15bb98ade138b003fd3688b88a11b7075b6daa5b/icd10_blocks.csv")
 icd10_description<- read_excel("icd10_description.xlsx")
