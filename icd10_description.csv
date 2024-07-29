@@ -1,0 +1,1710 @@
+code;text
+A00;Cholera
+A01;Typhus abdominalis und Paratyphus
+A02;Sonstige Salmonelleninfektionen
+A03;Shigellose [Bakterielle Ruhr]
+A04;Sonstige bakterielle Darminfektionen
+A05;Sonstige bakteriell bedingte Lebensmittelvergiftungen, anderenorts nicht klassifiziert
+A06;Amoebiasis
+A07;Sonstige Darmkrankheiten durch Protozoen
+A08;Virusbedingte und sonstige naeher bezeichnete Darminfektionen
+A09;Sonstige und nicht naeher bezeichnete Gastroenteritis und Kolitis infektioesen und nicht naeher bezeichneten Ursprungs
+A15;Tuberkulose der Atmungsorgane, bakteriologisch, molekularbiologisch oder histologisch gesichert
+A16;Tuberkulose der Atmungsorgane, weder bakteriologisch, molekularbiologisch noch histologisch gesichert
+A17;Tuberkulose des Nervensystems
+A18;Tuberkulose sonstiger Organe
+A19;Miliartuberkulose
+A20;Pest
+A21;Tularaemie
+A22;Anthrax [Milzbrand]
+A23;Brucellose
+A24;Rotz [Malleus] und Melioidose [Pseudorotz]
+A25;Rattenbisskrankheiten
+A26;Erysipeloid
+A27;Leptospirose
+A28;Sonstige bakterielle Zoonosen, anderenorts nicht klassifiziert
+A30;Lepra [Aussatz]
+A31;Infektion durch sonstige Mykobakterien
+A32;Listeriose
+A33;Tetanus neonatorum
+A34;Tetanus waehrend der Schwangerschaft, der Geburt und des Wochenbettes
+A35;Sonstiger Tetanus
+A36;Diphtherie
+A37;Keuchhusten
+A38;Scharlach
+A39;Meningokokkeninfektion
+A40;Streptokokkensepsis
+A41;Sonstige Sepsis
+A42;Aktinomykose
+A43;Nokardiose
+A44;Bartonellose
+A46;Erysipel [Wundrose]
+A48;Sonstige bakterielle Krankheiten, anderenorts nicht klassifiziert
+A49;Bakterielle Infektion nicht naeher bezeichneter Lokalisation
+A50;Syphilis connata
+A51;Fruehsyphilis
+A52;Spaetsyphilis
+A53;Sonstige und nicht naeher bezeichnete Syphilis
+A54;Gonokokkeninfektion
+A55;Lymphogranuloma inguinale (venereum) durch Chlamydien
+A56;Sonstige durch Geschlechtsverkehr uebertragene Chlamydienkrankheiten
+A57;Ulcus molle (venereum)
+A58;Granuloma venereum (inguinale)
+A59;Trichomoniasis
+A60;Infektionen des Anogenitalbereiches durch Herpesviren [Herpes simplex]
+A63;Sonstige vorwiegend durch Geschlechtsverkehr uebertragene Krankheiten, anderenorts nicht klassifiziert
+A64;Durch Geschlechtsverkehr uebertragene Krankheiten, nicht naeher bezeichnet
+A65;Nichtvenerische Syphilis
+A66;Framboesie
+A67;Pinta [Carate]
+A68;Rueckfallfieber
+A69;Sonstige Spirochaeteninfektionen
+A70;Infektionen durch Chlamydia psittaci
+A71;Trachom
+A74;Sonstige Krankheiten durch Chlamydien
+A75;Fleckfieber
+A77;Zeckenbissfieber [Rickettsiosen, durch Zecken uebertragen]
+A78;Q-Fieber
+A79;Sonstige Rickettsiosen
+A80;Akute Poliomyelitis [Spinale Kinderlaehmung]
+A81;Atypische Virusinfektionen des Zentralnervensystems
+A82;Tollwut [Rabies]
+A83;Virusenzephalitis, durch Moskitos [Stechmuecken] uebertragen
+A84;Virusenzephalitis, durch Zecken uebertragen
+A85;Sonstige Virusenzephalitis, anderenorts nicht klassifiziert
+A86;Virusenzephalitis, nicht naeher bezeichnet
+A87;Virusmeningitis
+A88;Sonstige Virusinfektionen des Zentralnervensystems, anderenorts nicht klassifiziert
+A89;Virusinfektion des Zentralnervensystems, nicht naeher bezeichnet
+A92;Sonstige durch Moskitos [Stechmuecken] uebertragene Viruskrankheiten
+A93;Sonstige durch Arthropoden uebertragene Viruskrankheiten, anderenorts nicht klassifiziert
+A94;Durch Arthropoden uebertragene Viruskrankheit, nicht naeher bezeichnet
+A95;Gelbfieber
+A96;Haemorrhagisches Fieber durch Arenaviren
+A97;Dengue
+A98;Sonstige haemorrhagische Viruskrankheiten, anderenorts nicht klassifiziert
+A99;Nicht naeher bezeichnete haemorrhagische Viruskrankheit
+B00;Infektionen durch Herpesviren [Herpes simplex]
+B01;Varizellen [Windpocken]
+B02;Zoster [Herpes zoster]
+B03;Pocken
+B04;Affenpocken
+B05;Masern
+B06;Roeteln [Rubeola] [Rubella]
+B07;Viruswarzen
+B08;Sonstige Virusinfektionen, die durch Haut- und Schleimhautlaesionen gekennzeichnet sind, anderenorts nicht klassifiziert
+B09;Nicht naeher bezeichnete Virusinfektion, die durch Haut- und Schleimhautlaesionen gekennzeichnet ist
+B15;Akute Virushepatitis A
+B16;Akute Virushepatitis B
+B17;Sonstige akute Virushepatitis
+B18;Chronische Virushepatitis
+B19;Nicht naeher bezeichnete Virushepatitis
+B20;Infektioese und parasitaere Krankheiten infolge HIV-Krankheit [Humane Immundefizienz-Viruskrankheit]
+B21;Boesartige Neubildungen infolge HIV-Krankheit [Humane Immundefizienz-Viruskrankheit]
+B22;Sonstige naeher bezeichnete Krankheiten infolge HIV-Krankheit [Humane Immundefizienz-Viruskrankheit]
+B23;Sonstige Krankheitszustaende infolge HIV-Krankheit [Humane Immundefizienz-Viruskrankheit]
+B24;Nicht naeher bezeichnete HIV-Krankheit [Humane Immundefizienz-Viruskrankheit]
+B25;Zytomegalie
+B26;Mumps
+B27;Infektioese Mononukleose
+B30;Viruskonjunktivitis
+B33;Sonstige Viruskrankheiten, anderenorts nicht klassifiziert
+B34;Viruskrankheit nicht naeher bezeichneter Lokalisation
+B35;Dermatophytose [Tinea]
+B36;Sonstige oberflaechliche Mykosen
+B37;Kandidose
+B38;Kokzidioidomykose
+B39;Histoplasmose
+B40;Blastomykose
+B41;Parakokzidioidomykose
+B42;Sporotrichose
+B43;Chromomykose und chromomykotischer Abszess
+B44;Aspergillose
+B45;Kryptokokkose
+B46;Zygomykose
+B47;Myzetom
+B48;Sonstige Mykosen, anderenorts nicht klassifiziert
+B49;Nicht naeher bezeichnete Mykose
+B50;Malaria tropica durch Plasmodium falciparum
+B51;Malaria tertiana durch Plasmodium vivax
+B52;Malaria quartana durch Plasmodium malariae
+B53;Sonstige parasitologisch bestaetigte Malaria
+B54;Malaria, nicht naeher bezeichnet
+B55;Leishmaniose
+B56;Afrikanische Trypanosomiasis
+B57;Chagas-Krankheit
+B58;Toxoplasmose
+B60;Sonstige Protozoenkrankheiten, anderenorts nicht klassifiziert
+B64;Nicht naeher bezeichnete Protozoenkrankheit
+B65;Schistosomiasis [Bilharziose]
+B66;Befall durch sonstige Trematoden [Egel]
+B67;Echinokokkose
+B68;Taeniasis
+B69;Zystizerkose
+B70;Diphyllobothriose und Sparganose
+B71;Befall durch sonstige Zestoden
+B72;Drakunkulose
+B73;Onchozerkose
+B74;Filariose
+B75;Trichinellose
+B76;Hakenwurm-Krankheit
+B77;Askaridose
+B78;Strongyloidiasis
+B79;Trichuriasis
+B80;Enterobiasis
+B81;Sonstige intestinale Helminthosen, anderenorts nicht klassifiziert
+B82;Nicht naeher bezeichneter intestinaler Parasitismus
+B83;Sonstige Helminthosen
+B85;Pedikulose [Laeusebefall] und Phthiriasis [Filzlaeusebefall]
+B86;Skabies
+B87;Myiasis
+B88;Sonstiger Parasitenbefall der Haut
+B89;Nicht naeher bezeichnete parasitaere Krankheit
+B90;Folgezustaende der Tuberkulose
+B91;Folgezustaende der Poliomyelitis
+B92;Folgezustaende der Lepra
+B94;Folgezustaende sonstiger und nicht naeher bezeichneter infektioeser und parasitaerer Krankheiten
+B95;Streptokokken und Staphylokokken als Ursache von Krankheiten, die in anderen Kapiteln klassifiziert sind
+B96;Sonstige naeher bezeichnete Bakterien als Ursache von Krankheiten, die in anderen Kapiteln klassifiziert sind
+B97;Viren als Ursache von Krankheiten, die in anderen Kapiteln klassifiziert sind
+B98;Sonstige naeher bezeichnete infektioese Erreger als Ursache von Krankheiten, die in anderen Kapiteln klassifiziert sind
+B99;Sonstige und nicht naeher bezeichnete Infektionskrankheiten
+C00;Boesartige Neubildung der Lippe
+C01;Boesartige Neubildung des Zungengrundes
+C02;Boesartige Neubildung sonstiger und nicht naeher bezeichneter Teile der Zunge
+C03;Boesartige Neubildung des Zahnfleisches
+C04;Boesartige Neubildung des Mundbodens
+C05;Boesartige Neubildung des Gaumens
+C06;Boesartige Neubildung sonstiger und nicht naeher bezeichneter Teile des Mundes
+C07;Boesartige Neubildung der Parotis
+C08;Boesartige Neubildung sonstiger und nicht naeher bezeichneter grosser Speicheldruesen
+C09;Boesartige Neubildung der Tonsille
+C10;Boesartige Neubildung des Oropharynx
+C11;Boesartige Neubildung des Nasopharynx
+C12;Boesartige Neubildung des Recessus piriformis
+C13;Boesartige Neubildung des Hypopharynx
+C14;Boesartige Neubildung sonstiger und ungenau bezeichneter Lokalisationen der Lippe, der Mundhoehle und des Pharynx
+C15;Boesartige Neubildung des Oesophagus
+C16;Boesartige Neubildung des Magens
+C17;Boesartige Neubildung des Duenndarmes
+C18;Boesartige Neubildung des Kolons
+C19;Boesartige Neubildung am Rektosigmoid, Uebergang
+C20;Boesartige Neubildung des Rektums
+C21;Boesartige Neubildung des Anus und des Analkanals
+C22;Boesartige Neubildung der Leber und der intrahepatischen Gallengaenge
+C23;Boesartige Neubildung der Gallenblase
+C24;Boesartige Neubildung sonstiger und nicht naeher bezeichneter Teile der Gallenwege
+C25;Boesartige Neubildung des Pankreas
+C26;Boesartige Neubildung sonstiger und ungenau bezeichneter Verdauungsorgane
+C30;Boesartige Neubildung der Nasenhoehle und des Mittelohres
+C31;Boesartige Neubildung der Nasennebenhoehlen
+C32;Boesartige Neubildung des Larynx
+C33;Boesartige Neubildung der Trachea
+C34;Boesartige Neubildung der Bronchien und der Lunge
+C37;Boesartige Neubildung des Thymus
+C38;Boesartige Neubildung des Herzens, des Mediastinums und der Pleura
+C39;Boesartige Neubildung sonstiger und ungenau bezeichneter Lokalisationen des Atmungssystems und sonstiger intrathorakaler Organe
+C40;Boesartige Neubildung des Knochens und des Gelenkknorpels der Extremitaeten
+C41;Boesartige Neubildung des Knochens und des Gelenkknorpels sonstiger und nicht naeher bezeichneter Lokalisationen
+C43;Boesartiges Melanom der Haut
+C44;Sonstige boesartige Neubildungen der Haut
+C45;Mesotheliom
+C46;Kaposi-Sarkom [Sarcoma idiopathicum multiplex haemorrhagicum]
+C47;Boesartige Neubildung der peripheren Nerven und des autonomen Nervensystems
+C48;Boesartige Neubildung des Retroperitoneums und des Peritoneums
+C49;Boesartige Neubildung sonstigen Bindegewebes und anderer Weichteilgewebe
+C50;Boesartige Neubildung der Brustdruese [Mamma]
+C51;Boesartige Neubildung der Vulva
+C52;Boesartige Neubildung der Vagina
+C53;Boesartige Neubildung der Cervix uteri
+C54;Boesartige Neubildung des Corpus uteri
+C55;Boesartige Neubildung des Uterus, Teil nicht naeher bezeichnet
+C56;Boesartige Neubildung des Ovars
+C57;Boesartige Neubildung sonstiger und nicht naeher bezeichneter weiblicher Genitalorgane
+C58;Boesartige Neubildung der Plazenta
+C60;Boesartige Neubildung des Penis
+C61;Boesartige Neubildung der Prostata
+C62;Boesartige Neubildung des Hodens
+C63;Boesartige Neubildung sonstiger und nicht naeher bezeichneter maennlicher Genitalorgane
+C64;Boesartige Neubildung der Niere, ausgenommen Nierenbecken
+C65;Boesartige Neubildung des Nierenbeckens
+C66;Boesartige Neubildung des Ureters
+C67;Boesartige Neubildung der Harnblase
+C68;Boesartige Neubildung sonstiger und nicht naeher bezeichneter Harnorgane
+C69;Boesartige Neubildung des Auges und der Augenanhangsgebilde
+C70;Boesartige Neubildung der Meningen
+C71;Boesartige Neubildung des Gehirns
+C72;Boesartige Neubildung des Rueckenmarkes, der Hirnnerven und anderer Teile des Zentralnervensystems
+C73;Boesartige Neubildung der Schilddruese
+C74;Boesartige Neubildung der Nebenniere
+C75;Boesartige Neubildung sonstiger endokriner Druesen und verwandter Strukturen
+C76;Boesartige Neubildung sonstiger und ungenau bezeichneter Lokalisationen
+C77;Sekundaere und nicht naeher bezeichnete boesartige Neubildung der Lymphknoten
+C78;Sekundaere boesartige Neubildung der Atmungs- und Verdauungsorgane
+C79;Sekundaere boesartige Neubildung an sonstigen und nicht naeher bezeichneten Lokalisationen
+C80;Boesartige Neubildung ohne Angabe der Lokalisation
+C81;Hodgkin-Lymphom [Lymphogranulomatose]
+C82;Follikulaeres Lymphom
+C83;Nicht follikulaeres Lymphom
+C84;Reifzellige T/NK-Zell-Lymphome
+C85;Sonstige und nicht naeher bezeichnete Typen des Non-Hodgkin-Lymphoms
+C86;Weitere spezifizierte T/NK-Zell-Lymphome
+C88;Boesartige immunproliferative Krankheiten
+C90;Plasmozytom und boesartige Plasmazellen-Neubildungen
+C91;Lymphatische Leukaemie
+C92;Myeloische Leukaemie
+C93;Monozytenleukaemie
+C94;Sonstige Leukaemien naeher bezeichneten Zelltyps
+C95;Leukaemie nicht naeher bezeichneten Zelltyps
+C96;Sonstige und nicht naeher bezeichnete boesartige Neubildungen des lymphatischen, blutbildenden und verwandten Gewebes
+C97;Boesartige Neubildungen als Primaertumoren an mehreren Lokalisationen
+D00;Carcinoma in situ der Mundhoehle, des Oesophagus und des Magens
+D01;Carcinoma in situ sonstiger und nicht naeher bezeichneter Verdauungsorgane
+D02;Carcinoma in situ des Mittelohres und des Atmungssystems
+D03;Melanoma in situ
+D04;Carcinoma in situ der Haut
+D05;Carcinoma in situ der Brustdruese [Mamma]
+D06;Carcinoma in situ der Cervix uteri
+D07;Carcinoma in situ sonstiger und nicht naeher bezeichneter Genitalorgane
+D09;Carcinoma in situ sonstiger und nicht naeher bezeichneter Lokalisationen
+D10;Gutartige Neubildung des Mundes und des Pharynx
+D11;Gutartige Neubildung der grossen Speicheldruesen
+D12;Gutartige Neubildung des Kolons, des Rektums, des Analkanals und des Anus
+D13;Gutartige Neubildung sonstiger und ungenau bezeichneter Teile des Verdauungssystems
+D14;Gutartige Neubildung des Mittelohres und des Atmungssystems
+D15;Gutartige Neubildung sonstiger und nicht naeher bezeichneter intrathorakaler Organe
+D16;Gutartige Neubildung des Knochens und des Gelenkknorpels
+D17;Gutartige Neubildung des Fettgewebes
+D18;Haemangiom und Lymphangiom
+D19;Gutartige Neubildung des mesothelialen Gewebes
+D20;Gutartige Neubildung des Weichteilgewebes des Retroperitoneums und des Peritoneums
+D21;Sonstige gutartige Neubildungen des Bindegewebes und anderer Weichteilgewebe
+D22;Melanozytennaevus
+D23;Sonstige gutartige Neubildungen der Haut
+D24;Gutartige Neubildung der Brustdruese [Mamma]
+D25;Leiomyom des Uterus
+D26;Sonstige gutartige Neubildungen des Uterus
+D27;Gutartige Neubildung des Ovars
+D28;Gutartige Neubildung sonstiger und nicht naeher bezeichneter weiblicher Genitalorgane
+D29;Gutartige Neubildung der maennlichen Genitalorgane
+D30;Gutartige Neubildung der Harnorgane
+D31;Gutartige Neubildung des Auges und der Augenanhangsgebilde
+D32;Gutartige Neubildung der Meningen
+D33;Gutartige Neubildung des Gehirns und anderer Teile des Zentralnervensystems
+D34;Gutartige Neubildung der Schilddruese
+D35;Gutartige Neubildung sonstiger und nicht naeher bezeichneter endokriner Druesen
+D36;Gutartige Neubildung an sonstigen und nicht naeher bezeichneten Lokalisationen
+D37;Neubildung unsicheren oder unbekannten Verhaltens der Mundhoehle und der Verdauungsorgane
+D38;Neubildung unsicheren oder unbekannten Verhaltens des Mittelohres, der Atmungsorgane und der intrathorakalen Organe
+D39;Neubildung unsicheren oder unbekannten Verhaltens der weiblichen Genitalorgane
+D40;Neubildung unsicheren oder unbekannten Verhaltens der maennlichen Genitalorgane
+D41;Neubildung unsicheren oder unbekannten Verhaltens der Harnorgane
+D42;Neubildung unsicheren oder unbekannten Verhaltens der Meningen
+D43;Neubildung unsicheren oder unbekannten Verhaltens des Gehirns und des Zentralnervensystems
+D44;Neubildung unsicheren oder unbekannten Verhaltens der endokrinen Druesen
+D45;Polycythaemia vera
+D46;Myelodysplastische Syndrome
+D47;Sonstige Neubildungen unsicheren oder unbekannten Verhaltens des lymphatischen, blutbildenden und verwandten Gewebes
+D48;Neubildung unsicheren oder unbekannten Verhaltens an sonstigen und nicht naeher bezeichneten Lokalisationen
+D50;Eisenmangelanaemie
+D51;Vitamin-B12-Mangelanaemie
+D52;Folsaeure-Mangelanaemie
+D53;Sonstige alimentaere Anaemien
+D55;Anaemie durch Enzymdefekte
+D56;Thalassaemie
+D57;Sichelzellenkrankheiten
+D58;Sonstige hereditaere haemolytische Anaemien
+D59;Erworbene haemolytische Anaemien
+D60;Erworbene isolierte aplastische Anaemie [Erythroblastopenie] [pure red cell aplasia]
+D61;Sonstige aplastische Anaemien
+D62;Akute Blutungsanaemie
+D63;Anaemie bei chronischen, anderenorts klassifizierten Krankheiten
+D64;Sonstige Anaemien
+D65;Disseminierte intravasale Gerinnung [Defibrinationssyndrom]
+D66;Hereditaerer Faktor-VIII-Mangel
+D67;Hereditaerer Faktor-IX-Mangel
+D68;Sonstige Koagulopathien
+D69;Purpura und sonstige haemorrhagische Diathesen
+D70;Agranulozytose und Neutropenie
+D71;Funktionelle Stoerungen der neutrophilen Granulozyten
+D72;Sonstige Krankheiten der Leukozyten
+D73;Krankheiten der Milz
+D74;Methaemoglobinaemie
+D75;Sonstige Krankheiten des Blutes und der blutbildenden Organe
+D76;Sonstige naeher bezeichnete Krankheiten mit Beteiligung des lymphoretikulaeren Gewebes und des retikulohistiozytaeren Systems
+D77;Sonstige Krankheiten des Blutes und der blutbildenden Organe bei anderenorts klassifizierten Krankheiten
+D80;Immundefekt mit vorherrschendem Antikoerpermangel
+D81;Kombinierte Immundefekte
+D82;Immundefekt in Verbindung mit anderen schweren Defekten
+D83;Variabler Immundefekt [common variable immunodeficiency]
+D84;Sonstige Immundefekte
+D86;Sarkoidose
+D89;Sonstige Stoerungen mit Beteiligung des Immunsystems, anderenorts nicht klassifiziert
+D90;Immunkompromittierung nach Bestrahlung, Chemotherapie und sonstigen immunsuppressiven Massnahmen
+E00;Angeborenes Jodmangelsyndrom
+E01;Jodmangelbedingte Schilddruesenkrankheiten und verwandte Zustaende
+E02;Subklinische Jodmangel-Hypothyreose
+E03;Sonstige Hypothyreose
+E04;Sonstige nichttoxische Struma
+E05;Hyperthyreose [Thyreotoxikose]
+E06;Thyreoiditis
+E07;Sonstige Krankheiten der Schilddruese
+E10;Diabetes mellitus, Typ 1
+E11;Diabetes mellitus, Typ 2
+E12;Diabetes mellitus in Verbindung mit Fehl- oder Mangelernaehrung [Malnutrition]
+E13;Sonstiger naeher bezeichneter Diabetes mellitus
+E14;Nicht naeher bezeichneter Diabetes mellitus
+E15;Hypoglykaemisches Koma, nichtdiabetisch
+E16;Sonstige Stoerungen der inneren Sekretion des Pankreas
+E20;Hypoparathyreoidismus
+E21;Hyperparathyreoidismus und sonstige Krankheiten der Nebenschilddruese
+E22;Ueberfunktion der Hypophyse
+E23;Unterfunktion und andere Stoerungen der Hypophyse
+E24;Cushing-Syndrom
+E25;Adrenogenitale Stoerungen
+E26;Hyperaldosteronismus
+E27;Sonstige Krankheiten der Nebenniere
+E28;Ovarielle Dysfunktion
+E29;Testikulaere Dysfunktion
+E30;Pubertaetsstoerungen, anderenorts nicht klassifiziert
+E31;Polyglandulaere Dysfunktion
+E32;Krankheiten des Thymus
+E34;Sonstige endokrine Stoerungen
+E35;Stoerungen der endokrinen Druesen bei anderenorts klassifizierten Krankheiten
+E40;Kwashiorkor
+E41;Alimentaerer Marasmus
+E42;Kwashiorkor-Marasmus
+E43;Nicht naeher bezeichnete erhebliche Energie- und Eiweissmangelernaehrung
+E44;Energie- und Eiweissmangelernaehrung maessigen und leichten Grades
+E45;Entwicklungsverzoegerung durch Energie- und Eiweissmangelernaehrung
+E46;Nicht naeher bezeichnete Energie- und Eiweissmangelernaehrung
+E50;Vitamin-A-Mangel
+E51;Thiaminmangel [Vitamin-B1-Mangel]
+E52;Niazinmangel [Pellagra]
+E53;Mangel an sonstigen Vitaminen des Vitamin-B-Komplexes
+E54;Ascorbinsaeuremangel
+E55;Vitamin-D-Mangel
+E56;Sonstige Vitaminmangelzustaende
+E58;Alimentaerer Kalziummangel
+E59;Alimentaerer Selenmangel
+E60;Alimentaerer Zinkmangel
+E61;Mangel an sonstigen Spurenelementen
+E63;Sonstige alimentaere Mangelzustaende
+E64;Folgen von Mangelernaehrung oder sonstigen alimentaeren Mangelzustaenden
+E65;Lokalisierte Adipositas
+E66;Adipositas
+E67;Sonstige Ueberernaehrung
+E68;Folgen der Ueberernaehrung
+E70;Stoerungen des Stoffwechsels aromatischer Aminosaeuren
+E71;Stoerungen des Stoffwechsels verzweigter Aminosaeuren und des Fettsaeurestoffwechsels
+E72;Sonstige Stoerungen des Aminosaeurestoffwechsels
+E73;Laktoseintoleranz
+E74;Sonstige Stoerungen des Kohlenhydratstoffwechsels
+E75;Stoerungen des Sphingolipidstoffwechsels und sonstige Stoerungen der Lipidspeicherung
+E76;Stoerungen des Glykosaminoglykan-Stoffwechsels
+E77;Stoerungen des Glykoproteinstoffwechsels
+E78;Stoerungen des Lipoproteinstoffwechsels und sonstige Lipidaemien
+E79;Stoerungen des Purin- und Pyrimidinstoffwechsels
+E80;Stoerungen des Porphyrin- und Bilirubinstoffwechsels
+E83;Stoerungen des Mineralstoffwechsels
+E84;Zystische Fibrose
+E85;Amyloidose
+E86;Volumenmangel
+E87;Sonstige Stoerungen des Wasser- und Elektrolythaushaltes sowie des Saeure-Basen-Gleichgewichts
+E88;Sonstige Stoffwechselstoerungen
+E89;Endokrine und Stoffwechselstoerungen nach medizinischen Massnahmen, anderenorts nicht klassifiziert
+E90;Ernaehrungs- und Stoffwechselstoerungen bei anderenorts klassifizierten Krankheiten
+F00;Demenz bei Alzheimer-Krankheit
+F01;Vaskulaere Demenz
+F02;Demenz bei anderenorts klassifizierten Krankheiten
+F03;Nicht naeher bezeichnete Demenz
+F04;Organisches amnestisches Syndrom, nicht durch Alkohol oder andere psychotrope Substanzen bedingt
+F05;Delir, nicht durch Alkohol oder andere psychotrope Substanzen bedingt
+F06;Andere psychische Stoerungen aufgrund einer Schaedigung oder Funktionsstoerung des Gehirns oder einer koerperlichen Krankheit
+F07;Persoenlichkeits- und Verhaltensstoerung aufgrund einer Krankheit, Schaedigung oder Funktionsstoerung des Gehirns
+F09;Nicht naeher bezeichnete organische oder symptomatische psychische Stoerung
+F10;Psychische und Verhaltensstoerungen durch Alkohol
+F11;Psychische und Verhaltensstoerungen durch Opioide
+F12;Psychische und Verhaltensstoerungen durch Cannabinoide
+F13;Psychische und Verhaltensstoerungen durch Sedativa oder Hypnotika
+F14;Psychische und Verhaltensstoerungen durch Kokain
+F15;Psychische und Verhaltensstoerungen durch andere Stimulanzien, einschliesslich Koffein
+F16;Psychische und Verhaltensstoerungen durch Halluzinogene
+F17;Psychische und Verhaltensstoerungen durch Tabak
+F18;Psychische und Verhaltensstoerungen durch fluechtige Loesungsmittel
+F19;Psychische und Verhaltensstoerungen durch multiplen Substanzgebrauch und Konsum anderer psychotroper Substanzen
+F20;Schizophrenie
+F21;Schizotype Stoerung
+F22;Anhaltende wahnhafte Stoerungen
+F23;Akute voruebergehende psychotische Stoerungen
+F24;Induzierte wahnhafte Stoerung
+F25;Schizoaffektive Stoerungen
+F28;Sonstige nichtorganische psychotische Stoerungen
+F29;Nicht naeher bezeichnete nichtorganische Psychose
+F30;Manische Episode
+F31;Bipolare affektive Stoerung
+F32;Depressive Episode
+F33;Rezidivierende depressive Stoerung
+F34;Anhaltende affektive Stoerungen
+F38;Andere affektive Stoerungen
+F39;Nicht naeher bezeichnete affektive Stoerung
+F40;Phobische Stoerungen
+F41;Andere Angststoerungen
+F42;Zwangsstoerung
+F43;Reaktionen auf schwere Belastungen und Anpassungsstoerungen
+F44;Dissoziative Stoerungen [Konversionsstoerungen]
+F45;Somatoforme Stoerungen
+F48;Andere neurotische Stoerungen
+F50;Essstoerungen
+F51;Nichtorganische Schlafstoerungen
+F52;Sexuelle Funktionsstoerungen, nicht verursacht durch eine organische Stoerung oder Krankheit
+F53;Psychische oder Verhaltensstoerungen im Wochenbett, anderenorts nicht klassifiziert
+F54;Psychologische Faktoren oder Verhaltensfaktoren bei anderenorts klassifizierten Krankheiten
+F55;Schaedlicher Gebrauch von nichtabhaengigkeitserzeugenden Substanzen
+F59;Nicht naeher bezeichnete Verhaltensauffaelligkeiten bei koerperlichen Stoerungen und Faktoren
+F60;Spezifische Persoenlichkeitsstoerungen
+F61;Kombinierte und andere Persoenlichkeitsstoerungen
+F62;Andauernde Persoenlichkeitsaenderungen, nicht Folge einer Schaedigung oder Krankheit des Gehirns
+F63;Abnorme Gewohnheiten und Stoerungen der Impulskontrolle
+F64;Stoerungen der Geschlechtsidentitaet
+F65;Stoerungen der Sexualpraeferenz
+F66;Psychische und Verhaltensstoerungen in Verbindung mit der sexuellen Entwicklung und Orientierung
+F68;Andere Persoenlichkeits- und Verhaltensstoerungen
+F69;Nicht naeher bezeichnete Persoenlichkeits- und Verhaltensstoerung
+F70;Leichte Intelligenzminderung
+F71;Mittelgradige Intelligenzminderung
+F72;Schwere Intelligenzminderung
+F73;Schwerste Intelligenzminderung
+F74;Dissoziierte Intelligenz
+F78;Andere Intelligenzminderung
+F79;Nicht naeher bezeichnete Intelligenzminderung
+F80;Umschriebene Entwicklungsstoerungen des Sprechens und der Sprache
+F81;Umschriebene Entwicklungsstoerungen schulischer Fertigkeiten
+F82;Umschriebene Entwicklungsstoerung der motorischen Funktionen
+F83;Kombinierte umschriebene Entwicklungsstoerungen
+F84;Tief greifende Entwicklungsstoerungen
+F88;Andere Entwicklungsstoerungen
+F89;Nicht naeher bezeichnete Entwicklungsstoerung
+F90;Hyperkinetische Stoerungen
+F91;Stoerungen des Sozialverhaltens
+F92;Kombinierte Stoerung des Sozialverhaltens und der Emotionen
+F93;Emotionale Stoerungen des Kindesalters
+F94;Stoerungen sozialer Funktionen mit Beginn in der Kindheit und Jugend
+F95;Ticstoerungen
+F98;Andere Verhaltens- und emotionale Stoerungen mit Beginn in der Kindheit und Jugend
+F99;Psychische Stoerung ohne naehere Angabe
+G00;Bakterielle Meningitis, anderenorts nicht klassifiziert
+G01;Meningitis bei anderenorts klassifizierten bakteriellen Krankheiten
+G02;Meningitis bei sonstigen anderenorts klassifizierten infektioesen und parasitaeren Krankheiten
+G03;Meningitis durch sonstige und nicht naeher bezeichnete Ursachen
+G04;Enzephalitis, Myelitis und Enzephalomyelitis
+G05;Enzephalitis, Myelitis und Enzephalomyelitis bei anderenorts klassifizierten Krankheiten
+G06;Intrakranielle und intraspinale Abszesse und Granulome
+G07;Intrakranielle und intraspinale Abszesse und Granulome bei anderenorts klassifizierten Krankheiten
+G08;Intrakranielle und intraspinale Phlebitis und Thrombophlebitis
+G09;Folgen entzuendlicher Krankheiten des Zentralnervensystems
+G10;Chorea Huntington
+G11;Hereditaere Ataxie
+G12;Spinale Muskelatrophie und verwandte Syndrome
+G13;Systematrophien, vorwiegend das Zentralnervensystem betreffend, bei anderenorts klassifizierten Krankheiten
+G14;Postpolio-Syndrom
+G20;Primaeres Parkinson-Syndrom
+G21;Sekundaeres Parkinson-Syndrom
+G22;Parkinson-Syndrom bei anderenorts klassifizierten Krankheiten
+G23;Sonstige degenerative Krankheiten der Basalganglien
+G24;Dystonie
+G25;Sonstige extrapyramidale Krankheiten und Bewegungsstoerungen
+G26;Extrapyramidale Krankheiten und Bewegungsstoerungen bei anderenorts klassifizierten Krankheiten
+G30;Alzheimer-Krankheit
+G31;Sonstige degenerative Krankheiten des Nervensystems, anderenorts nicht klassifiziert
+G32;Sonstige degenerative Krankheiten des Nervensystems bei anderenorts klassifizierten Krankheiten
+G35;Multiple Sklerose [Encephalomyelitis disseminata]
+G36;Sonstige akute disseminierte Demyelinisation
+G37;Sonstige demyelinisierende Krankheiten des Zentralnervensystems
+G40;Epilepsie
+G41;Status epilepticus
+G43;Migraene
+G44;Sonstige Kopfschmerzsyndrome
+G45;Zerebrale transitorische Ischaemie und verwandte Syndrome
+G46;Zerebrale Gefaesssyndrome bei zerebrovaskulaeren Krankheiten
+G47;Schlafstoerungen
+G50;Krankheiten des N. trigeminus [V. Hirnnerv]
+G51;Krankheiten des N. facialis [VII. Hirnnerv]
+G52;Krankheiten sonstiger Hirnnerven
+G53;Krankheiten der Hirnnerven bei anderenorts klassifizierten Krankheiten
+G54;Krankheiten von Nervenwurzeln und Nervenplexus
+G55;Kompression von Nervenwurzeln und Nervenplexus bei anderenorts klassifizierten Krankheiten
+G56;Mononeuropathien der oberen Extremitaet
+G57;Mononeuropathien der unteren Extremitaet
+G58;Sonstige Mononeuropathien
+G59;Mononeuropathie bei anderenorts klassifizierten Krankheiten
+G60;Hereditaere und idiopathische Neuropathie
+G61;Polyneuritis
+G62;Sonstige Polyneuropathien
+G63;Polyneuropathie bei anderenorts klassifizierten Krankheiten
+G64;Sonstige Krankheiten des peripheren Nervensystems
+G70;Myasthenia gravis und sonstige neuromuskulaere Krankheiten
+G71;Primaere Myopathien
+G72;Sonstige Myopathien
+G73;Krankheiten im Bereich der neuromuskulaeren Synapse und des Muskels bei anderenorts klassifizierten Krankheiten
+G80;Infantile Zerebralparese
+G81;Hemiparese und Hemiplegie
+G82;Paraparese und Paraplegie, Tetraparese und Tetraplegie
+G83;Sonstige Laehmungssyndrome
+G90;Krankheiten des autonomen Nervensystems
+G91;Hydrozephalus
+G92;Toxische Enzephalopathie
+G93;Sonstige Krankheiten des Gehirns
+G94;Sonstige Krankheiten des Gehirns bei anderenorts klassifizierten Krankheiten
+G95;Sonstige Krankheiten des Rueckenmarkes
+G96;Sonstige Krankheiten des Zentralnervensystems
+G97;Krankheiten des Nervensystems nach medizinischen Massnahmen, anderenorts nicht klassifiziert
+G98;Sonstige Krankheiten des Nervensystems, anderenorts nicht klassifiziert
+G99;Sonstige Krankheiten des Nervensystems bei anderenorts klassifizierten Krankheiten
+H00;Hordeolum und Chalazion
+H01;Sonstige Entzuendung des Augenlides
+H02;Sonstige Affektionen des Augenlides
+H03;Affektionen des Augenlides bei anderenorts klassifizierten Krankheiten
+H04;Affektionen des Traenenapparates
+H05;Affektionen der Orbita
+H06;Affektionen des Traenenapparates und der Orbita bei anderenorts klassifizierten Krankheiten
+H10;Konjunktivitis
+H11;Sonstige Affektionen der Konjunktiva
+H13;Affektionen der Konjunktiva bei anderenorts klassifizierten Krankheiten
+H15;Affektionen der Sklera
+H16;Keratitis
+H17;Hornhautnarben und -truebungen
+H18;Sonstige Affektionen der Hornhaut
+H19;Affektionen der Sklera und der Hornhaut bei anderenorts klassifizierten Krankheiten
+H20;Iridozyklitis
+H21;Sonstige Affektionen der Iris und des Ziliarkoerpers
+H22;Affektionen der Iris und des Ziliarkoerpers bei anderenorts klassifizierten Krankheiten
+H25;Cataracta senilis
+H26;Sonstige Kataraktformen
+H27;Sonstige Affektionen der Linse
+H28;Katarakt und sonstige Affektionen der Linse bei anderenorts klassifizierten Krankheiten
+H30;Chorioretinitis
+H31;Sonstige Affektionen der Aderhaut
+H32;Chorioretinale Affektionen bei anderenorts klassifizierten Krankheiten
+H33;Netzhautabloesung und Netzhautriss
+H34;Netzhautgefaessverschluss
+H35;Sonstige Affektionen der Netzhaut
+H36;Affektionen der Netzhaut bei anderenorts klassifizierten Krankheiten
+H40;Glaukom
+H42;Glaukom bei anderenorts klassifizierten Krankheiten
+H43;Affektionen des Glaskoerpers
+H44;Affektionen des Augapfels
+H45;Affektionen des Glaskoerpers und des Augapfels bei anderenorts klassifizierten Krankheiten
+H46;Neuritis nervi optici
+H47;Sonstige Affektionen des N. opticus [II. Hirnnerv] und der Sehbahn
+H48;Affektionen des N. opticus [II. Hirnnerv] und der Sehbahn bei anderenorts klassifizierten Krankheiten
+H49;Strabismus paralyticus
+H50;Sonstiger Strabismus
+H51;Sonstige Stoerungen der Blickbewegungen
+H52;Akkommodationsstoerungen und Refraktionsfehler
+H53;Sehstoerungen
+H54;Blindheit und Sehbeeintraechtigung
+H55;Nystagmus und sonstige abnorme Augenbewegungen
+H57;Sonstige Affektionen des Auges und der Augenanhangsgebilde
+H58;Sonstige Affektionen des Auges und der Augenanhangsgebilde bei anderenorts klassifizierten Krankheiten
+H59;Affektionen des Auges und der Augenanhangsgebilde nach medizinischen Massnahmen, anderenorts nicht klassifiziert
+H60;Otitis externa
+H61;Sonstige Krankheiten des aeusseren Ohres
+H62;Krankheiten des aeusseren Ohres bei anderenorts klassifizierten Krankheiten
+H65;Nichteitrige Otitis media
+H66;Eitrige und nicht naeher bezeichnete Otitis media
+H67;Otitis media bei anderenorts klassifizierten Krankheiten
+H68;Entzuendung und Verschluss der Tuba auditiva
+H69;Sonstige Krankheiten der Tuba auditiva
+H70;Mastoiditis und verwandte Zustaende
+H71;Cholesteatom des Mittelohres
+H72;Trommelfellperforation
+H73;Sonstige Krankheiten des Trommelfells
+H74;Sonstige Krankheiten des Mittelohres und des Warzenfortsatzes
+H75;Sonstige Krankheiten des Mittelohres und des Warzenfortsatzes bei anderenorts klassifizierten Krankheiten
+H80;Otosklerose
+H81;Stoerungen der Vestibularfunktion
+H82;Schwindelsyndrome bei anderenorts klassifizierten Krankheiten
+H83;Sonstige Krankheiten des Innenohres
+H90;Hoerverlust durch Schallleitungs- oder Schallempfindungsstoerung
+H91;Sonstiger Hoerverlust
+H92;Otalgie und Ohrenfluss
+H93;Sonstige Krankheiten des Ohres, anderenorts nicht klassifiziert
+H94;Sonstige Krankheiten des Ohres bei anderenorts klassifizierten Krankheiten
+H95;Krankheiten des Ohres und des Warzenfortsatzes nach medizinischen Massnahmen, anderenorts nicht klassifiziert
+I00;Rheumatisches Fieber ohne Angabe einer Herzbeteiligung
+I01;Rheumatisches Fieber mit Herzbeteiligung
+I02;Rheumatische Chorea
+I05;Rheumatische Mitralklappenkrankheiten
+I06;Rheumatische Aortenklappenkrankheiten
+I07;Rheumatische Trikuspidalklappenkrankheiten
+I08;Krankheiten mehrerer Herzklappen
+I09;Sonstige rheumatische Herzkrankheiten
+I10;Essentielle (primaere) Hypertonie
+I11;Hypertensive Herzkrankheit
+I12;Hypertensive Nierenkrankheit
+I13;Hypertensive Herz- und Nierenkrankheit
+I15;Sekundaere Hypertonie
+I20;Angina pectoris
+I21;Akuter Myokardinfarkt
+I22;Rezidivierender Myokardinfarkt
+I23;Bestimmte akute Komplikationen nach akutem Myokardinfarkt
+I24;Sonstige akute ischaemische Herzkrankheit
+I25;Chronische ischaemische Herzkrankheit
+I26;Lungenembolie
+I27;Sonstige pulmonale Herzkrankheiten
+I28;Sonstige Krankheiten der Lungengefaesse
+I30;Akute Perikarditis
+I31;Sonstige Krankheiten des Perikards
+I32;Perikarditis bei anderenorts klassifizierten Krankheiten
+I33;Akute und subakute Endokarditis
+I34;Nichtrheumatische Mitralklappenkrankheiten
+I35;Nichtrheumatische Aortenklappenkrankheiten
+I36;Nichtrheumatische Trikuspidalklappenkrankheiten
+I37;Pulmonalklappenkrankheiten
+I38;Endokarditis, Herzklappe nicht naeher bezeichnet
+I39;Endokarditis und Herzklappenkrankheiten bei anderenorts klassifizierten Krankheiten
+I40;Akute Myokarditis
+I41;Myokarditis bei anderenorts klassifizierten Krankheiten
+I42;Kardiomyopathie
+I43;Kardiomyopathie bei anderenorts klassifizierten Krankheiten
+I44;Atrioventrikulaerer Block und Linksschenkelblock
+I45;Sonstige kardiale Erregungsleitungsstoerungen
+I46;Herzstillstand
+I47;Paroxysmale Tachykardie
+I48;Vorhofflimmern und Vorhofflattern
+I49;Sonstige kardiale Arrhythmien
+I50;Herzinsuffizienz
+I51;Komplikationen einer Herzkrankheit und ungenau beschriebene Herzkrankheit
+I52;Sonstige Herzkrankheiten bei anderenorts klassifizierten Krankheiten
+I60;Subarachnoidalblutung
+I61;Intrazerebrale Blutung
+I62;Sonstige nichttraumatische intrakranielle Blutung
+I63;Hirninfarkt
+I64;Schlaganfall, nicht als Blutung oder Infarkt bezeichnet
+I65;Verschluss und Stenose praezerebraler Arterien ohne resultierenden Hirninfarkt
+I66;Verschluss und Stenose zerebraler Arterien ohne resultierenden Hirninfarkt
+I67;Sonstige zerebrovaskulaere Krankheiten
+I68;Zerebrovaskulaere Stoerungen bei anderenorts klassifizierten Krankheiten
+I69;Folgen einer zerebrovaskulaeren Krankheit
+I70;Atherosklerose
+I71;Aortenaneurysma und -dissektion
+I72;Sonstiges Aneurysma und sonstige Dissektion
+I73;Sonstige periphere Gefaesskrankheiten
+I74;Arterielle Embolie und Thrombose
+I77;Sonstige Krankheiten der Arterien und Arteriolen
+I78;Krankheiten der Kapillaren
+I79;Krankheiten der Arterien, Arteriolen und Kapillaren bei anderenorts klassifizierten Krankheiten
+I80;Thrombose, Phlebitis und Thrombophlebitis
+I81;Pfortaderthrombose
+I82;Sonstige venoese Embolie und Thrombose
+I83;Varizen der unteren Extremitaeten
+I85;Oesophagusvarizen
+I86;Varizen sonstiger Lokalisationen
+I87;Sonstige Venenkrankheiten
+I88;Unspezifische Lymphadenitis
+I89;Sonstige nichtinfektioese Krankheiten der Lymphgefaesse und Lymphknoten
+I95;Hypotonie
+I97;Kreislaufkomplikationen nach medizinischen Massnahmen, anderenorts nicht klassifiziert
+I98;Sonstige Stoerungen des Kreislaufsystems bei anderenorts klassifizierten Krankheiten
+I99;Sonstige und nicht naeher bezeichnete Krankheiten des Kreislaufsystems
+J00;Akute Rhinopharyngitis [Erkaeltungsschnupfen]
+J01;Akute Sinusitis
+J02;Akute Pharyngitis
+J03;Akute Tonsillitis
+J04;Akute Laryngitis und Tracheitis
+J05;Akute obstruktive Laryngitis [Krupp] und Epiglottitis
+J06;Akute Infektionen an mehreren oder nicht naeher bezeichneten Lokalisationen der oberen Atemwege
+J09;Grippe durch zoonotische oder pandemische nachgewiesene Influenzaviren
+J10;Grippe durch saisonale nachgewiesene Influenzaviren
+J11;Grippe, Viren nicht nachgewiesen
+J12;Viruspneumonie, anderenorts nicht klassifiziert
+J13;Pneumonie durch Streptococcus pneumoniae
+J14;Pneumonie durch Haemophilus influenzae
+J15;Pneumonie durch Bakterien, anderenorts nicht klassifiziert
+J16;Pneumonie durch sonstige Infektionserreger, anderenorts nicht klassifiziert
+J17;Pneumonie bei anderenorts klassifizierten Krankheiten
+J18;Pneumonie, Erreger nicht naeher bezeichnet
+J20;Akute Bronchitis
+J21;Akute Bronchiolitis
+J22;Akute Infektion der unteren Atemwege, nicht naeher bezeichnet
+J30;Vasomotorische und allergische Rhinopathie
+J31;Chronische Rhinitis, Rhinopharyngitis und Pharyngitis
+J32;Chronische Sinusitis
+J33;Nasenpolyp
+J34;Sonstige Krankheiten der Nase und der Nasennebenhoehlen
+J35;Chronische Krankheiten der Gaumenmandeln und der Rachenmandel
+J36;Peritonsillarabszess
+J37;Chronische Laryngitis und Laryngotracheitis
+J38;Krankheiten der Stimmlippen und des Kehlkopfes, anderenorts nicht klassifiziert
+J39;Sonstige Krankheiten der oberen Atemwege
+J40;Bronchitis, nicht als akut oder chronisch bezeichnet
+J41;Einfache und schleimig-eitrige chronische Bronchitis
+J42;Nicht naeher bezeichnete chronische Bronchitis
+J43;Emphysem
+J44;Sonstige chronische obstruktive Lungenkrankheit
+J45;Asthma bronchiale
+J46;Status asthmaticus
+J47;Bronchiektasen
+J60;Kohlenbergarbeiter-Pneumokoniose
+J61;Pneumokoniose durch Asbest und sonstige anorganische Fasern
+J62;Pneumokoniose durch Quarzstaub
+J63;Pneumokoniose durch sonstige anorganische Staeube
+J64;Nicht naeher bezeichnete Pneumokoniose
+J65;Pneumokoniose in Verbindung mit Tuberkulose
+J66;Krankheit der Atemwege durch spezifischen organischen Staub
+J67;Allergische Alveolitis durch organischen Staub
+J68;Krankheiten der Atmungsorgane durch Einatmen von chemischen Substanzen, Gasen, Rauch und Daempfen
+J69;Pneumonie durch feste und fluessige Substanzen
+J70;Krankheiten der Atmungsorgane durch sonstige exogene Substanzen
+J80;Atemnotsyndrom des Erwachsenen [ARDS]
+J81;Lungenoedem
+J82;Eosinophiles Lungeninfiltrat, anderenorts nicht klassifiziert
+J84;Sonstige interstitielle Lungenkrankheiten
+J85;Abszess der Lunge und des Mediastinums
+J86;Pyothorax
+J90;Pleuraerguss, anderenorts nicht klassifiziert
+J91;Pleuraerguss bei anderenorts klassifizierten Krankheiten
+J92;Pleuraplaques
+J93;Pneumothorax
+J94;Sonstige Krankheitszustaende der Pleura
+J95;Krankheiten der Atemwege nach medizinischen Massnahmen, anderenorts nicht klassifiziert
+J96;Respiratorische Insuffizienz, anderenorts nicht klassifiziert
+J98;Sonstige Krankheiten der Atemwege
+J99;Krankheiten der Atemwege bei anderenorts klassifizierten Krankheiten
+K00;Stoerungen der Zahnentwicklung und des Zahndurchbruchs
+K01;Retinierte und impaktierte Zaehne
+K02;Zahnkaries
+K03;Sonstige Krankheiten der Zahnhartsubstanzen
+K04;Krankheiten der Pulpa und des periapikalen Gewebes
+K05;Gingivitis und Krankheiten des Parodonts
+K06;Sonstige Krankheiten der Gingiva und des zahnlosen Alveolarkammes
+K07;Dentofaziale Anomalien [einschliesslich fehlerhafter Okklusion]
+K08;Sonstige Krankheiten der Zaehne und des Zahnhalteapparates
+K09;Zysten der Mundregion, anderenorts nicht klassifiziert
+K10;Sonstige Krankheiten der Kiefer
+K11;Krankheiten der Speicheldruesen
+K12;Stomatitis und verwandte Krankheiten
+K13;Sonstige Krankheiten der Lippe und der Mundschleimhaut
+K14;Krankheiten der Zunge
+K20;Oesophagitis
+K21;Gastrooesophageale Refluxkrankheit
+K22;Sonstige Krankheiten des Oesophagus
+K23;Krankheiten des Oesophagus bei anderenorts klassifizierten Krankheiten
+K25;Ulcus ventriculi
+K26;Ulcus duodeni
+K27;Ulcus pepticum, Lokalisation nicht naeher bezeichnet
+K28;Ulcus pepticum jejuni
+K29;Gastritis und Duodenitis
+K30;Funktionelle Dyspepsie
+K31;Sonstige Krankheiten des Magens und des Duodenums
+K35;Akute Appendizitis
+K36;Sonstige Appendizitis
+K37;Nicht naeher bezeichnete Appendizitis
+K38;Sonstige Krankheiten der Appendix
+K40;Hernia inguinalis
+K41;Hernia femoralis
+K42;Hernia umbilicalis
+K43;Hernia ventralis
+K44;Hernia diaphragmatica
+K45;Sonstige abdominale Hernien
+K46;Nicht naeher bezeichnete abdominale Hernie
+K50;Crohn-Krankheit [Enteritis regionalis] [Morbus Crohn]
+K51;Colitis ulcerosa
+K52;Sonstige nichtinfektioese Gastroenteritis und Kolitis
+K55;Gefaesskrankheiten des Darmes
+K56;Paralytischer Ileus und intestinale Obstruktion ohne Hernie
+K57;Divertikulose des Darmes
+K58;Reizdarmsyndrom
+K59;Sonstige funktionelle Darmstoerungen
+K60;Fissur und Fistel in der Anal- und Rektalregion
+K61;Abszess in der Anal- und Rektalregion
+K62;Sonstige Krankheiten des Anus und des Rektums
+K63;Sonstige Krankheiten des Darmes
+K64;Haemorrhoiden und Perianalvenenthrombose
+K65;Peritonitis
+K66;Sonstige Krankheiten des Peritoneums
+K67;Krankheiten des Peritoneums bei anderenorts klassifizierten Infektionskrankheiten
+K70;Alkoholische Leberkrankheit
+K71;Toxische Leberkrankheit
+K72;Leberversagen, anderenorts nicht klassifiziert
+K73;Chronische Hepatitis, anderenorts nicht klassifiziert
+K74;Fibrose und Zirrhose der Leber
+K75;Sonstige entzuendliche Leberkrankheiten
+K76;Sonstige Krankheiten der Leber
+K77;Leberkrankheiten bei anderenorts klassifizierten Krankheiten
+K80;Cholelithiasis
+K81;Cholezystitis
+K82;Sonstige Krankheiten der Gallenblase
+K83;Sonstige Krankheiten der Gallenwege
+K85;Akute Pankreatitis
+K86;Sonstige Krankheiten des Pankreas
+K87;Krankheiten der Gallenblase, der Gallenwege und des Pankreas bei anderenorts klassifizierten Krankheiten
+K90;Intestinale Malabsorption
+K91;Krankheiten des Verdauungssystems nach medizinischen Massnahmen, anderenorts nicht klassifiziert
+K92;Sonstige Krankheiten des Verdauungssystems
+K93;Krankheiten sonstiger Verdauungsorgane bei anderenorts klassifizierten Krankheiten
+L00;Staphylococcal scalded skin syndrome [SSS-Syndrom]
+L01;Impetigo
+L02;Hautabszess, Furunkel und Karbunkel
+L03;Phlegmone
+L04;Akute Lymphadenitis
+L05;Pilonidalzyste
+L08;Sonstige lokale Infektionen der Haut und der Unterhaut
+L10;Pemphiguskrankheiten
+L11;Sonstige akantholytische Dermatosen
+L12;Pemphigoidkrankheiten
+L13;Sonstige bulloese Dermatosen
+L14;Bulloese Dermatosen bei anderenorts klassifizierten Krankheiten
+L20;Atopisches [endogenes] Ekzem
+L21;Seborrhoisches Ekzem
+L22;Windeldermatitis
+L23;Allergische Kontaktdermatitis
+L24;Toxische Kontaktdermatitis
+L25;Nicht naeher bezeichnete Kontaktdermatitis
+L26;Exfoliative Dermatitis
+L27;Dermatitis durch oral, enteral oder parenteral aufgenommene Substanzen
+L28;Lichen simplex chronicus und Prurigo
+L29;Pruritus
+L30;Sonstige Dermatitis
+L40;Psoriasis
+L41;Parapsoriasis
+L42;Pityriasis rosea
+L43;Lichen ruber planus
+L44;Sonstige papulosquamoese Hautkrankheiten
+L45;Papulosquamoese Hautkrankheiten bei anderenorts klassifizierten Krankheiten
+L50;Urtikaria
+L51;Erythema exsudativum multiforme
+L52;Erythema nodosum
+L53;Sonstige erythematoese Krankheiten
+L54;Erythem bei anderenorts klassifizierten Krankheiten
+L55;Dermatitis solaris acuta
+L56;Sonstige akute Hautveraenderungen durch Ultraviolettstrahlen
+L57;Hautveraenderungen durch chronische Exposition gegenueber nichtionisierender Strahlung
+L58;Radiodermatitis
+L59;Sonstige Krankheiten der Haut und der Unterhaut durch Strahleneinwirkung
+L60;Krankheiten der Naegel
+L62;Krankheiten der Naegel bei anderenorts klassifizierten Krankheiten
+L63;Alopecia areata
+L64;Alopecia androgenetica
+L65;Sonstiger Haarausfall ohne Narbenbildung
+L66;Narbige Alopezie [Haarausfall mit Narbenbildung]
+L67;Anomalien der Haarfarbe und des Haarschaftes
+L68;Hypertrichose
+L70;Akne
+L71;Rosazea
+L72;Follikulaere Zysten der Haut und der Unterhaut
+L73;Sonstige Krankheiten der Haarfollikel
+L74;Krankheiten der ekkrinen Schweissdruesen
+L75;Krankheiten der apokrinen Schweissdruesen
+L80;Vitiligo
+L81;Sonstige Stoerungen der Hautpigmentierung
+L82;Seborrhoische Keratose
+L83;Acanthosis nigricans
+L84;Huehneraugen und Horn- (Haut-) Schwielen
+L85;Sonstige Epidermisverdickung
+L86;Keratom bei anderenorts klassifizierten Krankheiten
+L87;Stoerungen der transepidermalen Elimination
+L88;Pyoderma gangraenosum
+L89;Dekubitalgeschwuer und Druckzone
+L90;Atrophische Hautkrankheiten
+L91;Hypertrophe Hautkrankheiten
+L92;Granulomatoese Krankheiten der Haut und der Unterhaut
+L93;Lupus erythematodes
+L94;Sonstige lokalisierte Krankheiten des Bindegewebes
+L95;Anderenorts nicht klassifizierte Vaskulitis, die auf die Haut begrenzt ist
+L97;Ulcus cruris, anderenorts nicht klassifiziert
+L98;Sonstige Krankheiten der Haut und der Unterhaut, anderenorts nicht klassifiziert
+L99;Sonstige Krankheiten der Haut und der Unterhaut bei anderenorts klassifizierten Krankheiten
+M00;Eitrige Arthritis
+M01;Direkte Gelenkinfektionen bei anderenorts klassifizierten infektioesen und parasitaeren Krankheiten
+M02;Reaktive Arthritiden
+M03;Postinfektioese und reaktive Arthritiden bei anderenorts klassifizierten Krankheiten
+M05;Seropositive chronische Polyarthritis
+M06;Sonstige chronische Polyarthritis
+M07;Arthritis psoriatica und Arthritiden bei gastrointestinalen Grundkrankheiten
+M08;Juvenile Arthritis
+M09;Juvenile Arthritis bei anderenorts klassifizierten Krankheiten
+M10;Gicht
+M11;Sonstige Kristall-Arthropathien
+M12;Sonstige naeher bezeichnete Arthropathien
+M13;Sonstige Arthritis
+M14;Arthropathien bei sonstigen anderenorts klassifizierten Krankheiten
+M15;Polyarthrose
+M16;Koxarthrose [Arthrose des Hueftgelenkes]
+M17;Gonarthrose [Arthrose des Kniegelenkes]
+M18;Rhizarthrose [Arthrose des Daumensattelgelenkes]
+M19;Sonstige Arthrose
+M20;Erworbene Deformitaeten der Finger und Zehen
+M21;Sonstige erworbene Deformitaeten der Extremitaeten
+M22;Krankheiten der Patella
+M23;Binnenschaedigung des Kniegelenkes [internal derangement]
+M24;Sonstige naeher bezeichnete Gelenkschaedigungen
+M25;Sonstige Gelenkkrankheiten, anderenorts nicht klassifiziert
+M30;Panarteriitis nodosa und verwandte Zustaende
+M31;Sonstige nekrotisierende Vaskulopathien
+M32;Systemischer Lupus erythematodes
+M33;Dermatomyositis-Polymyositis
+M34;Systemische Sklerose
+M35;Sonstige Krankheiten mit Systembeteiligung des Bindegewebes
+M36;Systemkrankheiten des Bindegewebes bei anderenorts klassifizierten Krankheiten
+M40;Kyphose und Lordose
+M41;Skoliose
+M42;Osteochondrose der Wirbelsaeule
+M43;Sonstige Deformitaeten der Wirbelsaeule und des Rueckens
+M45;Spondylitis ankylosans
+M46;Sonstige entzuendliche Spondylopathien
+M47;Spondylose
+M48;Sonstige Spondylopathien
+M49;Spondylopathien bei anderenorts klassifizierten Krankheiten
+M50;Zervikale Bandscheibenschaeden
+M51;Sonstige Bandscheibenschaeden
+M53;Sonstige Krankheiten der Wirbelsaeule und des Rueckens, anderenorts nicht klassifiziert
+M54;Rueckenschmerzen
+M60;Myositis
+M61;Kalzifikation und Ossifikation von Muskeln
+M62;Sonstige Muskelkrankheiten
+M63;Muskelkrankheiten bei anderenorts klassifizierten Krankheiten
+M65;Synovitis und Tenosynovitis
+M66;Spontanruptur der Synovialis und von Sehnen
+M67;Sonstige Krankheiten der Synovialis und der Sehnen
+M68;Krankheiten der Synovialis und der Sehnen bei anderenorts klassifizierten Krankheiten
+M70;Krankheiten des Weichteilgewebes im Zusammenhang mit Beanspruchung, Ueberbeanspruchung und Druck
+M71;Sonstige Bursopathien
+M72;Fibromatosen
+M73;Krankheiten des Weichteilgewebes bei anderenorts klassifizierten Krankheiten
+M75;Schulterlaesionen
+M76;Enthesopathien der unteren Extremitaet mit Ausnahme des Fusses
+M77;Sonstige Enthesopathien
+M79;Sonstige Krankheiten des Weichteilgewebes, anderenorts nicht klassifiziert
+M80;Osteoporose mit pathologischer Fraktur
+M81;Osteoporose ohne pathologische Fraktur
+M82;Osteoporose bei anderenorts klassifizierten Krankheiten
+M83;Osteomalazie im Erwachsenenalter
+M84;Veraenderungen der Knochenkontinuitaet
+M85;Sonstige Veraenderungen der Knochendichte und -struktur
+M86;Osteomyelitis
+M87;Knochennekrose
+M88;Osteodystrophia deformans [Paget-Krankheit]
+M89;Sonstige Knochenkrankheiten
+M90;Osteopathien bei anderenorts klassifizierten Krankheiten
+M91;Juvenile Osteochondrose der Huefte und des Beckens
+M92;Sonstige juvenile Osteochondrosen
+M93;Sonstige Osteochondropathien
+M94;Sonstige Knorpelkrankheiten
+M95;Sonstige erworbene Deformitaeten des Muskel-Skelett-Systems und des Bindegewebes
+M96;Krankheiten des Muskel-Skelett-Systems nach medizinischen Massnahmen, anderenorts nicht klassifiziert
+M99;Biomechanische Funktionsstoerungen, anderenorts nicht klassifiziert
+N00;Akutes nephritisches Syndrom
+N01;Rapid-progressives nephritisches Syndrom
+N02;Rezidivierende und persistierende Haematurie
+N03;Chronisches nephritisches Syndrom
+N04;Nephrotisches Syndrom
+N05;Nicht naeher bezeichnetes nephritisches Syndrom
+N06;Isolierte Proteinurie mit Angabe morphologischer Veraenderungen
+N07;Hereditaere Nephropathie, anderenorts nicht klassifiziert
+N08;Glomerulaere Krankheiten bei anderenorts klassifizierten Krankheiten
+N10;Akute tubulointerstitielle Nephritis
+N11;Chronische tubulointerstitielle Nephritis
+N12;Tubulointerstitielle Nephritis, nicht als akut oder chronisch bezeichnet
+N13;Obstruktive Uropathie und Refluxuropathie
+N14;Arzneimittel- und schwermetallinduzierte tubulointerstitielle und tubulaere Krankheitszustaende
+N15;Sonstige tubulointerstitielle Nierenkrankheiten
+N16;Tubulointerstitielle Nierenkrankheiten bei anderenorts klassifizierten Krankheiten
+N17;Akutes Nierenversagen
+N18;Chronische Nierenkrankheit
+N19;Nicht naeher bezeichnete Niereninsuffizienz
+N20;Nieren- und Ureterstein
+N21;Stein in den unteren Harnwegen
+N22;Harnstein bei anderenorts klassifizierten Krankheiten
+N23;Nicht naeher bezeichnete Nierenkolik
+N25;Krankheiten infolge Schaedigung der tubulaeren Nierenfunktion
+N26;Schrumpfniere, nicht naeher bezeichnet
+N27;Kleine Niere unbekannter Ursache
+N28;Sonstige Krankheiten der Niere und des Ureters, anderenorts nicht klassifiziert
+N29;Sonstige Krankheiten der Niere und des Ureters bei anderenorts klassifizierten Krankheiten
+N30;Zystitis
+N31;Neuromuskulaere Dysfunktion der Harnblase, anderenorts nicht klassifiziert
+N32;Sonstige Krankheiten der Harnblase
+N33;Krankheiten der Harnblase bei anderenorts klassifizierten Krankheiten
+N34;Urethritis und urethrales Syndrom
+N35;Harnroehrenstriktur
+N36;Sonstige Krankheiten der Harnroehre
+N37;Krankheiten der Harnroehre bei anderenorts klassifizierten Krankheiten
+N39;Sonstige Krankheiten des Harnsystems
+N40;Prostatahyperplasie
+N41;Entzuendliche Krankheiten der Prostata
+N42;Sonstige Krankheiten der Prostata
+N43;Hydrozele und Spermatozele
+N44;Hodentorsion und Hydatidentorsion
+N45;Orchitis und Epididymitis
+N46;Sterilitaet beim Mann
+N47;Vorhauthypertrophie, Phimose und Paraphimose
+N48;Sonstige Krankheiten des Penis
+N49;Entzuendliche Krankheiten der maennlichen Genitalorgane, anderenorts nicht klassifiziert
+N50;Sonstige Krankheiten der maennlichen Genitalorgane
+N51;Krankheiten der maennlichen Genitalorgane bei anderenorts klassifizierten Krankheiten
+N60;Gutartige Mammadysplasie [Brustdruesendysplasie]
+N61;Entzuendliche Krankheiten der Mamma [Brustdruese]
+N62;Hypertrophie der Mamma [Brustdruese]
+N63;Nicht naeher bezeichnete Knoten in der Mamma [Brustdruese]
+N64;Sonstige Krankheiten der Mamma [Brustdruese]
+N70;Salpingitis und Oophoritis
+N71;Entzuendliche Krankheit des Uterus, ausgenommen der Zervix
+N72;Entzuendliche Krankheit der Cervix uteri
+N73;Sonstige entzuendliche Krankheiten im weiblichen Becken
+N74;Entzuendung im weiblichen Becken bei anderenorts klassifizierten Krankheiten
+N75;Krankheiten der Bartholin-Druesen
+N76;Sonstige entzuendliche Krankheit der Vagina und Vulva
+N77;Vulvovaginale Ulzeration und Entzuendung bei anderenorts klassifizierten Krankheiten
+N80;Endometriose
+N81;Genitalprolaps bei der Frau
+N82;Fisteln mit Beteiligung des weiblichen Genitaltraktes
+N83;Nichtentzuendliche Krankheiten des Ovars, der Tuba uterina und des Lig. latum uteri
+N84;Polyp des weiblichen Genitaltraktes
+N85;Sonstige nichtentzuendliche Krankheiten des Uterus, ausgenommen der Zervix
+N86;Erosion und Ektropium der Cervix uteri
+N87;Dysplasie der Cervix uteri
+N88;Sonstige nichtentzuendliche Krankheiten der Cervix uteri
+N89;Sonstige nichtentzuendliche Krankheiten der Vagina
+N90;Sonstige nichtentzuendliche Krankheiten der Vulva und des Perineums
+N91;Ausgebliebene, zu schwache oder zu seltene Menstruation
+N92;Zu starke, zu haeufige oder unregelmaessige Menstruation
+N93;Sonstige abnorme Uterus- oder Vaginalblutung
+N94;Schmerz und andere Zustaende im Zusammenhang mit den weiblichen Genitalorganen und dem Menstruationszyklus
+N95;Klimakterische Stoerungen
+N96;Neigung zu habituellem Abort
+N97;Sterilitaet der Frau
+N98;Komplikationen im Zusammenhang mit kuenstlicher Befruchtung
+N99;Krankheiten des Urogenitalsystems nach medizinischen Massnahmen, anderenorts nicht klassifiziert
+O00;Extrauteringraviditaet
+O01;Blasenmole
+O02;Sonstige abnorme Konzeptionsprodukte
+O03;Spontanabort
+O04;Aerztlich eingeleiteter Abort
+O05;Sonstiger Abort
+O06;Nicht naeher bezeichneter Abort
+O07;Misslungene Aborteinleitung
+O08;Komplikationen nach Abort, Extrauteringraviditaet und Molenschwangerschaft
+O09;Schwangerschaftsdauer
+O10;Vorher bestehende Hypertonie, die Schwangerschaft, Geburt und Wochenbett kompliziert
+O11;Chronische Hypertonie mit aufgepfropfter Praeeklampsie
+O12;Gestationsoedeme und Gestationsproteinurie [schwangerschaftsinduziert] ohne Hypertonie
+O13;Gestationshypertonie [schwangerschaftsinduzierte Hypertonie]
+O14;Praeeklampsie
+O15;Eklampsie
+O16;Nicht naeher bezeichnete Hypertonie der Mutter
+O20;Blutung in der Fruehschwangerschaft
+O21;Uebermaessiges Erbrechen waehrend der Schwangerschaft
+O22;Venenkrankheiten und Haemorrhoiden als Komplikationen in der Schwangerschaft
+O23;Infektionen des Urogenitaltraktes in der Schwangerschaft
+O24;Diabetes mellitus in der Schwangerschaft
+O25;Fehl- und Mangelernaehrung in der Schwangerschaft
+O26;Betreuung der Mutter bei sonstigen Zustaenden, die vorwiegend mit der Schwangerschaft verbunden sind
+O28;Abnorme Befunde bei der Screeninguntersuchung der Mutter zur praenatalen Diagnostik
+O29;Komplikationen bei Anaesthesie in der Schwangerschaft
+O30;Mehrlingsschwangerschaft
+O31;Komplikationen, die fuer eine Mehrlingsschwangerschaft spezifisch sind
+O32;Betreuung der Mutter bei festgestellter oder vermuteter Lage- und Einstellungsanomalie des Fetus
+O33;Betreuung der Mutter bei festgestelltem oder vermutetem Missverhaeltnis zwischen Fetus und Becken
+O34;Betreuung der Mutter bei festgestellter oder vermuteter Anomalie der Beckenorgane
+O35;Betreuung der Mutter bei festgestellter oder vermuteter Anomalie oder Schaedigung des Fetus
+O36;Betreuung der Mutter wegen sonstiger festgestellter oder vermuteter Komplikationen beim Fetus
+O40;Polyhydramnion
+O41;Sonstige Veraenderungen des Fruchtwassers und der Eihaeute
+O42;Vorzeitiger Blasensprung
+O43;Pathologische Zustaende der Plazenta
+O44;Placenta praevia
+O45;Vorzeitige Plazentaloesung [Abruptio placentae]
+O46;Praepartale Blutung, anderenorts nicht klassifiziert
+O47;Frustrane Kontraktionen [Unnuetze Wehen]
+O48;Uebertragene Schwangerschaft
+O60;Vorzeitige Wehen und Entbindung
+O61;Misslungene Geburtseinleitung
+O62;Abnorme Wehentaetigkeit
+O63;Protrahierte Geburt
+O64;Geburtshindernis durch Lage-, Haltungs- und Einstellungsanomalien des Fetus
+O65;Geburtshindernis durch Anomalie des muetterlichen Beckens
+O66;Sonstiges Geburtshindernis
+O67;Komplikationen bei Wehen und Entbindung durch intrapartale Blutung, anderenorts nicht klassifiziert
+O68;Komplikationen bei Wehen und Entbindung durch fetalen Distress [fetal distress] [fetaler Gefahrenzustand]
+O69;Komplikationen bei Wehen und Entbindung durch Nabelschnurkomplikationen
+O70;Dammriss unter der Geburt
+O71;Sonstige Verletzungen unter der Geburt
+O72;Postpartale Blutung
+O73;Retention der Plazenta und der Eihaeute ohne Blutung
+O74;Komplikationen bei Anaesthesie waehrend der Wehentaetigkeit und bei der Entbindung
+O75;Sonstige Komplikationen bei Wehentaetigkeit und Entbindung, anderenorts nicht klassifiziert
+O80;Spontangeburt eines Einlings
+O81;Geburt eines Einlings durch Zangen- oder Vakuumextraktion
+O82;Geburt eines Einlings durch Schnittentbindung [Sectio caesarea]
+O85;Puerperalfieber
+O86;Sonstige Wochenbettinfektionen
+O87;Venenkrankheiten und Haemorrhoiden als Komplikationen im Wochenbett
+O88;Embolie waehrend der Gestationsperiode
+O89;Komplikationen bei Anaesthesie im Wochenbett
+O90;Wochenbettkomplikationen, anderenorts nicht klassifiziert
+O91;Infektionen der Mamma [Brustdruese] im Zusammenhang mit der Gestation
+O92;Sonstige Krankheiten der Mamma [Brustdruese] im Zusammenhang mit der Gestation und Laktationsstoerungen
+O94;Folgen von Komplikationen waehrend Schwangerschaft, Geburt und Wochenbett
+O95;Sterbefall waehrend der Gestationsperiode nicht naeher bezeichneter Ursache
+O96;Tod infolge jeder gestationsbedingten Ursache nach mehr als 42 Tagen bis unter einem Jahr nach der Entbindung
+O97;Tod an den Folgen gestationsbedingter Ursachen
+O98;Infektioese und parasitaere Krankheiten der Mutter, die anderenorts klassifizierbar sind, die jedoch Schwangerschaft, Geburt und Wochenbett komplizieren
+O99;Sonstige Krankheiten der Mutter, die anderenorts klassifizierbar sind, die jedoch Schwangerschaft, Geburt und Wochenbett komplizieren
+P00;Schaedigung des Fetus und Neugeborenen durch Zustaende der Mutter, die zur vorliegenden Schwangerschaft keine Beziehung haben muessen
+P01;Schaedigung des Fetus und Neugeborenen durch muetterliche Schwangerschaftskomplikationen
+P02;Schaedigung des Fetus und Neugeborenen durch Komplikationen von Plazenta, Nabelschnur und Eihaeuten
+P03;Schaedigung des Fetus und Neugeborenen durch sonstige Komplikationen bei Wehen und Entbindung
+P04;Schaedigung des Fetus und Neugeborenen durch Noxen, die transplazentar oder mit der Muttermilch uebertragen werden
+P05;Intrauterine Mangelentwicklung und fetale Mangelernaehrung
+P07;Stoerungen im Zusammenhang mit kurzer Schwangerschaftsdauer und niedrigem Geburtsgewicht, anderenorts nicht klassifiziert
+P08;Stoerungen im Zusammenhang mit langer Schwangerschaftsdauer und hohem Geburtsgewicht
+P10;Intrakranielle Verletzung und Blutung durch Geburtsverletzung
+P11;Sonstige Geburtsverletzungen des Zentralnervensystems
+P12;Geburtsverletzung der behaarten Kopfhaut
+P13;Geburtsverletzung des Skeletts
+P14;Geburtsverletzung des peripheren Nervensystems
+P15;Sonstige Geburtsverletzungen
+P20;Intrauterine Hypoxie
+P21;Asphyxie unter der Geburt
+P22;Atemnot [Respiratory distress] beim Neugeborenen
+P23;Angeborene Pneumonie
+P24;Aspirationssyndrome beim Neugeborenen
+P25;Interstitielles Emphysem und verwandte Zustaende mit Ursprung in der Perinatalperiode
+P26;Lungenblutung mit Ursprung in der Perinatalperiode
+P27;Chronische Atemwegskrankheit mit Ursprung in der Perinatalperiode
+P28;Sonstige Stoerungen der Atmung mit Ursprung in der Perinatalperiode
+P29;Kardiovaskulaere Krankheiten mit Ursprung in der Perinatalperiode
+P35;Angeborene Viruskrankheiten
+P36;Bakterielle Sepsis beim Neugeborenen
+P37;Sonstige angeborene infektioese und parasitaere Krankheiten
+P38;Omphalitis beim Neugeborenen mit oder ohne leichte Blutung
+P39;Sonstige Infektionen, die fuer die Perinatalperiode spezifisch sind
+P50;Fetaler Blutverlust
+P51;Nabelblutung beim Neugeborenen
+P52;Intrakranielle nichttraumatische Blutung beim Fetus und Neugeborenen
+P53;Haemorrhagische Krankheit beim Fetus und Neugeborenen
+P54;Sonstige Blutungen beim Neugeborenen
+P55;Haemolytische Krankheit beim Fetus und Neugeborenen
+P56;Hydrops fetalis durch haemolytische Krankheit
+P57;Kernikterus
+P58;Neugeborenenikterus durch sonstige gesteigerte Haemolyse
+P59;Neugeborenenikterus durch sonstige und nicht naeher bezeichnete Ursachen
+P60;Disseminierte intravasale Gerinnung beim Fetus und Neugeborenen
+P61;Sonstige haematologische Krankheiten in der Perinatalperiode
+P70;Transitorische Stoerungen des Kohlenhydratstoffwechsels, die fuer den Fetus und das Neugeborene spezifisch sind
+P71;Transitorische Stoerungen des Kalzium- und Magnesiumstoffwechsels beim Neugeborenen
+P72;Sonstige transitorische endokrine Krankheiten beim Neugeborenen
+P74;Sonstige transitorische Stoerungen des Elektrolythaushaltes und des Stoffwechsels beim Neugeborenen
+P75;Mekoniumileus bei zystischer Fibrose
+P76;Sonstiger Darmverschluss beim Neugeborenen
+P77;Enterocolitis necroticans beim Fetus und Neugeborenen
+P78;Sonstige Krankheiten des Verdauungssystems in der Perinatalperiode
+P80;Hypothermie beim Neugeborenen
+P81;Sonstige Stoerungen der Temperaturregulation beim Neugeborenen
+P83;Sonstige Krankheitszustaende mit Beteiligung der Haut, die fuer den Fetus und das Neugeborene spezifisch sind
+P90;Kraempfe beim Neugeborenen
+P91;Sonstige zerebrale Stoerungen beim Neugeborenen
+P92;Ernaehrungsprobleme beim Neugeborenen
+P93;Reaktionen und Intoxikationen durch Arzneimittel oder Drogen, die dem Fetus und Neugeborenen verabreicht wurden
+P94;Stoerungen des Muskeltonus beim Neugeborenen
+P95;Fetaltod nicht naeher bezeichneter Ursache
+P96;Sonstige Zustaende, die ihren Ursprung in der Perinatalperiode haben
+Q00;Anenzephalie und aehnliche Fehlbildungen
+Q01;Enzephalozele
+Q02;Mikrozephalie
+Q03;Angeborener Hydrozephalus
+Q04;Sonstige angeborene Fehlbildungen des Gehirns
+Q05;Spina bifida
+Q06;Sonstige angeborene Fehlbildungen des Rueckenmarks
+Q07;Sonstige angeborene Fehlbildungen des Nervensystems
+Q10;Angeborene Fehlbildungen des Augenlides, des Traenenapparates und der Orbita
+Q11;Anophthalmus, Mikrophthalmus und Makrophthalmus
+Q12;Angeborene Fehlbildungen der Linse
+Q13;Angeborene Fehlbildungen des vorderen Augenabschnittes
+Q14;Angeborene Fehlbildung des hinteren Augenabschnittes
+Q15;Sonstige angeborene Fehlbildungen des Auges
+Q16;Angeborene Fehlbildungen des Ohres, die eine Beeintraechtigung des Hoervermoegens verursachen
+Q17;Sonstige angeborene Fehlbildungen des Ohres
+Q18;Sonstige angeborene Fehlbildungen des Gesichtes und des Halses
+Q20;Angeborene Fehlbildungen der Herzhoehlen und verbindender Strukturen
+Q21;Angeborene Fehlbildungen der Herzsepten
+Q22;Angeborene Fehlbildungen der Pulmonal- und der Trikuspidalklappe
+Q23;Angeborene Fehlbildungen der Aorten- und der Mitralklappe
+Q24;Sonstige angeborene Fehlbildungen des Herzens
+Q25;Angeborene Fehlbildungen der grossen Arterien
+Q26;Angeborene Fehlbildungen der grossen Venen
+Q27;Sonstige angeborene Fehlbildungen des peripheren Gefaesssystems
+Q28;Sonstige angeborene Fehlbildungen des Kreislaufsystems
+Q30;Angeborene Fehlbildungen der Nase
+Q31;Angeborene Fehlbildungen des Kehlkopfes
+Q32;Angeborene Fehlbildungen der Trachea und der Bronchien
+Q33;Angeborene Fehlbildungen der Lunge
+Q34;Sonstige angeborene Fehlbildungen des Atmungssystems
+Q35;Gaumenspalte
+Q36;Lippenspalte
+Q37;Gaumenspalte mit Lippenspalte
+Q38;Sonstige angeborene Fehlbildungen der Zunge, des Mundes und des Rachens
+Q39;Angeborene Fehlbildungen des Oesophagus
+Q40;Sonstige angeborene Fehlbildungen des oberen Verdauungstraktes
+Q41;Angeborene(s) Fehlen, Atresie und Stenose des Duenndarmes
+Q42;Angeborene(s) Fehlen, Atresie und Stenose des Dickdarmes
+Q43;Sonstige angeborene Fehlbildungen des Darmes
+Q44;Angeborene Fehlbildungen der Gallenblase, der Gallengaenge und der Leber
+Q45;Sonstige angeborene Fehlbildungen des Verdauungssystems
+Q50;Angeborene Fehlbildungen der Ovarien, der Tubae uterinae und der Ligg. lata uteri
+Q51;Angeborene Fehlbildungen des Uterus und der Cervix uteri
+Q52;Sonstige angeborene Fehlbildungen der weiblichen Genitalorgane
+Q53;Nondescensus testis
+Q54;Hypospadie
+Q55;Sonstige angeborene Fehlbildungen der maennlichen Genitalorgane
+Q56;Unbestimmtes Geschlecht und Pseudohermaphroditismus
+Q60;Nierenagenesie und sonstige Reduktionsdefekte der Niere
+Q61;Zystische Nierenkrankheit
+Q62;Angeborene obstruktive Defekte des Nierenbeckens und angeborene Fehlbildungen des Ureters
+Q63;Sonstige angeborene Fehlbildungen der Niere
+Q64;Sonstige angeborene Fehlbildungen des Harnsystems
+Q65;Angeborene Deformitaeten der Huefte
+Q66;Angeborene Deformitaeten der Fuesse
+Q67;Angeborene Muskel-Skelett-Deformitaeten des Kopfes, des Gesichtes, der Wirbelsaeule und des Thorax
+Q68;Sonstige angeborene Muskel-Skelett-Deformitaeten
+Q69;Polydaktylie
+Q70;Syndaktylie
+Q71;Reduktionsdefekte der oberen Extremitaet
+Q72;Reduktionsdefekte der unteren Extremitaet
+Q73;Reduktionsdefekte nicht naeher bezeichneter Extremitaet(en)
+Q74;Sonstige angeborene Fehlbildungen der Extremitaet(en)
+Q75;Sonstige angeborene Fehlbildungen der Schaedel- und Gesichtsschaedelknochen
+Q76;Angeborene Fehlbildungen der Wirbelsaeule und des knoechernen Thorax
+Q77;Osteochondrodysplasie mit Wachstumsstoerungen der Roehrenknochen und der Wirbelsaeule
+Q78;Sonstige Osteochondrodysplasien
+Q79;Angeborene Fehlbildungen des Muskel-Skelett-Systems, anderenorts nicht klassifiziert
+Q80;Ichthyosis congenita
+Q81;Epidermolysis bullosa
+Q82;Sonstige angeborene Fehlbildungen der Haut
+Q83;Angeborene Fehlbildungen der Mamma [Brustdruese]
+Q84;Sonstige angeborene Fehlbildungen des Integumentes
+Q85;Phakomatosen, anderenorts nicht klassifiziert
+Q86;Angeborene Fehlbildungssyndrome durch bekannte aeussere Ursachen, anderenorts nicht klassifiziert
+Q87;Sonstige naeher bezeichnete angeborene Fehlbildungssyndrome mit Beteiligung mehrerer Systeme
+Q89;Sonstige angeborene Fehlbildungen, anderenorts nicht klassifiziert
+Q90;Down-Syndrom
+Q91;Edwards-Syndrom und Patau-Syndrom
+Q92;Sonstige Trisomien und partielle Trisomien der Autosomen, anderenorts nicht klassifiziert
+Q93;Monosomien und Deletionen der Autosomen, anderenorts nicht klassifiziert
+Q95;Balancierte Chromosomen-Rearrangements und Struktur-Marker, anderenorts nicht klassifiziert
+Q96;Turner-Syndrom
+Q97;Sonstige Anomalien der Gonosomen bei weiblichem Phaenotyp, anderenorts nicht klassifiziert
+Q98;Sonstige Anomalien der Gonosomen bei maennlichem Phaenotyp, anderenorts nicht klassifiziert
+Q99;Sonstige Chromosomenanomalien, anderenorts nicht klassifiziert
+R00;Stoerungen des Herzschlages
+R01;Herzgeraeusche und andere Herz-Schallphaenomene
+R02;Gangraen, anderenorts nicht klassifiziert
+R03;Abnormer Blutdruckwert ohne Diagnose
+R04;Blutung aus den Atemwegen
+R05;Husten
+R06;Stoerungen der Atmung
+R07;Hals- und Brustschmerzen
+R09;Sonstige Symptome, die das Kreislaufsystem und das Atmungssystem betreffen
+R10;Bauch- und Beckenschmerzen
+R11;Uebelkeit und Erbrechen
+R12;Sodbrennen
+R13;Dysphagie
+R14;Flatulenz und verwandte Zustaende
+R15;Stuhlinkontinenz
+R16;Hepatomegalie und Splenomegalie, anderenorts nicht klassifiziert
+R17;Hyperbilirubinaemie, mit oder ohne Gelbsucht, anderenorts nicht klassifiziert
+R18;Aszites
+R19;Sonstige Symptome, die das Verdauungssystem und das Abdomen betreffen
+R20;Sensibilitaetsstoerungen der Haut
+R21;Hautausschlag und sonstige unspezifische Hauteruptionen
+R22;Lokalisierte Schwellung, Raumforderung und Knoten der Haut und der Unterhaut
+R23;Sonstige Hautveraenderungen
+R25;Abnorme unwillkuerliche Bewegungen
+R26;Stoerungen des Ganges und der Mobilitaet
+R27;Sonstige Koordinationsstoerungen
+R29;Sonstige Symptome, die das Nervensystem und das Muskel-Skelett-System betreffen
+R30;Schmerzen beim Wasserlassen
+R31;Nicht naeher bezeichnete Haematurie
+R32;Nicht naeher bezeichnete Harninkontinenz
+R33;Harnverhaltung
+R34;Anurie und Oligurie
+R35;Polyurie
+R36;Ausfluss aus der Harnroehre
+R39;Sonstige Symptome, die das Harnsystem betreffen
+R40;Somnolenz, Sopor und Koma
+R41;Sonstige Symptome, die das Erkennungsvermoegen und das Bewusstsein betreffen
+R42;Schwindel und Taumel
+R43;Stoerungen des Geruchs- und Geschmackssinnes
+R44;Sonstige Symptome, die die Sinneswahrnehmungen und das Wahrnehmungsvermoegen betreffen
+R45;Symptome, die die Stimmung betreffen
+R46;Symptome, die das aeussere Erscheinungsbild und das Verhalten betreffen
+R47;Sprech- und Sprachstoerungen, anderenorts nicht klassifiziert
+R48;Dyslexie und sonstige Werkzeugstoerungen, anderenorts nicht klassifiziert
+R49;Stoerungen der Stimme
+R50;Fieber sonstiger und unbekannter Ursache
+R51;Kopfschmerz
+R52;Schmerz, anderenorts nicht klassifiziert
+R53;Unwohlsein und Ermuedung
+R54;Senilitaet
+R55;Synkope und Kollaps
+R56;Kraempfe, anderenorts nicht klassifiziert
+R57;Schock, anderenorts nicht klassifiziert
+R58;Blutung, anderenorts nicht klassifiziert
+R59;Lymphknotenvergroesserung
+R60;Oedem, anderenorts nicht klassifiziert
+R61;Hyperhidrose
+R62;Ausbleiben der erwarteten normalen physiologischen Entwicklung
+R63;Symptome, die die Nahrungs- und Fluessigkeitsaufnahme betreffen
+R64;Kachexie
+R65;Systemisches inflammatorisches Response-Syndrom [SIRS]
+R68;Sonstige Allgemeinsymptome
+R69;Unbekannte und nicht naeher bezeichnete Krankheitsursachen
+R70;Beschleunigte Blutkoerperchensenkungsreaktion und Veraenderungen der Plasmaviskositaet
+R71;Veraenderung der Erythrozyten
+R72;Veraenderung der Leukozyten, anderenorts nicht klassifiziert
+R73;Erhoehter Blutglukosewert
+R74;Abnorme Serumenzymwerte
+R75;Laborhinweis auf Humanes Immundefizienz-Virus [HIV]
+R76;Sonstige abnorme immunologische Serumbefunde
+R77;Sonstige Veraenderungen der Plasmaproteine
+R78;Nachweis von Drogen und anderen Substanzen, die normalerweise nicht im Blut vorhanden sind
+R79;Sonstige abnorme Befunde der Blutchemie
+R80;Isolierte Proteinurie
+R81;Glukosurie
+R82;Sonstige abnorme Urinbefunde
+R83;Abnorme Liquorbefunde
+R84;Abnorme Befunde in Untersuchungsmaterialien aus Atemwegen und Thorax
+R85;Abnorme Befunde in Untersuchungsmaterialien aus Verdauungsorganen und Bauchhoehle
+R86;Abnorme Befunde in Untersuchungsmaterialien aus den maennlichen Genitalorganen
+R87;Abnorme Befunde in Untersuchungsmaterialien aus den weiblichen Genitalorganen
+R89;Abnorme Befunde in Untersuchungsmaterialien aus anderen Koerperorganen, -systemen und -geweben
+R90;Abnorme Befunde bei der bildgebenden Diagnostik des Zentralnervensystems
+R91;Abnorme Befunde bei der bildgebenden Diagnostik der Lunge
+R92;Abnorme Befunde bei der bildgebenden Diagnostik der Mamma [Brustdruese]
+R93;Abnorme Befunde bei der bildgebenden Diagnostik sonstiger Koerperstrukturen
+R94;Abnorme Ergebnisse von Funktionspruefungen
+R95;Ploetzlicher Kindstod
+R96;Sonstiger ploetzlicher Tod unbekannter Ursache
+R98;Tod ohne Anwesenheit anderer Personen
+R99;Sonstige ungenau oder nicht naeher bezeichnete Todesursachen
+S00;Oberflaechliche Verletzung des Kopfes
+S01;Offene Wunde des Kopfes
+S02;Fraktur des Schaedels und der Gesichtsschaedelknochen
+S03;Luxation, Verstauchung und Zerrung von Gelenken und Baendern des Kopfes
+S04;Verletzung von Hirnnerven
+S05;Verletzung des Auges und der Orbita
+S06;Intrakranielle Verletzung
+S07;Zerquetschung des Kopfes
+S08;Traumatische Amputation von Teilen des Kopfes
+S09;Sonstige und nicht naeher bezeichnete Verletzungen des Kopfes
+S10;Oberflaechliche Verletzung des Halses
+S11;Offene Wunde des Halses
+S12;Fraktur im Bereich des Halses
+S13;Luxation, Verstauchung und Zerrung von Gelenken und Baendern in Halshoehe
+S14;Verletzung der Nerven und des Rueckenmarkes in Halshoehe
+S15;Verletzung von Blutgefaessen in Halshoehe
+S16;Verletzung von Muskeln und Sehnen in Halshoehe
+S17;Zerquetschung des Halses
+S18;Traumatische Amputation in Halshoehe
+S19;Sonstige und nicht naeher bezeichnete Verletzungen des Halses
+S20;Oberflaechliche Verletzung des Thorax
+S21;Offene Wunde des Thorax
+S22;Fraktur der Rippe(n), des Sternums und der Brustwirbelsaeule
+S23;Luxation, Verstauchung und Zerrung von Gelenken und Baendern im Bereich des Thorax
+S24;Verletzung der Nerven und des Rueckenmarkes in Thoraxhoehe
+S25;Verletzung von Blutgefaessen des Thorax
+S26;Verletzung des Herzens
+S27;Verletzung sonstiger und nicht naeher bezeichneter intrathorakaler Organe
+S28;Zerquetschung des Thorax und traumatische Amputation von Teilen des Thorax
+S29;Sonstige und nicht naeher bezeichnete Verletzungen des Thorax
+S30;Oberflaechliche Verletzung des Abdomens, der Lumbosakralgegend und des Beckens
+S31;Offene Wunde des Abdomens, der Lumbosakralgegend und des Beckens
+S32;Fraktur der Lendenwirbelsaeule und des Beckens
+S33;Luxation, Verstauchung und Zerrung von Gelenken und Baendern der Lendenwirbelsaeule und des Beckens
+S34;Verletzung der Nerven und des lumbalen Rueckenmarkes in Hoehe des Abdomens, der Lumbosakralgegend und des Beckens
+S35;Verletzung von Blutgefaessen in Hoehe des Abdomens, der Lumbosakralgegend und des Beckens
+S36;Verletzung von intraabdominalen Organen
+S37;Verletzung der Harnorgane und der Beckenorgane
+S38;Zerquetschung und traumatische Amputation von Teilen des Abdomens, der Lumbosakralgegend und des Beckens
+S39;Sonstige und nicht naeher bezeichnete Verletzungen des Abdomens, der Lumbosakralgegend und des Beckens
+S40;Oberflaechliche Verletzung der Schulter und des Oberarmes
+S41;Offene Wunde der Schulter und des Oberarmes
+S42;Fraktur im Bereich der Schulter und des Oberarmes
+S43;Luxation, Verstauchung und Zerrung von Gelenken und Baendern des Schulterguertels
+S44;Verletzung von Nerven in Hoehe der Schulter und des Oberarmes
+S45;Verletzung von Blutgefaessen in Hoehe der Schulter und des Oberarmes
+S46;Verletzung von Muskeln und Sehnen in Hoehe der Schulter und des Oberarmes
+S47;Zerquetschung der Schulter und des Oberarmes
+S48;Traumatische Amputation an Schulter und Oberarm
+S49;Sonstige und nicht naeher bezeichnete Verletzungen der Schulter und des Oberarmes
+S50;Oberflaechliche Verletzung des Unterarmes
+S51;Offene Wunde des Unterarmes
+S52;Fraktur des Unterarmes
+S53;Luxation, Verstauchung und Zerrung des Ellenbogengelenkes und von Baendern des Ellenbogens
+S54;Verletzung von Nerven in Hoehe des Unterarmes
+S55;Verletzung von Blutgefaessen in Hoehe des Unterarmes
+S56;Verletzung von Muskeln und Sehnen in Hoehe des Unterarmes
+S57;Zerquetschung des Unterarmes
+S58;Traumatische Amputation am Unterarm
+S59;Sonstige und nicht naeher bezeichnete Verletzungen des Unterarmes
+S60;Oberflaechliche Verletzung des Handgelenkes und der Hand
+S61;Offene Wunde des Handgelenkes und der Hand
+S62;Fraktur im Bereich des Handgelenkes und der Hand
+S63;Luxation, Verstauchung und Zerrung von Gelenken und Baendern in Hoehe des Handgelenkes und der Hand
+S64;Verletzung von Nerven in Hoehe des Handgelenkes und der Hand
+S65;Verletzung von Blutgefaessen in Hoehe des Handgelenkes und der Hand
+S66;Verletzung von Muskeln und Sehnen in Hoehe des Handgelenkes und der Hand
+S67;Zerquetschung des Handgelenkes und der Hand
+S68;Traumatische Amputation an Handgelenk und Hand
+S69;Sonstige und nicht naeher bezeichnete Verletzungen des Handgelenkes und der Hand
+S70;Oberflaechliche Verletzung der Huefte und des Oberschenkels
+S71;Offene Wunde der Huefte und des Oberschenkels
+S72;Fraktur des Femurs
+S73;Luxation, Verstauchung und Zerrung des Hueftgelenkes und von Baendern der Huefte
+S74;Verletzung von Nerven in Hoehe der Huefte und des Oberschenkels
+S75;Verletzung von Blutgefaessen in Hoehe der Huefte und des Oberschenkels
+S76;Verletzung von Muskeln und Sehnen in Hoehe der Huefte und des Oberschenkels
+S77;Zerquetschung der Huefte und des Oberschenkels
+S78;Traumatische Amputation an Huefte und Oberschenkel
+S79;Sonstige und nicht naeher bezeichnete Verletzungen der Huefte und des Oberschenkels
+S80;Oberflaechliche Verletzung des Unterschenkels
+S81;Offene Wunde des Unterschenkels
+S82;Fraktur des Unterschenkels, einschliesslich des oberen Sprunggelenkes
+S83;Luxation, Verstauchung und Zerrung des Kniegelenkes und von Baendern des Kniegelenkes
+S84;Verletzung von Nerven in Hoehe des Unterschenkels
+S85;Verletzung von Blutgefaessen in Hoehe des Unterschenkels
+S86;Verletzung von Muskeln und Sehnen in Hoehe des Unterschenkels
+S87;Zerquetschung des Unterschenkels
+S88;Traumatische Amputation am Unterschenkel
+S89;Sonstige und nicht naeher bezeichnete Verletzungen des Unterschenkels
+S90;Oberflaechliche Verletzung der Knoechelregion und des Fusses
+S91;Offene Wunde der Knoechelregion und des Fusses
+S92;Fraktur des Fusses [ausgenommen oberes Sprunggelenk]
+S93;Luxation, Verstauchung und Zerrung der Gelenke und Baender in Hoehe des oberen Sprunggelenkes und des Fusses
+S94;Verletzung von Nerven in Hoehe des Knoechels und des Fusses
+S95;Verletzung von Blutgefaessen in Hoehe des Knoechels und des Fusses
+S96;Verletzung von Muskeln und Sehnen in Hoehe des Knoechels und des Fusses
+S97;Zerquetschung des oberen Sprunggelenkes und des Fusses
+S98;Traumatische Amputation am oberen Sprunggelenk und Fuss
+S99;Sonstige und nicht naeher bezeichnete Verletzungen der Knoechelregion und des Fusses
+T00;Oberflaechliche Verletzungen mit Beteiligung mehrerer Koerperregionen
+T01;Offene Wunden mit Beteiligung mehrerer Koerperregionen
+T02;Frakturen mit Beteiligung mehrerer Koerperregionen
+T03;Luxationen, Verstauchungen und Zerrungen mit Beteiligung mehrerer Koerperregionen
+T04;Zerquetschungen mit Beteiligung mehrerer Koerperregionen
+T05;Traumatische Amputationen mit Beteiligung mehrerer Koerperregionen
+T06;Sonstige Verletzungen mit Beteiligung mehrerer Koerperregionen, anderenorts nicht klassifiziert
+T07;Nicht naeher bezeichnete multiple Verletzungen
+T08;Fraktur der Wirbelsaeule, Hoehe nicht naeher bezeichnet
+T09;Sonstige Verletzungen der Wirbelsaeule und des Rumpfes, Hoehe nicht naeher bezeichnet
+T10;Fraktur der oberen Extremitaet, Hoehe nicht naeher bezeichnet
+T11;Sonstige Verletzungen der oberen Extremitaet, Hoehe nicht naeher bezeichnet
+T12;Fraktur der unteren Extremitaet, Hoehe nicht naeher bezeichnet
+T13;Sonstige Verletzungen der unteren Extremitaet, Hoehe nicht naeher bezeichnet
+T14;Verletzung an einer nicht naeher bezeichneten Koerperregion
+T15;Fremdkoerper im aeusseren Auge
+T16;Fremdkoerper im Ohr
+T17;Fremdkoerper in den Atemwegen
+T18;Fremdkoerper im Verdauungstrakt
+T19;Fremdkoerper im Urogenitaltrakt
+T20;Verbrennung oder Veraetzung des Kopfes und des Halses
+T21;Verbrennung oder Veraetzung des Rumpfes
+T22;Verbrennung oder Veraetzung der Schulter und des Armes, ausgenommen Handgelenk und Hand
+T23;Verbrennung oder Veraetzung des Handgelenkes und der Hand
+T24;Verbrennung oder Veraetzung der Huefte und des Beines, ausgenommen Knoechelregion und Fuss
+T25;Verbrennung oder Veraetzung der Knoechelregion und des Fusses
+T26;Verbrennung oder Veraetzung, begrenzt auf das Auge und seine Anhangsgebilde
+T27;Verbrennung oder Veraetzung der Atemwege
+T28;Verbrennung oder Veraetzung sonstiger innerer Organe
+T29;Verbrennungen oder Veraetzungen mehrerer Koerperregionen
+T30;Verbrennung oder Veraetzung, Koerperregion nicht naeher bezeichnet
+T31;Verbrennungen, klassifiziert nach dem Ausmass der betroffenen Koerperoberflaeche
+T32;Veraetzungen, klassifiziert nach dem Ausmass der betroffenen Koerperoberflaeche
+T33;Oberflaechliche Erfrierung
+T34;Erfrierung mit Gewebsnekrose
+T35;Erfrierung mit Beteiligung mehrerer Koerperregionen und nicht naeher bezeichnete Erfrierung
+T36;Vergiftung durch systemisch wirkende Antibiotika
+T37;Vergiftung durch sonstige systemisch wirkende Antiinfektiva und Antiparasitika
+T38;Vergiftung durch Hormone und deren synthetische Ersatzstoffe und Antagonisten, anderenorts nicht klassifiziert
+T39;Vergiftung durch nichtopioidhaltige Analgetika, Antipyretika und Antirheumatika
+T40;Vergiftung durch Betaeubungsmittel und Psychodysleptika [Halluzinogene]
+T41;Vergiftung durch Anaesthetika und therapeutische Gase
+T42;Vergiftung durch Antiepileptika, Sedativa, Hypnotika und Antiparkinsonmittel
+T43;Vergiftung durch psychotrope Substanzen, anderenorts nicht klassifiziert
+T44;Vergiftung durch primaer auf das autonome Nervensystem wirkende Arzneimittel
+T45;Vergiftung durch primaer systemisch und auf das Blut wirkende Mittel, anderenorts nicht klassifiziert
+T46;Vergiftung durch primaer auf das Herz-Kreislaufsystem wirkende Mittel
+T47;Vergiftung durch primaer auf den Magen-Darm-Trakt wirkende Mittel
+T48;Vergiftung durch primaer auf die glatte Muskulatur, die Skelettmuskulatur und das Atmungssystem wirkende Mittel
+T49;Vergiftung durch primaer auf Haut und Schleimhaeute wirkende und in der Augen-, der Hals-Nasen-Ohren- und der Zahnheilkunde angewendete Mittel zur topischen Anwendung
+T50;Vergiftung durch Diuretika und sonstige und nicht naeher bezeichnete Arzneimittel, Drogen und biologisch aktive Substanzen
+T51;Toxische Wirkung von Alkohol
+T52;Toxische Wirkung von organischen Loesungsmitteln
+T53;Toxische Wirkung von halogenierten aliphatischen und aromatischen Kohlenwasserstoffen
+T54;Toxische Wirkung von aetzenden Substanzen
+T55;Toxische Wirkung von Seifen und Detergenzien
+T56;Toxische Wirkung von Metallen
+T57;Toxische Wirkung von sonstigen anorganischen Substanzen
+T58;Toxische Wirkung von Kohlenmonoxid
+T59;Toxische Wirkung sonstiger Gase, Daempfe oder sonstigen Rauches
+T60;Toxische Wirkung von Schaedlingsbekaempfungsmitteln [Pestiziden]
+T61;Toxische Wirkung schaedlicher Substanzen, die mit essbaren Meerestieren aufgenommen wurden
+T62;Toxische Wirkung sonstiger schaedlicher Substanzen, die mit der Nahrung aufgenommen wurden
+T63;Toxische Wirkung durch Kontakt mit giftigen Tieren
+T64;Toxische Wirkung von Aflatoxin und sonstigem Mykotoxin in kontaminierten Lebensmitteln
+T65;Toxische Wirkung sonstiger und nicht naeher bezeichneter Substanzen
+T66;Nicht naeher bezeichnete Schaeden durch Strahlung
+T67;Schaeden durch Hitze und Sonnenlicht
+T68;Hypothermie
+T69;Sonstige Schaeden durch niedrige Temperatur
+T70;Schaeden durch Luft- und Wasserdruck
+T71;Erstickung
+T73;Schaeden durch sonstigen Mangel
+T74;Missbrauch von Personen
+T75;Schaeden durch sonstige aeussere Ursachen
+T76;Nicht naeher bezeichnete Schaeden durch aeussere Ursachen
+T78;Unerwuenschte Nebenwirkungen, anderenorts nicht klassifiziert
+T79;Bestimmte Fruehkomplikationen eines Traumas, anderenorts nicht klassifiziert
+T80;Komplikationen nach Infusion, Transfusion oder Injektion zu therapeutischen Zwecken
+T81;Komplikationen bei Eingriffen, anderenorts nicht klassifiziert
+T82;Komplikationen durch Prothesen, Implantate oder Transplantate im Herzen und in den Gefaessen
+T83;Komplikationen durch Prothesen, Implantate oder Transplantate im Urogenitaltrakt
+T84;Komplikationen durch orthopaedische Endoprothesen, Implantate oder Transplantate
+T85;Komplikationen durch sonstige interne Prothesen, Implantate oder Transplantate
+T86;Versagen und Abstossung von transplantierten Organen und Geweben
+T87;Komplikationen, die fuer Replantation und Amputation bezeichnend sind
+T88;Sonstige Komplikationen bei chirurgischen Eingriffen und medizinischer Behandlung, anderenorts nicht klassifiziert
+T89;Sonstige naeher bezeichnete Komplikationen eines Traumas
+T90;Folgen von Verletzungen des Kopfes
+T91;Folgen von Verletzungen des Halses und des Rumpfes
+T92;Folgen von Verletzungen der oberen Extremitaet
+T93;Folgen von Verletzungen der unteren Extremitaet
+T94;Folgen von Verletzungen mehrerer oder nicht naeher bezeichneter Koerperregionen
+T95;Folgen von Verbrennungen, Veraetzungen oder Erfrierungen
+T96;Folgen einer Vergiftung durch Arzneimittel, Drogen und biologisch aktive Substanzen
+T97;Folgen toxischer Wirkungen von vorwiegend nicht medizinisch verwendeten Substanzen
+T98;Folgen sonstiger und nicht naeher bezeichneter Wirkungen aeusserer Ursachen
+V99;Transportmittelunfall
+W49;Exposition gegenueber mechanischen Kraeften unbelebter Objekte
+W64;Exposition gegenueber mechanischen Kraeften belebter Objekte
+W87;Exposition gegenueber elektrischem Strom
+W91;Exposition gegenueber Strahlung
+W92;Exposition gegenueber uebermaessiger, kuenstlich erzeugter Hitze
+W93;Exposition gegenueber uebermaessiger, kuenstlich erzeugter Kaelte
+W94;Exposition gegenueber hohem oder niedrigem Luftdruck oder Luftdruckwechsel
+X19;Verbrennung oder Verbruehung durch Hitze oder heisse Substanzen
+X29;Kontakt mit giftigen Tieren und Pflanzen
+X49;Akzidentelle Vergiftung durch und Exposition gegenueber schaedliche(n) Substanzen
+X59;Akzidentelle Exposition gegenueber sonstigen und nicht naeher bezeichneten Faktoren
+X84;Absichtliche Selbstbeschaedigung
+Y09;Taetlicher Angriff
+Y34;Nicht naeher bezeichnetes Ereignis, Umstaende unbestimmt
+Y35;Verletzungen bei gesetzlichen Massnahmen
+Y36;Verletzungen durch Kriegshandlungen
+Y57;Unerwuenschte Nebenwirkungen bei therapeutischer Anwendung von Arzneimitteln und Drogen
+Y59;Unerwuenschte Nebenwirkungen bei therapeutischer Anwendung von Impfstoffen oder biologisch aktiven Substanzen
+Y69;Zwischenfaelle bei chirurgischem Eingriff und medizinischer Behandlung
+Y82;Medizintechnische Geraete und Produkte im Zusammenhang mit Zwischenfaellen bei diagnostischer und therapeutischer Anwendung
+Y84;Chirurgische und sonstige medizinische Massnahmen als Ursache einer abnormen Reaktion eines Patienten oder einer spaeteren Komplikation, ohne Angabe eines Zwischenfalls zum Zeitpunkt der Durchfuehrung der Massnahme
+Z00;Allgemeinuntersuchung und Abklaerung bei Personen ohne Beschwerden oder angegebene Diagnose
+Z01;Sonstige spezielle Untersuchungen und Abklaerungen bei Personen ohne Beschwerden oder angegebene Diagnose
+Z02;Untersuchung und Konsultation aus administrativen Gruenden
+Z03;Aerztliche Beobachtung und Beurteilung von Verdachtsfaellen, Verdacht ausgeschlossen
+Z04;Untersuchung und Beobachtung aus sonstigen Gruenden
+Z08;Nachuntersuchung nach Behandlung wegen boesartiger Neubildung
+Z09;Nachuntersuchung nach Behandlung wegen anderer Krankheitszustaende ausser boesartigen Neubildungen
+Z10;Allgemeine Reihenuntersuchung bestimmter Bevoelkerungsgruppen
+Z11;Spezielle Verfahren zur Untersuchung auf infektioese und parasitaere Krankheiten
+Z12;Spezielle Verfahren zur Untersuchung auf Neubildungen
+Z13;Spezielle Verfahren zur Untersuchung auf sonstige Krankheiten oder Stoerungen
+Z20;Kontakt mit und Exposition gegenueber uebertragbaren Krankheiten
+Z21;Asymptomatische HIV-Infektion [Humane Immundefizienz-Virusinfektion]
+Z22;Keimtraeger von Infektionskrankheiten
+Z23;Notwendigkeit der Impfung [Immunisierung] gegen einzelne bakterielle Krankheiten
+Z24;Notwendigkeit der Impfung [Immunisierung] gegen bestimmte einzelne Viruskrankheiten
+Z25;Notwendigkeit der Impfung [Immunisierung] gegen andere einzelne Viruskrankheiten
+Z26;Notwendigkeit der Impfung [Immunisierung] gegen andere einzelne Infektionskrankheiten
+Z27;Notwendigkeit der Impfung [Immunisierung] gegen Kombinationen von Infektionskrankheiten
+Z28;Nicht durchgefuehrte Impfung [Immunisierung]
+Z29;Notwendigkeit von anderen prophylaktischen Massnahmen
+Z30;Kontrazeptive Massnahmen
+Z31;Fertilisationsfoerdernde Massnahmen
+Z32;Untersuchung und Test zur Feststellung einer Schwangerschaft
+Z33;Schwangerschaftsfeststellung als Nebenbefund
+Z34;Ueberwachung einer normalen Schwangerschaft
+Z35;Ueberwachung einer Risikoschwangerschaft
+Z36;Praenatales Screening
+Z37;Resultat der Entbindung
+Z38;Lebendgeborene nach dem Geburtsort
+Z39;Postpartale Betreuung und Untersuchung der Mutter
+Z40;Prophylaktische Operation
+Z41;Massnahmen aus anderen Gruenden als der Wiederherstellung des Gesundheitszustandes
+Z42;Nachbehandlung unter Anwendung plastischer Chirurgie
+Z43;Versorgung kuenstlicher Koerperoeffnungen
+Z44;Versorgen mit und Anpassen einer Ektoprothese
+Z45;Anpassung und Handhabung eines implantierten medizinischen Geraetes
+Z46;Versorgen mit und Anpassen von anderen medizinischen Geraeten oder Hilfsmitteln
+Z47;Andere orthopaedische Nachbehandlung
+Z48;Andere Nachbehandlung nach chirurgischem Eingriff
+Z49;Dialysebehandlung
+Z50;Rehabilitationsmassnahmen
+Z51;Sonstige medizinische Behandlung
+Z52;Spender von Organen oder Geweben
+Z53;Personen, die Einrichtungen des Gesundheitswesens wegen spezifischer Massnahmen aufgesucht haben, die aber nicht durchgefuehrt wurden
+Z54;Rekonvaleszenz
+Z55;Kontaktanlaesse mit Bezug auf die Ausbildung
+Z56;Kontaktanlaesse mit Bezug auf das Berufsleben
+Z57;Berufliche Exposition gegenueber Risikofaktoren
+Z58;Kontaktanlaesse mit Bezug auf die physikalische Umwelt
+Z59;Kontaktanlaesse mit Bezug auf das Wohnumfeld oder die wirtschaftliche Lage
+Z60;Kontaktanlaesse mit Bezug auf die soziale Umgebung
+Z61;Kontaktanlaesse mit Bezug auf Kindheitserlebnisse
+Z62;Andere Kontaktanlaesse mit Bezug auf die Erziehung
+Z63;Andere Kontaktanlaesse mit Bezug auf den engeren Familienkreis
+Z64;Kontaktanlaesse mit Bezug auf bestimmte psychosoziale Umstaende
+Z65;Kontaktanlaesse mit Bezug auf andere psychosoziale Umstaende
+Z70;Beratung in Bezug auf Sexualeinstellung, -verhalten oder -orientierung
+Z71;Personen, die das Gesundheitswesen zum Zwecke anderer Beratung oder aerztlicher Konsultation in Anspruch nehmen, anderenorts nicht klassifiziert
+Z72;Probleme mit Bezug auf die Lebensfuehrung
+Z73;Probleme mit Bezug auf Schwierigkeiten bei der Lebensbewaeltigung
+Z74;Probleme mit Bezug auf Pflegebeduerftigkeit
+Z75;Probleme mit Bezug auf medizinische Betreuungsmoeglichkeiten oder andere Gesundheitsversorgung
+Z76;Personen, die das Gesundheitswesen aus sonstigen Gruenden in Anspruch nehmen
+Z80;Boesartige Neubildung in der Familienanamnese
+Z81;Psychische Krankheiten oder Verhaltensstoerungen in der Familienanamnese
+Z82;Bestimmte Behinderungen oder chronische Krankheiten in der Familienanamnese, die zu Schaedigung oder Behinderung fuehren
+Z83;Andere spezifische Krankheiten in der Familienanamnese
+Z84;Andere Krankheiten oder Zustaende in der Familienanamnese
+Z85;Boesartige Neubildung in der Eigenanamnese
+Z86;Bestimmte andere Krankheiten in der Eigenanamnese
+Z87;Andere Krankheiten oder Zustaende in der Eigenanamnese
+Z88;Allergie gegenueber Arzneimitteln, Drogen oder biologisch aktiven Substanzen in der Eigenanamnese
+Z89;Extremitaetenverlust
+Z90;Verlust von Organen, anderenorts nicht klassifiziert
+Z91;Risikofaktoren in der Eigenanamnese, anderenorts nicht klassifiziert
+Z92;Medizinische Behandlung in der Eigenanamnese
+Z93;Vorhandensein einer kuenstlichen Koerperoeffnung
+Z94;Zustand nach Organ- oder Gewebetransplantation
+Z95;Vorhandensein von kardialen oder vaskulaeren Implantaten oder Transplantaten
+Z96;Vorhandensein von anderen funktionellen Implantaten
+Z97;Vorhandensein anderer medizinischer Geraete oder Hilfsmittel
+Z98;Sonstige Zustaende nach chirurgischem Eingriff
+Z99;Abhaengigkeit (langzeitig) von unterstuetzenden Apparaten, medizinischen Geraeten oder Hilfsmitteln, anderenorts nicht klassifiziert
+U04;Schweres akutes respiratorisches Syndrom [SARS]
+U07;Nicht belegte Schluesselnummer U07
+U50;Motorische Funktionseinschraenkung
+U51;Kognitive Funktionseinschraenkung
+U52;Fruehrehabilitations-Barthel-Index [FRB]
+U55;Erfolgte Registrierung zur Organtransplantation
+U60;Klinische Kategorien der HIV-Krankheit
+U61;Anzahl der T-Helferzellen bei HIV-Krankheit
+U69;Sonstige sekundaere Schluesselnummern fuer besondere Zwecke
+U80;Grampositive Erreger mit bestimmten Antibiotikaresistenzen, die besondere therapeutische oder hygienische Massnahmen erfordern
+U81;Gramnegative Erreger mit bestimmten Antibiotikaresistenzen, die besondere therapeutische oder hygienische Massnahmen erfordern
+U82;Mykobakterien mit Resistenz gegen Antituberkulotika (Erstrangmedikamente)
+U83;Candida mit Resistenz gegen Fluconazol oder Voriconazol
+U84;Herpesviren mit Resistenz gegen Virustatika
+U85;Humanes Immundefizienz-Virus mit Resistenz gegen Virustatika oder Proteinaseinhibitoren
+U99;Nicht belegte Schluesselnummer U99

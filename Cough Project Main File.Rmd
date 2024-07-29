@@ -40,7 +40,7 @@ names.vec<- c("Diag","ICPC","Labor","Stamm","Ueberweis")
 ListeKrankenkassen<- read.csv("https://github.com/rapkroes/Code_UKSH_Husten/blob/e67735f206a45437803f01e3fe0b6cacb84d3298/ListeKrankenkassen.csv")
 altersstruktur_deutschland <- read.csv("https://github.com/rapkroes/Code_UKSH_Husten/blob/e67735f206a45437803f01e3fe0b6cacb84d3298/altersstruktur%20deutschland.csv")
 colnames(altersstruktur_deutschland)<- c("altersjahre","bevoelkerungsstand")
-icd10_blocks <- read.csv("https://github.com/rapkroes/Code_UKSH_Husten/blob/15bb98ade138b003fd3688b88a11b7075b6daa5b/icd10_blocks.csv")
+icd10_blocks <- read.csv("https://github.com/rapkroes/Code_UKSH_Husten/blob/bb08bfe63a3a69ff1a2d7fdadf2c6e0dfc9d3785/icd10_blocks.csv")
 icd10_description<- read_excel("icd10_description.xlsx")
 selected.lab.descriptions<- read_excel("freitextanalyse.xlsx")
 
