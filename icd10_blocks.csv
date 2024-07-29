@@ -20,7 +20,7 @@ B85;B89;Pedikulose [Laeusebefall], Akarinose [Milbenbefall] und sonstiger Parasi
 B90;B94;Folgezustaende von infektioesen und parasitaeren Krankheiten;B;90;B;94
 B95;B98;Bakterien, Viren und sonstige Infektionserreger als Ursache von Krankheiten, die in anderen Kapiteln klassifiziert sind;B;95;B;98
 B99;B99;Sonstige Infektionskrankheiten;B;99;B;99
-C00;C14;Boesartige Neubildungen der Lippe, der Mundh?hle und des Pharynx;C;0;C;14
+C00;C14;Boesartige Neubildungen der Lippe, der Mundhoehle und des Pharynx;C;0;C;14
 C15;C26;Boesartige Neubildungen der Verdauungsorgane;C;15;C;26
 C30;C39;Boesartige Neubildungen der Atmungsorgane und sonstiger intrathorakaler Organe;C;30;C;39
 C40;C41;Boesartige Neubildungen des Knochens und des Gelenkknorpels;C;40;C;41
@@ -31,7 +31,7 @@ C51;C58;Boesartige Neubildungen der weiblichen Genitalorgane;C;51;C;58
 C60;C63;Boesartige Neubildungen der maennlichen Genitalorgane;C;60;C;63
 C64;C68;Boesartige Neubildungen der Harnorgane;C;64;C;68
 C69;C72;Boesartige Neubildungen des Auges, des Gehirns und sonstiger Teile des Zentralnervensystems;C;69;C;72
-C73;C75;Boesartige Neubildungen der Schilddruese und sonstiger endokriner Dr?sen;C;73;C;75
+C73;C75;Boesartige Neubildungen der Schilddruese und sonstiger endokriner Druesen;C;73;C;75
 C76;C80;Boesartige Neubildungen ungenau bezeichneter, sekundaerer und nicht naeher bezeichneter Lokalisationen;C;76;C;80
 C81;C96;Boesartige Neubildungen des lymphatischen, blutbildenden und verwandten Gewebes, als primaer festgestellt oder vermutet;C;81;C;96
 C97;C97;Boesartige Neubildungen als Primaertumoren an mehreren Lokalisationen;C;97;C;97
@@ -138,7 +138,7 @@ M50;M54;Sonstige Krankheiten der Wirbelsaeule und des Rueckens;M;50;M;54
 M60;M63;Krankheiten der Muskeln;M;60;M;63
 M65;M68;Krankheiten der Synovialis und der Sehnen;M;65;M;68
 M70;M79;Sonstige Krankheiten des Weichteilgewebes;M;70;M;79
-M80;M85;Ver?nderungen der Knochendichte und -struktur;M;80;M;85
+M80;M85;Veraenderungen der Knochendichte und -struktur;M;80;M;85
 M86;M90;Sonstige Osteopathien;M;86;M;90
 M91;M94;Chondropathien;M;91;M;94
 M95;M99;Sonstige Krankheiten des Muskel-Skelett-Systems und des Bindegewebes;M;95;M;99
@@ -188,7 +188,7 @@ R10;R19;Symptome, die das Verdauungssystem und das Abdomen betreffen;R;10;R;19
 R20;R23;Symptome, die die Haut und das Unterhautgewebe betreffen;R;20;R;23
 R25;R29;Symptome, die das Nervensystem und das Muskel-Skelett-System betreffen;R;25;R;29
 R30;R39;Symptome, die das Harnsystem betreffen;R;30;R;39
-R40;R46;Symptome, die das Erkennungs- und Wahrnehmungsverm?gen, die Stimmung und das Verhalten betreffen;R;40;R;46
+R40;R46;Symptome, die das Erkennungs- und Wahrnehmungsvermoegen, die Stimmung und das Verhalten betreffen;R;40;R;46
 R47;R49;Symptome, die die Sprache und die Stimme betreffen;R;47;R;49
 R50;R69;Allgemeinsymptome;R;50;R;69
 R70;R79;Abnorme Blutuntersuchungsbefunde ohne Vorliegen einer Diagnose;R;70;R;79
