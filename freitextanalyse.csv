@@ -1,25 +1,69 @@
 ﻿text_description;something;blood_normal;blood_large_test;CRP;ery;leuko;procalcitonin
 Blutbild;1;1;;;;;
-Blutbild groÃŸ;1;;1;;;;
+Blutbild -groß;1;;1;;;;
+Blutbild * + Thromb.;1;1;;;;;
+Blutbild gro;1;;1;;;;
+Blutbild groß;1;;1;;;;
+Blutbild groß/klein;1;;1;;;;
+Blutbild klein;1;1;;;;;
+Blutbild klein + Thromb.;1;1;;;;;
 Blutbild klein+Thro.;1;1;;;;;
-C-reaktives Protein;1;;;1;;;
+DIFF BLUTBILD;1;;1;;;;
+DIFF BLUTBILD MANUEL;1;;1;;;;
+Differentialblutbild;1;;1;;;;
+Differentialblutbild:;1;;1;;;;
+gr.Blutbild;1;;1;;;;
+großes Blutbild;1;;1;;;;
+Großes Blutbild;1;;1;;;;
+Grosses Blutbild;1;;1;;;;
+GROSSES BLUTBILD;1;;1;;;;
+Grosses Blutbild:;1;;1;;;;
+Kl. Blutbild+Thromb.;1;1;;;;;
+Kl. Blutbild+Thrombo;1;1;;;;;
+kl.Blutbild;1;1;;;;;
+Kleines Blutbild;1;1;;;;;
+KLEINES BLUTBILD;1;1;;;;;
+Kleines Blutbild aus Citr;1;1;;;;;
 C-reaktives Protein (CRP);1;;;1;;;
 CRP;1;;;1;;;
 CRP-Latex;1;;;1;;;
+CRP-quant.;1;;;1;;;
 CRP (C-reaktives Protein);1;;;1;;;
 CRP (hochsensitiv);1;;;1;;;
+CRP (quantitativ);1;;;1;;;
 CRP hochsensitiv;1;;;1;;;
-DIFF BLUTBILD;1;;1;;;;
-Differentialblutbild;1;;1;;;;
+CRP im Citratplasma;1;;;1;;;
+CRP mg/l;1;;;1;;;
+CRP qualitativ;1;;;1;;;
+CRP quant.;1;;;1;;;
+CRP quantitativ;1;;;1;;;
+CRP sensitiv;1;;;1;;;
+CRP, hochsensitiv;1;;;1;;;
+CRPQ;1;;;1;;;
+CRPS;1;;;1;;;
+Punktat: CRP quant.;1;;;1;;;
+-Erythrocyten:;1;;;;1;;
 ERY;1;;;;1;;
+ERY /pl;1;;;;1;;
 Erythrocyten;1;;;;1;;
 Erythrozyten;1;;;;1;;
 ERYTHROZYTEN;1;;;;1;;
 Erythrozyten iQ200;1;;;;1;;
+Erytrozyten;1;;;;1;;
+-Leukozyten:;1;;;;;1;
+LEUKO;1;;;;;1;
+LEUKO/uL;1;;;;;1;
+Leukocyten;1;;;;;1;
 Leukozyten;1;;;;;1;
 LEUKOZYTEN;1;;;;;1;
+Leukozyten /nl;1;;;;;1;
 Leukozyten i.B.;1;;;;;1;
+LEUKOZYTEN IMMUNST;1;;;;;1;
 Leukozyten iQ200;1;;;;;1;
+Leukozytenkonglomerat iQ2;1;;;;;1;
+PCALC Procalcitonin;1;;;;;;1
 Procalcitonin;1;;;;;;1
 PROCALCITONIN;1;;;;;;1
 Procalcitonin (PCT);1;;;;;;1
+Procalcitonin DW;1;;;;;;1
+Procalcitonin, quant.;1;;;;;;1

@@ -42,8 +42,7 @@ names.vec<- c("Diag","ICPC","Labor","Stamm","Ueberweis")
   icd10_blocks <- read.csv("https://github.com/rapkroes/Code_UKSH_Husten/raw/main/icd10_blocks.csv", sep = ";")
   icd10_description<- read.csv("https://github.com/rapkroes/Code_UKSH_Husten/blob/288b25aa745f178d2705d990e5106ad6db320a4d/icd10_description.csv")
   selected.lab.descriptions<- read.csv("https://github.com/rapkroes/Code_UKSH_Husten/raw/main/freitextanalyse.csv", sep = ";")
-  
-  # read in functions
+  ICD3St<- read.csv("https://raw.githubusercontent.com/rapkroes/Code_UKSH_Husten/main/Table_ICD_3St.csv")
   source("//fileserver1.uni-luebeck.de/ifa_homes/raphaelkroes/Documents/GitHub/Code_UKSH_Husten/functions.R")
 
 }else{
@@ -140,7 +139,7 @@ cutoff_diag<- quantile(table(diag.up$unipat_date), probs= 0.95)
 
 # table(paste0(diag.up$uniPatID,diag.up$TG_DateNum)
 # quantile(table(paste0(diag.up$uniPatID,diag.up$TG_DateNum)))
-diag.up_2<- aligner(diag.up, cutoff = x_diag, var.name = "diag")
+diag.up_2<- aligner(diag.up, cutoff = cutoff_diag, var.name = "diag")
 length(unique(diag.up_2$unipat_date)) == nrow(diag.up_2)
 
 # icpc.up_2<- aligner.parallel.new(icpc.up, x_ipc,100,4)
@@ -170,7 +169,9 @@ There is no decision rule we can enforce that distinguishes perfectly whether ep
 #decision rule 2: If the timing of episodes overlaps, we treat them as two distinct episodes. The last day of the earlier episode is the day before the new episode begins.
 
 episodes_r1<- episodes.dr1(episodes)
+episodes_r1$episode.ID<- paste0(episodes_r1$uniPatID, episodes_r1$start_date)
 episodes_r2<- episodes.dr2(episodes)
+episodes_r2$episode.ID<- paste0(episodes_r2$uniPatID, episodes_r2$start_date)
 
 # test for how many overlaps there are
 sum(episodes.overlap.finder(episodes_r1)$overlap)
@@ -179,61 +180,49 @@ sum(episodes.overlap.finder(episodes_r2)$overlap)
 
 ```{r}
 #create complete datasets
-episodes.stamm_r1<- add.stamm.new.par(episodes_r1,stamm.up,50,2)
-episodes.diag_r1<- add.diag.par(episodes_r1,diag.up_2,50,2)
-episodes.labor_r1<- add.lab.par(episodes_r1,labor.up,50,2)
-episodes.ueberweis_1<- add.ueberweis.par(episodes_r1,ueberweis.up,50,2)
-full_r1<- cbind(arrange(episodes.stamm_r1,uniPatID,start_date),
-                arrange(episodes.diag_r1,uniPatID,start_date),
-                arrange(episodes.labor_r1,uniPatID,start_date),
-                arrange(episodes.ueberweis_1,uniPatID,start_date))
-
-#remove duplicate columns
+episodes.stamm_r1<- add.stamm.new.par(episodes_r1, stamm.up, 100, 10)
+episodes.diag_r1<- add.diag.par(episodes_r1, diag.up_2, 100, 10)
+episodes.labor_r1<- add.lab(episodes_r1,labor.up)
+episodes.ueberweis_1<- add.ueberweis(episodes_r1, ueberweis.up)
+full_r1<- cbind(arrange(episodes.stamm_r1, uniPatID, start_date),
+                arrange(episodes.diag_r1, uniPatID, start_date),
+                arrange(episodes.labor_r1, uniPatID, start_date),
+                arrange(episodes.ueberweis_1, uniPatID, start_date))
 full_r1<- full_r1[,!duplicated(colnames(full_r1))]
+full_r1$age<- year(TG_DateNum2date(full_r1$start_date)) - full_r1$Geburtsjahr
+full_r1<- filter(full_r1, age <= 100)
+full_r1$length_of_episode<- full_r1$end_date - full_r1$start_date
 
 #same procedure for decision rule 2
-episodes.stamm_r2<- add.stamm.new.par(episodes_r2,stamm.up,50,2)
-episodes.diag_r2<- add.diag.par(episodes_r2,diag.up_2,50,2)
-episodes.labor_r2<- add.lab.par(episodes_r2,labor.up,50,2)
-episodes.ueberweis_2<- add.ueberweis.par(episodes_r2,ueberweis.up,50,2)
-full_r2<- cbind(arrange(episodes.stamm_r2,uniPatID,start_date),
-                arrange(episodes.diag_r2,uniPatID,start_date),
-                arrange(episodes.labor_r2,uniPatID,start_date),
-                arrange(episodes.ueberweis_2,uniPatID,start_date))
-
+episodes.stamm_r2<- add.stamm.new.par(episodes_r2, stamm.up, 100, 10)
+episodes.diag_r2<- add.diag.par(episodes_r2, diag.up_2, 100, 10)
+episodes.labor_r2<- add.lab(episodes_r2,labor.up)
+episodes.ueberweis_2<- add.ueberweis(episodes_r2, ueberweis.up)
+full_r2<- cbind(arrange(episodes.stamm_r2, uniPatID, start_date),
+                arrange(episodes.diag_r2, uniPatID, start_date),
+                arrange(episodes.labor_r2, uniPatID, start_date),
+                arrange(episodes.ueberweis_2, uniPatID, start_date))
 full_r2<- full_r2[,!duplicated(colnames(full_r2))]
+full_r2$age<- year(TG_DateNum2date(full_r2$start_date)) - full_r2$Geburtsjahr
+full_r2<- filter(full_r2, age <= 100)
+full_r2$length_of_episode<- full_r2$end_date - full_r2$start_date
 
 #no.chronic diseases 
-for(k in 1:2){
-  im<- get(paste0("full_r",k))
-  no.chronic.diseases<- numeric(nrow(im))
-  for(i in seq(1,nrow(im))){
-    pat<- im$uniPatID[i]
-    loc<- which(chronic.patients$chronic.patients==pat)
-    if(length(loc)==1){
-      no.chronic.diseases[i]<- chronic.patients$Freq[loc]
-    }else if(length(loc)>1){
-      stop("several entries found for the same patient!")
-    }
-    
-  }
-  names.vec<- c(colnames(im),"no.chronic.diseases")
-  im<- cbind(im,no.chronic.diseases)
-  colnames(im)<- names.vec
-  
-  assign(paste0("full_r",k),im)
-  rm(im)
-}
-
+colnames(chronic.patients)<- c("uniPatID", "no.chronic.diseases")
+chronic.patients$uniPatID<- chronic.patients$uniPatID|>
+  as.character()|>
+  as.numeric()
+full_r1<- left_join(full_r1, chronic.patients, by = "uniPatID")
+full_r2<- left_join(full_r2, chronic.patients, by = "uniPatID")
 
 for(k in 1:2){
-  im<- get(paste0("full_r",k))
+  im<- get(paste0("full_r", k))
   
   #find cases where at least one initial diagnosis was preliminary
-  first.cols<- grep("first_icd10",colnames(im))
-  last.cols<- grep("last_icd10",colnames(im))
+  first.cols<- grep("first_diag", colnames(im))
+  last.cols<- grep("last_diag", colnames(im))
   
-  im_first<- apply(im[,first.cols],2,FUN = function(dv){
+  im_first<- apply(im[,first.cols], 2, FUN = function(dv){
     im_dv<- substr(dv,nchar(dv),nchar(dv))
     return(grepl("V",im_dv))
   })
@@ -246,11 +235,11 @@ for(k in 1:2){
   im$last_diag_V_present<- rowSums(im_last)>0
   
   
-  #find cases where an AUB was issued on the first visit
-  AUB.cols<- grepl("first_DiagTyp",colnames(im))
-  im_2<- apply(im[,AUB.cols],2,FUN = function(dv){grepl("AUB",dv)})
-  im$AUB_issued<- rowSums(im_2)>0
-  
+  # #find cases where an AUB was issued on the first visit
+  # AUB.cols<- grepl("first_DiagTyp",colnames(im))
+  # im_2<- apply(im[,AUB.cols],2,FUN = function(dv){grepl("AUB",dv)})
+  # im$AUB_issued<- rowSums(im_2)>0
+  # 
   #add start month/ quarter
   im$start_month<- month(TG_DateNum2date(im$start_date))
   im$start_quarter<- quarter(TG_DateNum2date(im$start_date))
@@ -267,8 +256,8 @@ for(k in 1:2){
 summary.stats<- function(episodedf){
   no.patients<- length(levels(as.factor(episodedf$uniPatID)))
   no.episodes<- nrow(episodedf)
-  age<- year(TG_DateNum2date(episodedf$start_date)) - episodedf$Geburtsjahr
-  length.of.episode<- episodedf$end_date-episodedf$start_date
+  age<- episodedf$age
+  length.of.episode<- episodedf$length_of_episode
   
   numbers<- list(
     no.episodes= nrow(episodedf),
@@ -309,9 +298,16 @@ summary.stats<- function(episodedf){
   return(numbers)
 }
 
-summary.stats(episodedf = full_r1)
-summary.stats(episodedf = full_r2)
-
+t1_r1<- summary.stats(episodedf = full_r1)|>
+  unlist()|>
+  as.data.frame()
+colnames(t1_r1)<- NULL
+t1_r2<- summary.stats(episodedf = full_r2)|>
+  unlist()|>
+  as.data.frame()
+colnames(t1_r2)<- NULL
+write.csv(t1_r1, "table1_r1.csv")
+write.csv(t1_r2, "table1_r2.csv")
 ```
 
 ```{r}
@@ -430,12 +426,14 @@ discovery.tool<- function(decision.rule, agelims=c(1,150), insurance=c("all","GK
   #creating plots and tables
   
   #####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag#####diag
+  
   if(dependent.variable=="diag"){
     if(diag.parameters[["type"]]==1){
       if(diag.parameters[["initial.or.last"]]=="last"){
-        all.diagnoses<- as.vector(as.matrix(episodedf[,grepl("last_icd10", colnames(episodedf))]))
+        all.diagnoses<- as.vector(as.matrix(episodedf[,grepl("last_diag", colnames(episodedf))]))
       }else if(diag.parameters[["initial.or.last"]]=="initial"){
-        all.diagnoses<- as.vector(as.matrix(episodedf[,grepl("first_icd10", colnames(episodedf))]))
+        # all.diagnoses<- as.vector(as.matrix(episodedf[,grepl("first_diag", colnames(episodedf))]))
+        all.diagnoses<- unlist(episodedf[paste0("first_diag_", seq(1, cutoff_diag))])
       }else{
         stop("initial.or.last in diag.parameters is incorrectly specified")
       }
@@ -454,6 +452,7 @@ discovery.tool<- function(decision.rule, agelims=c(1,150), insurance=c("all","GK
       
       
       blocks<- icd10.to.block(all.diagnoses)
+      blocks<- blocks[blocks[,1] != 0,]
       im<- table(blocks[,1])
       blocks.no<- as.numeric(names(im))
       names(im)<- NULL
@@ -462,7 +461,7 @@ discovery.tool<- function(decision.rule, agelims=c(1,150), insurance=c("all","GK
       prob<- prob/sum(prob)
       d.block_num<- data.frame(x=1:241,prob=prob)
       d.block_description<- data.frame(x=icd10_blocks$description, prob=prob)
-      
+      browser()
       three.St<- icd10.to.3St(all.diagnoses)
       d.3St<- as.data.frame(table(paste0(three.St$codes,"- ",three.St$description)))
       colnames(d.3St)<- c("description","frequency")

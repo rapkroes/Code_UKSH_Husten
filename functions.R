@@ -1276,119 +1276,142 @@ add.stamm.new.par<- function(edf,sdf, no.splits,no.workers){
   return(out)
 }
 
-#no. 35
-add.lab.par<- function(episodedf, lab, no.splits, no.workers){
-  dl_e<- chunk.data(episodedf,no.splits)
-  dl_lab<- chunk.adddata(dl_e,lab)
-  par.cl<- makeCluster(no.workers)
-  dist.env<- environment()
-  clusterExport(par.cl,varlist = c("dl_e","dl_lab","filter","arrange"), envir = dist.env)
-  
-  result<- parLapply(cl=par.cl, 1:no.splits,function(k){
-    edf<- dl_e[[k]] |>
-      arrange(uniPatID)
-    labdf<- dl_lab[[k]]
-    out<- matrix(NA,nrow = nrow(edf), ncol = 7)
-    
-    pat<- edf$uniPatID[1]
-    im_lab<- labdf|>
-      filter(uniPatID==pat)|>
-      arrange(TG_DateNum)
-    if(nrow(im_lab)>0){
-      for(i in seq(1, nrow(im_lab))){
-        if (im_lab$TG_DateNum[i]>=edf$start_date[1] && im_lab$TG_DateNum[i]<=edf$end_date[1]) {
-          selector<- max(which(im_lab[i,]==1))-4 #max because we want to select the last column
-          out[1,selector]<- im_lab$TG_DateNum[i]
-        }
-      }
-    }
-    
-    for(j in seq(2,nrow(edf))){
-      pat<- edf$uniPatID[j]
-      if(edf$uniPatID[j-1]!=pat){
-        im_lab<- labdf|>
-          filter(uniPatID==pat)|>
-          arrange(TG_DateNum)
-      }
-      if(nrow(im_lab)>0){
-        for(i in seq(1, nrow(im_lab))){
-          if (im_lab$TG_DateNum[i]>=edf$start_date[j] && im_lab$TG_DateNum[i]<=edf$end_date[j]) {
-            selector<- max(which(im_lab[i,]==1))-4 #max because we want to select the last column
-            out[j,selector]<- im_lab$TG_DateNum[i]
-          }
-        }
-      }
-    }
-    out<- as.data.frame(cbind(edf,out))
-    colnames(out)<- c(colnames(edf),colnames(labdf)[-(1:4)])
-    return(out)
-  })
-  out<- as.data.frame(matrix(NA,nrow = nrow(episodedf), ncol = ncol(episodedf)+7))
-  colnames(out)<- colnames(result[[1]])
-  ticker<- 1
-  for(j in seq(1,length(result))){
-    out[seq(ticker,ticker-1+nrow(result[[j]])),]<- result[[j]]
-    ticker<- ticker+nrow(result[[j]])
-  }
+# #no. 35
+# add.lab.par<- function(episodedf, lab, no.splits, no.workers){
+#   dl_e<- chunk.data(episodedf,no.splits)
+#   dl_lab<- chunk.adddata(dl_e,lab)
+#   par.cl<- makeCluster(no.workers)
+#   dist.env<- environment()
+#   clusterExport(par.cl,varlist = c("dl_e","dl_lab","filter","arrange"), envir = dist.env)
+#   
+#   result<- parLapply(cl=par.cl, 1:no.splits,function(k){
+#     edf<- dl_e[[k]] |>
+#       arrange(uniPatID)
+#     labdf<- dl_lab[[k]]
+#     out<- matrix(NA,nrow = nrow(edf), ncol = 7)
+#     
+#     pat<- edf$uniPatID[1]
+#     im_lab<- labdf|>
+#       filter(uniPatID==pat)|>
+#       arrange(TG_DateNum)
+#     if(nrow(im_lab)>0){
+#       for(i in seq(1, nrow(im_lab))){
+#         if (im_lab$TG_DateNum[i] >= edf$start_date[1] && 
+#             im_lab$TG_DateNum[i] <= edf$end_date[1]) {
+#           selector<- max(which(im_lab[i,]==1))-4 #max because we want to select the last column
+#           out[1,selector]<- im_lab$TG_DateNum[i]
+#         }
+#       }
+#     }
+#     
+#     for(j in seq(2,nrow(edf))){
+#       pat<- edf$uniPatID[j]
+#       if(edf$uniPatID[j-1]!=pat){
+#         im_lab<- labdf|>
+#           filter(uniPatID==pat)|>
+#           arrange(TG_DateNum)
+#       }
+#       if(nrow(im_lab)>0){
+#         for(i in seq(1, nrow(im_lab))){
+#           if (im_lab$TG_DateNum[i]>=edf$start_date[j] && im_lab$TG_DateNum[i]<=edf$end_date[j]) {
+#             selector<- max(which(im_lab[i,]==1))-4 #max because we want to select the last column
+#             out[j,selector]<- im_lab$TG_DateNum[i]
+#           }
+#         }
+#       }
+#     }
+#     out<- as.data.frame(cbind(edf,out))
+#     colnames(out)<- c(colnames(edf),colnames(labdf)[-(1:4)])
+#     return(out)
+#   })
+#   out<- as.data.frame(matrix(NA,nrow = nrow(episodedf), ncol = ncol(episodedf)+7))
+#   colnames(out)<- colnames(result[[1]])
+#   ticker<- 1
+#   for(j in seq(1,length(result))){
+#     out[seq(ticker,ticker-1+nrow(result[[j]])),]<- result[[j]]
+#     ticker<- ticker+nrow(result[[j]])
+#   }
+#   return(out)
+# }
+
+add.lab<- function(episodedf, lab.df){
+  sel<- colnames(episodedf)[colnames(episodedf) != "episode.ID"]
+  ndf<- full_join(episodedf, lab.df, by = "uniPatID")
+  with.lab<- ndf|>
+    filter(start_date <= TG_DateNum & end_date >= TG_DateNum)|>
+    select(-sel, -unipat_date)
+  out<- left_join(episodedf, with.lab, by = "episode.ID")|>
+    select(-TG_DateNum)
   return(out)
 }
 
 #no. 36
-add.ueberweis.par<- function(episodedf, ueberweis, no.splits, no.workers){
-  dl_e<- chunk.data(episodedf,no.splits)
-  dl_ueberweis<- chunk.adddata(dl_e,ueberweis)
-  par.cl<- makeCluster(no.workers)
-  dist.env<- environment()
-  clusterExport(par.cl,varlist = c("dl_e","dl_ueberweis","filter","arrange"), envir = dist.env)
-  
-  result<- parLapply(cl=par.cl, 1:no.splits,function(k){
-    edf<- dl_e[[k]] |>
-      arrange(uniPatID)
-    ueberweisdf<- dl_ueberweis[[k]]
-    out<- matrix(NA,nrow = nrow(edf), ncol = 3)
-    
-    pat<- edf$uniPatID[1]
-    im_ueberweis<- ueberweisdf|>
-      filter(uniPatID==pat)|>
-      arrange(TG_DateNum)
-    if(nrow(im_ueberweis)>0){
-      for(i in seq(1, nrow(im_ueberweis))){
-        if (im_ueberweis$TG_DateNum[i]>=edf$start_date[1] && im_ueberweis$TG_DateNum[i]<=edf$end_date[1]) {
-          selector<- max(which(im_ueberweis[i,]==1))-2 #max because we want to select the last column
-          out[1,selector]<- im_ueberweis$TG_DateNum[i]
-        }
-      }
-    }
-    
-    for(j in seq(2,nrow(edf))){
-      pat<- edf$uniPatID[j]
-      if(edf$uniPatID[j-1]!=pat){
-        im_ueberweis<- ueberweisdf|>
-          filter(uniPatID==pat)|>
-          arrange(TG_DateNum)
-      }
-      if(nrow(im_ueberweis)>0){
-        for(i in seq(1, nrow(im_ueberweis))){
-          if (im_ueberweis$TG_DateNum[i]>=edf$start_date[j] && im_ueberweis$TG_DateNum[i]<=edf$end_date[j]) {
-            selector<- max(which(im_ueberweis[i,]==1))-4 #max because we want to select the last column
-            out[j,selector]<- im_ueberweis$TG_DateNum[i]
-          }
-        }
-      }
-    }
-    out<- as.data.frame(cbind(edf,out))
-    colnames(out)<- c(colnames(edf),colnames(ueberweisdf)[-(1:2)])
-    return(out)
-  })
-  out<- as.data.frame(matrix(NA,nrow = nrow(episodedf), ncol = ncol(episodedf)+3))
-  colnames(out)<- colnames(result[[1]])
-  ticker<- 1
-  for(j in seq(1,length(result))){
-    out[seq(ticker,ticker-1+nrow(result[[j]])),]<- result[[j]]
-    ticker<- ticker+nrow(result[[j]])
-  }
+add.ueberweis<- function(episodedf, ueberweis.df){
+  sel<- colnames(episodedf)[colnames(episodedf) != "episode.ID"]
+  ndf<- full_join(episodedf, ueberweis.df, by = "uniPatID")
+  with.ueberweis<- ndf|>
+    filter(start_date <= TG_DateNum & end_date >= TG_DateNum)|>
+    select(-sel, -unipat_date)
+  out<- left_join(episodedf, with.ueberweis, by = "episode.ID")|>
+    select(-TG_DateNum)
   return(out)
 }
+
+# add.ueberweis.par<- function(episodedf, ueberweis, no.splits, no.workers){
+#   dl_e<- chunk.data(episodedf,no.splits)
+#   dl_ueberweis<- chunk.adddata(dl_e,ueberweis)
+#   par.cl<- makeCluster(no.workers)
+#   dist.env<- environment()
+#   clusterExport(par.cl,varlist = c("dl_e","dl_ueberweis","filter","arrange"), envir = dist.env)
+#   
+#   result<- parLapply(cl=par.cl, 1:no.splits,function(k){
+#     edf<- dl_e[[k]] |>
+#       arrange(uniPatID)
+#     ueberweisdf<- dl_ueberweis[[k]]
+#     out<- matrix(NA,nrow = nrow(edf), ncol = 3)
+#     
+#     pat<- edf$uniPatID[1]
+#     im_ueberweis<- ueberweisdf|>
+#       filter(uniPatID==pat)|>
+#       arrange(TG_DateNum)
+#     if(nrow(im_ueberweis)>0){
+#       for(i in seq(1, nrow(im_ueberweis))){
+#         if (im_ueberweis$TG_DateNum[i]>=edf$start_date[1] && im_ueberweis$TG_DateNum[i]<=edf$end_date[1]) {
+#           selector<- max(which(im_ueberweis[i,]==1))-2 #max because we want to select the last column
+#           out[1,selector]<- im_ueberweis$TG_DateNum[i]
+#         }
+#       }
+#     }
+#     
+#     for(j in seq(2,nrow(edf))){
+#       pat<- edf$uniPatID[j]
+#       if(edf$uniPatID[j-1]!=pat){
+#         im_ueberweis<- ueberweisdf|>
+#           filter(uniPatID==pat)|>
+#           arrange(TG_DateNum)
+#       }
+#       if(nrow(im_ueberweis)>0){
+#         for(i in seq(1, nrow(im_ueberweis))){
+#           if (im_ueberweis$TG_DateNum[i]>=edf$start_date[j] && im_ueberweis$TG_DateNum[i]<=edf$end_date[j]) {
+#             selector<- max(which(im_ueberweis[i,]==1))-4 #max because we want to select the last column
+#             out[j,selector]<- im_ueberweis$TG_DateNum[i]
+#           }
+#         }
+#       }
+#     }
+#     out<- as.data.frame(cbind(edf,out))
+#     colnames(out)<- c(colnames(edf),colnames(ueberweisdf)[-(1:2)])
+#     return(out)
+#   })
+#   out<- as.data.frame(matrix(NA,nrow = nrow(episodedf), ncol = ncol(episodedf)+3))
+#   colnames(out)<- colnames(result[[1]])
+#   ticker<- 1
+#   for(j in seq(1,length(result))){
+#     out[seq(ticker,ticker-1+nrow(result[[j]])),]<- result[[j]]
+#     ticker<- ticker+nrow(result[[j]])
+#   }
+#   return(out)
+# }
 
 # add.ueberweis.par<- function(episodedf, ueberweis, no.splits, no.workers){
 #   dl_e<- chunk.data(episodedf,no.splits)
@@ -1449,7 +1472,8 @@ add.diag.par<- function(episodedf, adddata, no.splits, no.workers){
   adddl<- chunk.adddata(edl,adddata)
   par.cl<- makeCluster(no.workers)
   dist.env<- environment()
-  clusterExport(par.cl,varlist = c("edl","adddl","arrange","filter","select"), envir = dist.env)
+  clusterExport(par.cl, varlist = c("edl", "adddl", "arrange", "filter", 
+                                    "select"), envir = dist.env)
   
   result<- parLapply(par.cl,1:no.splits, function(k){
     edf<- edl[[k]]|>
@@ -1519,7 +1543,27 @@ add.diag.par<- function(episodedf, adddata, no.splits, no.workers){
   return(out)
 }
 
-
+# add.diag<- function(episodedf, diag.df){
+#   browser()
+#   im<- left_join(episodedf, diag.df, by = "uniPatID")|>
+#     filter(start_date <= TG_DateNum & end_date >= TG_DateNum)|>
+#     arrange(uniPatID, start_date)
+#   im_2<- im_2|>
+#     arrange(uniPatID, desc(start_date))
+#   sel.first.diag<- c(TRUE, im$uniPatID[seq(2, nrow(im))] != 
+#                        im$uniPatID[seq(1, nrow(im) - 1)])
+#   sel.last.diag<- c(TRUE, im_2$uniPatID[seq(2, nrow(im))] != 
+#                       im_2$uniPatID[seq(1, nrow(im) - 1)])
+#   no.matches.diag<- table(im$episode.ID)|>
+#     as.data.frame()
+#   colnames(no.matches.diag)<- c("episode.ID", "no.matches_diag")
+#   out<- im[sel.first.diag,]
+#   col.sel<- grepl("diag", colnames(im))
+#   colnames(out)[col.sel]<- paste0("first_", colnames(out)[col.sel])
+#   colnames(im_2)[col.sel]<- paste0("last_", colnames(im_2)[col.sel])
+#   
+# }
+# add.diag(episodes_r1, diag.up_2)
 data.repair.new<- function(df){
   #browser()
   out<- df|>
@@ -1530,7 +1574,8 @@ data.repair.new<- function(df){
 }
 
 icd10.to.3St<- function(icd10vec){
-  codes<- substr(icd10vec,1,3)
-  description<- ICD3St$text[match(codes,ICD3St$code)]
-  return(data.frame(codes=codes,description=description))
+  browser()
+  codes<- substr(icd10vec, 1, 3)
+  description<- ICD3St$text[match(codes, ICD3St$code)]
+  return(data.frame(codes = codes, description = description))
 }
