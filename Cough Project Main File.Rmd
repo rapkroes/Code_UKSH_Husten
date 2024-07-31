@@ -42,7 +42,7 @@ names.vec<- c("Diag","ICPC","Labor","Stamm","Ueberweis")
   icd10_blocks <- read.csv("https://github.com/rapkroes/Code_UKSH_Husten/raw/main/icd10_blocks.csv", sep = ";")
   icd10_description<- read.csv("https://github.com/rapkroes/Code_UKSH_Husten/blob/288b25aa745f178d2705d990e5106ad6db320a4d/icd10_description.csv")
   selected.lab.descriptions<- read.csv("https://github.com/rapkroes/Code_UKSH_Husten/raw/main/freitextanalyse.csv", sep = ";")
-  ICD3St<- read.csv("https://raw.githubusercontent.com/rapkroes/Code_UKSH_Husten/main/Table_ICD_3St.csv")
+  ICD3St<- read.csv("https://raw.githubusercontent.com/rapkroes/Code_UKSH_Husten/main/Table_ICD_3St.csv", sep = ";")
   source("//fileserver1.uni-luebeck.de/ifa_homes/raphaelkroes/Documents/GitHub/Code_UKSH_Husten/functions.R")
 
 }else{
@@ -461,7 +461,7 @@ discovery.tool<- function(decision.rule, agelims=c(1,150), insurance=c("all","GK
       prob<- prob/sum(prob)
       d.block_num<- data.frame(x=1:241,prob=prob)
       d.block_description<- data.frame(x=icd10_blocks$description, prob=prob)
-      browser()
+      
       three.St<- icd10.to.3St(all.diagnoses)
       d.3St<- as.data.frame(table(paste0(three.St$codes,"- ",three.St$description)))
       colnames(d.3St)<- c("description","frequency")
