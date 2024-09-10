@@ -1156,6 +1156,10 @@ add.lab<- function(episodedf, lab.df){
   with.lab<- ndf|>
     filter(start_date <= TG_DateNum & end_date >= TG_DateNum)|>
     select(-sel, -unipat_date)
+  date.cols<- colnames(with.lab) %in% c("labtest", "something", "blood_normal",
+                                        "blood_large_test", "CRP", "ery",
+                                        "leuko", "procalcitonin")
+  with.lab[,date.cols]<- with.lab$TG_DateNum * with.lab[,date.cols]
   out<- left_join(episodedf, with.lab, by = "episode.ID")|>
     select(-TG_DateNum)
   return(out)
@@ -1163,8 +1167,12 @@ add.lab<- function(episodedf, lab.df){
 
 #no. 36
 add.ueberweis<- function(episodedf, ueberweis.df){
+  ueberweis.new<- ueberweis.df
+  ueberweis.new$FR_Pneumo<- ueberweis.df$FR_Pneumo * ueberweis.df$TG_DateNum
+  ueberweis.new$FR_Radiol<- ueberweis.df$FR_Radiol * ueberweis.df$TG_DateNum
+  ueberweis.new$FR_KH<- ueberweis.df$FR_KH * ueberweis.df$TG_DateNum
   sel<- colnames(episodedf)[colnames(episodedf) != "episode.ID"]
-  ndf<- full_join(episodedf, ueberweis.df, by = "uniPatID")
+  ndf<- full_join(episodedf, ueberweis.new, by = "uniPatID")
   with.ueberweis<- ndf|>
     filter(start_date <= TG_DateNum & end_date >= TG_DateNum)|>
     select(-sel, -unipat_date)

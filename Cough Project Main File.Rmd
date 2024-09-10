@@ -23,7 +23,7 @@ library(writexl)
 real.data<- TRUE
 if(real.data){
   setwd("N:/StudentischeHilfskraefte/_Kroes (Christoph)/Routinedaten/01_Husten/R/DBnew2")
-names.vec<- c("Diag","ICPC","Labor","Stamm","Ueberweis")
+names.vec<- c("Diag","ICPC","Labor","Stamm","Ueberweis", "PZN")
 
   for (i in seq(1,length(names.vec))) {
     file.name<- paste0("DB_",names.vec[i],"1_v03",".csv")
@@ -99,6 +99,16 @@ ueberweis.up<- Ueberweis|>
   filter(FR_Pneumo > 0 | FR_Radiol > 0 | FR_KH > 0) |>
   distinct()
 ueberweis.up$unipat_date<- paste(ueberweis.up$uniPatID, ueberweis.up$TG_DateNum, sep = "_")
+
+aub<- Diag|>
+  filter(Typ == "AUB")|>
+  select(uniPatID, TG_DateNum)
+colnames(aub)[2]<- "TG_DateNum_AUB"
+
+pzn.up<- PZN[substr(PZN$ATC, 1, 3) == "J01",]|>
+  filter(TG == "ME")|>
+  select(uniPatID, TG_DateNum)
+colnames(pzn.up)[2]<- "TG_DateNum_antibiotic"
 ```
 
 
@@ -248,7 +258,51 @@ for(k in 1:2){
   rm(im)
 }
 
+full_r1$FR_KH[full_r1$FR_KH == 0]<- NA
+full_r1$FR_Pneumo[full_r1$FR_Pneumo == 0]<- NA
+full_r1$FR_Radiol[full_r1$FR_Radiol == 0]<- NA
 
+full_r2$FR_KH[full_r2$FR_KH == 0]<- NA
+full_r2$FR_Pneumo[full_r2$FR_Pneumo == 0]<- NA
+full_r2$FR_Radiol[full_r2$FR_Radiol == 0]<- NA
+
+full_r1<- left_join(full_r1, aub, by = "uniPatID")
+has.AUB<- full_r1$start_date <= full_r1$TG_DateNum_AUB & 
+  full_r1$end_date >= full_r1$TG_DateNum_AUB
+full_r1$TG_DateNum_AUB[!has.AUB]<- NA
+full_r1<- arrange(full_r1, episode.ID, TG_DateNum_AUB)
+episode.duplicate<- duplicated(full_r1$episode.ID)
+full_r1<- full_r1[!episode.duplicate,]
+full_r1$time_until_AUB<- full_r1$TG_DateNum_AUB - full_r1$start_date
+
+full_r2<- left_join(full_r2, aub, by = "uniPatID")
+has.AUB<- full_r2$start_date <= full_r2$TG_DateNum_AUB & 
+  full_r2$end_date >= full_r2$TG_DateNum_AUB
+full_r2$TG_DateNum_AUB[!has.AUB]<- NA
+full_r2<- arrange(full_r2, episode.ID, TG_DateNum_AUB)
+episode.duplicate<- duplicated(full_r2$episode.ID)
+full_r2<- full_r2[!episode.duplicate,]
+full_r2$time_until_AUB<- full_r2$TG_DateNum_AUB - full_r2$start_date
+
+full_r1<- left_join(full_r1, pzn.up, by = "uniPatID")
+has.PZN<- full_r1$start_date <= full_r1$TG_DateNum_antibiotic & 
+  full_r1$end_date >= full_r1$TG_DateNum_antibiotic
+full_r1$TG_DateNum_antibiotic[!has.PZN]<- NA
+full_r1<- arrange(full_r1, episode.ID, TG_DateNum_antibiotic)
+episode.duplicate<- duplicated(full_r1$episode.ID)
+full_r1<- full_r1[!episode.duplicate,]
+full_r1$time_until_antibiotic<- full_r1$TG_DateNum_antibiotic - 
+  full_r1$start_date
+
+full_r2<- left_join(full_r2, pzn.up, by = "uniPatID")
+has.PZN<- full_r2$start_date <= full_r2$TG_DateNum_antibiotic & 
+  full_r2$end_date >= full_r2$TG_DateNum_antibiotic
+full_r2$TG_DateNum_antibiotic[!has.PZN]<- NA
+full_r2<- arrange(full_r2, episode.ID, TG_DateNum_antibiotic)
+episode.duplicate<- duplicated(full_r2$episode.ID)
+full_r2<- full_r2[!episode.duplicate,]
+full_r2$time_until_antibiotic<- full_r2$TG_DateNum_antibiotic - 
+  full_r2$start_date
 ```
 
 ```{r}
@@ -263,8 +317,12 @@ summary.stats<- function(episodedf){
     no.episodes= nrow(episodedf),
     no.patients= length(levels(as.factor(episodedf$uniPatID))),
     no.stammdata.there= sum(episodedf$stamm.is.there, na.rm = TRUE),
-    earliest.recorded.episode.start= TG_DateNum2date(min(episodedf$start_date)),
-    latest.recorded.episode.start= TG_DateNum2date(max(episodedf$start_date)),
+    earliest.recorded.episode.start= min(episodedf$start_date)|>
+      TG_DateNum2date()|>
+      as.character(),
+    latest.recorded.episode.start= max(episodedf$start_date)|>
+      TG_DateNum2date()|>
+      as.character(),
     no.males=sum(episodedf$Maennl, na.rm = TRUE),
     no.females=sum(episodedf$Weibl, na.rm = TRUE),
     no.transgender=sum(episodedf$Transgen, na.rm = TRUE),
@@ -293,7 +351,9 @@ summary.stats<- function(episodedf){
     no.private.insurance= sum(episodedf$PKV, na.rm= TRUE),
     percentage.private.insurance= mean(episodedf$PKV, na.rm= TRUE),
     percentage.retired.patients= mean(episodedf$Status_R[!duplicated(episodedf$uniPatID)], na.rm= TRUE),
-    percentage.retired.episodes= mean(episodedf$Status_R, na.rm= TRUE)
+    percentage.retired.episodes= mean(episodedf$Status_R, na.rm= TRUE),
+    no.AUBs = sum(!is.na(episodedf$time_until_AUB)),
+    percentage.AUBs.episodes = mean(!is.na(episodedf$time_until_AUB))
   )
   return(numbers)
 }
@@ -306,21 +366,22 @@ t1_r2<- summary.stats(episodedf = full_r2)|>
   unlist()|>
   as.data.frame()
 colnames(t1_r2)<- NULL
-write.csv(t1_r1, "table1_r1.csv")
-write.csv(t1_r2, "table1_r2.csv")
+write.table(t1_r1, "table1_r1.csv", sep = "; ")
+write.table(t1_r2, "table1_r2.csv", sep = "; ")
 ```
 
 ```{r}
 # create plots
 
 # no. 32
-discovery.tool<- function(decision.rule, agelims=c(1,150), insurance=c("all","GKV","PKV")[1], remove.copd=FALSE, lims.chronic.diseases=c(0,100), pandemic="none", preliminary.diag=c(NA,TRUE,FALSE)[1], AUB=c(NA,TRUE,FALSE)[1], quarter.selection=1:4, month.selection=1:12, dependent.variable, research.question){
+discovery.tool<- function(decision.rule, agelims=c(1,150), insurance=c("all","GKV","PKV")[1], remove.copd=FALSE, lims.chronic.diseases=c(0,100), pandemic="none", preliminary.diag=c(NA,TRUE,FALSE)[1], AUB=c(NA,TRUE,FALSE)[1], quarter.selection=1:4, month.selection=1:12, selected.years = "all", dependent.variable, research.question){
   # Tool to create plots and tables for specific data requests.
   # decision.rule is an integer between 1 and 5 giving the decision rule for how to deal with overlaps in the data set. Can currently only be set to 1 or 2.
   # insurance can be selected as "GKV" or "PKV" in order to restrict the patients to being insured by a public/ private insurer
   # remove.copd can be set to TRUE to remove all patients that were registered with COPD within the time of the data
   # lims.chronic.diseases is a two element vector with the lowest and highest numbers of chronic diseases that are to be considered. By default, patients with 0 to 100 different chronic diseases are considered. Example: only patients with three chronic diseases are to be considered-> set lims.chronic.diseases=c(3,3); only people with two or fewer chronic diseases are to be considered-> set lims.chronic.diseases=c(0,2). Note that the people for which no data is recorded are kept by default in the analysis.
   # pandemic: if specified, set it to TRUE if only pandemic data is to be analysed, and to false if only data before the pandemic is to be included.
+  # selected.years is "all" for no limitation of the years, and a vector c(start year, end year) if the years are to be limited.
   # dependent.variable specifies the dependent variable to be looked at. Current options are: diag, age, escalation_lab, escalation_ueberweis.
   # constraint.list is a list of constraints what cases are to be selected.
   # research.question is the question that the plot/ table aims to answer. It is used as label for the plot and is used to name the generated files. Therefore, it must not contain any kind of punctuation (only underline permitted)! The function adds a question mark automatically at the end of each label with the research question!
@@ -342,7 +403,7 @@ discovery.tool<- function(decision.rule, agelims=c(1,150), insurance=c("all","GK
   }
   
   #age
-  age.vec<- as.numeric(year(TG_DateNum2date(episodedf$start_date)))-episodedf$Geburtsjahr
+  age.vec<- episodedf$age
   age.selector<- agelims[1]<= age.vec & agelims[2]>= age.vec
   age.selector[is.na(age.selector)]<- TRUE
   episodedf<- episodedf[age.selector,]
@@ -368,7 +429,8 @@ discovery.tool<- function(decision.rule, agelims=c(1,150), insurance=c("all","GK
   }
   
   #number of chronic diseases
-  selector<- episodedf$no.chronic.diseases>= lims.chronic.diseases[1] & episodedf$no.chronic.diseases<=lims.chronic.diseases[2]
+  selector<- episodedf$no.chronic.diseases>= lims.chronic.diseases[1] &
+    episodedf$no.chronic.diseases<=lims.chronic.diseases[2]
   selector[is.na(selector)]<- TRUE
   episodedf<- episodedf[selector,]
   
@@ -398,19 +460,17 @@ discovery.tool<- function(decision.rule, agelims=c(1,150), insurance=c("all","GK
       episodedf<- episodedf[!episodedf$first_diag_V_present,]
     }
   }
-  
   if(nrow(episodedf)==0){
     stop("Due to the parameter configuration there are no episodes left after accounting for preliminary.diag")
   }
   
   if(!is.na(AUB)){
-      if(AUB==TRUE){
-      episodedf<- episodedf[episodedf$AUB_issued,]
+    if(AUB==TRUE){
+      episodedf<- episodedf[!is.na(episodedf$TG_DateNum_AUB),]
     }else if(AUB==FALSE){
-      episodedf<- episodedf[!episodedf$AUB_issued,]
+      episodedf<- episodedf[is.na(episodedf$TG_DateNum_AUB),]
     }
   }
-  
   if(nrow(episodedf)==0){
     stop("Due to the parameter configuration there are no episodes left after accounting for AUB")
   }
@@ -418,9 +478,19 @@ discovery.tool<- function(decision.rule, agelims=c(1,150), insurance=c("all","GK
   episodedf<- episodedf|>
     filter(start_quarter %in% quarter.selection)|>
     filter(start_month %in% month.selection)
-  
   if(nrow(episodedf)==0){
     stop("Due to the parameter configuration there are no episodes left after accounting for quarter.selection and month.selection")
+  }
+  
+  if(length(selected.years) != 1){
+    if(length(selected.years) != 2 | !is.numeric(selected.years)){
+      warning("The selection of years is likely misspecified.")
+    }
+    constr<- date2TG_DateNum(paste0(selected.years, "-01-01"))
+    episodedf<- filter(episodedf, start_date >= constr[1] & end_date <= constr[2])
+  }
+  if(nrow(episodedf)==0){
+    stop("Due to the parameter configuration there are no episodes left after the year selection.")
   }
   
   #creating plots and tables
@@ -549,11 +619,11 @@ discovery.tool<- function(decision.rule, agelims=c(1,150), insurance=c("all","GK
       theme(legend.position = "bottom")
     
     ggsave(paste0(research.question,".png"), plot = p, path = getwd(), device = "png")
+    write_xlsx(d, paste0(research.question, ".xlsx"))
     
     #####escalation_lab#####escalation_lab#####escalation_lab#####escalation_lab#####escalation_lab#####escalation_lab#####escalation_lab#####escalation_lab#####escalation_lab#####escalation_lab#####escalation_lab
     
   }else if(dependent.variable=="escalation_lab"){
-    
     if(escalation.parameters_lab[["type"]]==1){
       #lab test, generally
       x<- episodedf$labtest-episodedf$start_date
@@ -602,13 +672,41 @@ discovery.tool<- function(decision.rule, agelims=c(1,150), insurance=c("all","GK
            subtitle = paste("based on", length(x), "episodes"))
     ggsave(paste0(research.question,".png"), plot = p, path = getwd(), device = "png")
     
+    write_xlsx(d, paste0(research.question, ".xlsx"))
     
+    #####escalation_antibiotics#####escalation_antibiotics#####escalation_antibiotics#####escalation_antibiotics#####escalation_antibiotics#####escalation_antibiotics#####escalation_antibiotics#####escalation_antibiotics
+  
+  }else if(dependent.variable=="escalation_antibiotics"){
+    x<- episodedf$time_until_antibiotic
+    x<- x[!is.na(x)]
+    
+    im<- table(x)
+    allocation<- as.numeric(names(im))
+    names(im)<- NULL
+    prob<- numeric(max(allocation)+1)
+    prob[allocation+1]<- im
+    prob<- prob/sum(prob)
+    d<- data.frame(x=seq(0,max(allocation)),prob=prob)
+    
+    
+    p<- ggplot(d, aes(x=x, y=prob)) +
+      geom_bar(stat = "identity", fill="skyblue") +
+      scale_y_continuous(labels = scales::percent_format()) +
+      labs(title = paste0(research.question,"?"),
+           x = "number of days since initial cough", 
+           y= "percentage",
+           subtitle = paste("based on", length(x), "episodes"))
+    ggsave(paste0(research.question,".png"), plot = p, path = getwd(), device = "png")
+    
+    write_xlsx(d, paste0(research.question, ".xlsx"))
     #####escalation_ueberweis#####escalation_ueberweis#####escalation_ueberweis#####escalation_ueberweis#####escalation_ueberweis#####escalation_ueberweis#####escalation_ueberweis#####escalation_ueberweis
     
     }else if(dependent.variable=="escalation_ueberweis"){
       if(escalation.parameters_ueberweis[["type"]]==1){
       #referral to specialist care
-      x<- cbind(episodedf$Uberw_Pneumo-episodedf$start_date,episodedf$Uberw_Radiol-episodedf$start_date,episodedf$Uberw_KH-episodedf$start_date)
+      x<- cbind(episodedf$FR_Pneumo - episodedf$start_date, 
+                episodedf$FR_Radiol - episodedf$start_date, 
+                episodedf$FR_KH - episodedf$start_date)
       x<- apply(x, 1, function(row) {
     if (all(is.na(row))) {
       return(NA)
@@ -620,17 +718,17 @@ discovery.tool<- function(decision.rule, agelims=c(1,150), insurance=c("all","GK
       warning(paste("There were", length(x), "episodes when patients were referred to a specialist."))
     }else if(escalation.parameters_ueberweis[["type"]]==2){
       #referral pulmonologist
-      x<- episodedf$Uberw_Pneumo-episodedf$start_date
+      x<- episodedf$FR_Pneumo-episodedf$start_date
       x<- x[!is.na(x)]
       warning(paste("There were", length(x), "episodes when patients were referred to a pulmonologist."))
     }else if(escalation.parameters_ueberweis[["type"]]==3){
       #referral radiologist
-      x<- episodedf$Uberw_Radiol-episodedf$start_date
+      x<- episodedf$FR_Radiol-episodedf$start_date
       x<- x[!is.na(x)]
       warning(paste("There were", length(x), "episodes when patients were referred to a radiologist."))
     }else if(escalation.parameters_ueberweis[["type"]]==4){
       #referral hospital
-      x<- episodedf$Uberw_KH-episodedf$start_date
+      x<- episodedf$FR_KH-episodedf$start_date
       x<- x[!is.na(x)]
       warning(paste("There were", length(x), "episodes when patients were referred to a hospital."))
     }
@@ -652,6 +750,8 @@ discovery.tool<- function(decision.rule, agelims=c(1,150), insurance=c("all","GK
            y= "percentage",
            subtitle = paste("based on", length(x), "episodes"))
     ggsave(paste0(research.question,".png"), plot = p, path = getwd(), device = "png")
+    
+    write_xlsx(d, paste0(research.question, ".xlsx"))
   }
 }
 ```
@@ -660,6 +760,8 @@ discovery.tool<- function(decision.rule, agelims=c(1,150), insurance=c("all","GK
 diag.parameters<- list(initial.or.last= "initial",type= 1)
 discovery.tool(1, dependent.variable = "diag", research.question = "Welche Diagnosen wurden zuerst gestellt, R1")
 discovery.tool(2, dependent.variable = "diag", research.question = "Welche Diagnosen wurden zuerst gestellt, R2")
+discovery.tool(1, dependent.variable = "diag", selected.years = c(2000,2019), research.question = "Welche Diagnosen wurden zuerst gestellt, 2000-2019, R1")
+discovery.tool(2, dependent.variable = "diag", selected.years = c(2000,2019), research.question = "Welche Diagnosen wurden zuerst gestellt, 2000-2019, R2")
 discovery.tool(1, dependent.variable = "diag", pandemic = FALSE, research.question = "Welche Diagnosen wurden zuerst gestellt, ohne Pandemie R1")
 discovery.tool(2, dependent.variable = "diag", pandemic = FALSE, research.question = "Welche Diagnosen wurden zuerst gestellt, ohne Pandemie, R2")
 
@@ -711,9 +813,6 @@ discovery.tool(2, dependent.variable = "diag", quarter.selection = 4, research.q
 escalation.parameters_lab<- list(type=1)
 discovery.tool(1,dependent.variable = "escalation_lab", research.question = "Wann wurde (irgend-) ein Labortest angeordnet, R1")
 discovery.tool(2,dependent.variable = "escalation_lab", research.question = "Wann wurde (irgend-) ein Labortest angeordnet, R2")
-escalation.parameters_lab<- list(type=2)#######here
-discovery.tool(1,dependent.variable = "escalation_lab", research.question = "Wann wurde ein Blutbild angeordnet, R1")
-discovery.tool(2,dependent.variable = "escalation_lab", research.question = "Wann wurde ein Blutbild angeordnet, R2")
 escalation.parameters_lab<- list(type=4)
 discovery.tool(1,dependent.variable = "escalation_lab", research.question = "Wann wurde auf C-reaktives Protein getestet, R1")
 discovery.tool(2,dependent.variable = "escalation_lab", research.question = "Wann wurde auf C-reaktives Protein getestet, R2")
@@ -729,6 +828,8 @@ discovery.tool(2,dependent.variable = "escalation_lab", research.question = "Wan
 #probably necessary to adjust the function
 discovery.tool(1, dependent.variable = "age", agelims = c(18,150), research.question = "Wie alt waren die Patienten, ohne Minderjährige, R1")
 discovery.tool(2, dependent.variable = "age", agelims = c(18,150), research.question = "Wie alt waren die Patienten, ohne Minderjährige, R2")
+discovery.tool(1, dependent.variable = "escalation_antibiotics", research.question = "Wann wurden Antibiotika verschrieben, R1")
+discovery.tool(2, dependent.variable = "escalation_antibiotics", research.question = "Wann wurden Antibiotika verschrieben, R2")
 ```
 
 ```{r}
@@ -745,7 +846,7 @@ complete.table<- function(dv){
 complete.table(full_r1$no.matches_diag)
 
 table(full_r1$no.matches_diag)
-prop.table(table(full_r1$no.matches_diag))
+round(prop.table(table(full_r1$no.matches_diag)), 3)
 table(full_r2$no.matches_diag)
 prop.table(table(full_r2$no.matches_diag))
 
