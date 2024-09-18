@@ -600,6 +600,61 @@ icd10.to.3St<- function(icd10vec){
   return(data.frame(codes = codes, description = description))
 }
 
+summary.stats<- function(episodedf){
+  no.patients<- length(levels(as.factor(episodedf$uniPatID)))
+  no.episodes<- nrow(episodedf)
+  age<- episodedf$age
+  length.of.episode<- episodedf$length_of_episode
+  
+  numbers<- list(
+    no.episodes= nrow(episodedf),
+    no.patients= length(levels(as.factor(episodedf$uniPatID))),
+    no.stammdata.there= sum(episodedf$stamm.is.there, na.rm = TRUE),
+    earliest.recorded.episode.start= min(episodedf$start_date)|>
+      TG_DateNum2date()|>
+      as.character(),
+    latest.recorded.episode.start= max(episodedf$start_date)|>
+      TG_DateNum2date()|>
+      as.character(),
+    no.males=sum(episodedf$Maennl, na.rm = TRUE),
+    no.females=sum(episodedf$Weibl, na.rm = TRUE),
+    no.transgender=sum(episodedf$Transgen, na.rm = TRUE),
+    no.undefined.sex=sum(episodedf$Geschlechtundef, na.rm = TRUE),
+    
+    percentage.chronically.diseased.patients= mean(as.character(levels(as.factor(episodedf$uniPatID))) %in% chronic.patients$chronic.patients),
+    percentage.episodes.of.chronically.diseased= mean(episodedf$uniPatID %in% chronic.patients$chronic.patients),
+    percentage.copd.patients= mean(as.character(levels(as.factor(episodedf$uniPatID))) %in% copd.vec),
+    percentage.episodes.of.copd.patients= mean(episodedf$uniPatID %in% copd.vec),
+    min.age= min(age, na.rm = TRUE),
+    mean.age= mean(age, na.rm= TRUE),
+    median.age= median(age, na.rm = TRUE),
+    max.age= max(age, na.rm = TRUE),
+    percentage.episodes.minors= mean(age<18, na.rm=TRUE),
+    percentage.patients.minors= mean((age<18)[!duplicated(episodedf$uniPatID)], na.rm=TRUE),
+    min.length.of.episode= min(length.of.episode),
+    mean.length.of.episode= mean(length.of.episode),
+    max.length.of.episode= max(length.of.episode),
+    
+    average.no.visit.per.patient=nrow(episodedf)/no.patients,
+    percentage.stammdata.there= sum(episodedf$stamm_is_there, na.rm = TRUE)/no.episodes,
+    percentage.males.episodes=mean(episodedf$Maennl, na.rm = TRUE),
+    percentage.females.episodes=mean(episodedf$Weibl, na.rm = TRUE),
+    percentage.males.patients=mean(episodedf$Maennl[!duplicated(episodedf$uniPatID)], na.rm = TRUE),
+    percentage.females.patients=mean(episodedf$Weibl[!duplicated(episodedf$uniPatID)], na.rm = TRUE),
+    no.private.insurance= sum(episodedf$PKV, na.rm= TRUE),
+    percentage.private.insurance= mean(episodedf$PKV, na.rm= TRUE),
+    percentage.retired.patients= mean(episodedf$Status_R[!duplicated(episodedf$uniPatID)], na.rm= TRUE),
+    percentage.retired.episodes= mean(episodedf$Status_R, na.rm= TRUE),
+    no.AUBs = sum(!is.na(episodedf$time_until_AUB)),
+    percentage.AUBs.episodes = mean(!is.na(episodedf$time_until_AUB))
+  )
+  
+  numbers<- unlist(numbers)|>
+    as.data.frame()
+  colnames(numbers)<- NULL
+  return(numbers)
+}
+
 discovery.tool<- function(decision.rule, agelims = c(1,150), 
                           insurance = c("all", "GKV", "PKV")[1], 
                           remove.copd = FALSE, lims.chronic.diseases = c(0, 100), 
