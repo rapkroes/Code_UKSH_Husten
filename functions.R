@@ -655,19 +655,21 @@ summary.stats<- function(episodedf){
   return(numbers)
 }
 
-discovery.tool<- function(decision.rule, agelims = c(1,150), 
+discovery.tool<- function(decision.rule, agelims = c(1, 150), 
                           insurance = c("all", "GKV", "PKV")[1], 
                           remove.copd = FALSE, lims.chronic.diseases = c(0, 100), 
                           pandemic = "none", cutoff_diag = cutoff_diag,
-                          preliminary.diag = c(NA, TRUE, FALSE)[1], 
-                          AUB=c(NA, TRUE, FALSE)[1], quarter.selection = 1:4, 
+                          # preliminary.diag = c(NA, TRUE, FALSE)[1], 
+                          AUB = c(NA, TRUE, FALSE)[1], quarter.selection = 1:4, 
                           month.selection=1:12, selected.years = "all", 
                           dependent.variable, research.question,
                           diag_initial_last = c("first", "last")[1],
                           diag_no_diagnoses = FALSE,
                           escalation_lab = c("any", "blood", "diff_blood", 
-                                             "CRP", "erythocytes", "leucocytes", 
-                                             "procalcitonin")[1]
+                                             "CRP", "erythocytes", "leukocytes", 
+                                             "procalcitonin")[1],
+                          escalation_ueberweis = c("any", "pulmologist", 
+                                                   "radiologist", "hospital")[1]
                           ){
   # Tool to create plots and tables for specific data requests.
   # decision.rule is an integer between 1 and 5 giving the decision rule for how to deal with overlaps in the data set. Can currently only be set to 1 or 2.
@@ -753,21 +755,21 @@ discovery.tool<- function(decision.rule, agelims = c(1,150),
     stop("pandemic must be specified as TRUE, FALSE, or not be specified.")
   }
   
-  if(!is.na(preliminary.diag)){
-    if(preliminary.diag==TRUE){
-      episodedf<- episodedf[episodedf$first_diag_V_present,]
-    }else if(preliminary.diag==FALSE){
-      episodedf<- episodedf[!episodedf$first_diag_V_present,]
-    }
-  }
-  if(nrow(episodedf)==0){
-    stop("Due to the parameter configuration there are no episodes left after accounting for preliminary.diag")
-  }
+  # if(!is.na(preliminary.diag)){
+  #   if(preliminary.diag==TRUE){
+  #     episodedf<- episodedf[episodedf$first_diag_V_present,]
+  #   }else if(preliminary.diag==FALSE){
+  #     episodedf<- episodedf[!episodedf$first_diag_V_present,]
+  #   }
+  # }
+  # if(nrow(episodedf)==0){
+  #   stop("Due to the parameter configuration there are no episodes left after accounting for preliminary.diag")
+  # }
   
   if(!is.na(AUB)){
-    if(AUB==TRUE){
+    if(AUB == TRUE){
       episodedf<- episodedf[!is.na(episodedf$TG_DateNum_AUB),]
-    }else if(AUB==FALSE){
+    }else if(AUB == FALSE){
       episodedf<- episodedf[is.na(episodedf$TG_DateNum_AUB),]
     }
   }
@@ -799,17 +801,17 @@ discovery.tool<- function(decision.rule, agelims = c(1,150),
   }else if(dependent.variable=="age"){
     dt_int_age(research.question, episodedf, agelims)
   }else if(dependent.variable=="escalation_lab"){
-    dt_int_escalation_lab(research.question, episodedf, 
-                          escalation.parameters_lab)
+    dt_int_escalation_lab(research.question, episodedf, escalation_lab)
   }else if(dependent.variable=="escalation_antibiotics"){
     dt_int_escalation_antibiotics(research.question, episodedf)
   }else if(dependent.variable=="escalation_ueberweis"){
-    
+    dt_int_escalation_lab(research.question, episodedf, escalation_ueberweis)
   }
   return(TRUE)
 }
 
-dt_int_diag<- function(research.question, episodedf, diag_initial_last, diag_no_diagnoses){
+dt_int_diag<- function(research.question, episodedf, diag_initial_last, 
+                       diag_no_diagnoses){
   if(isFALSE(diag_no_diagnoses)){
     if(diag_initial_last == "last"){
       all.diagnoses<- episodedf[,grepl("last_diag", colnames(episodedf))]|>
@@ -969,8 +971,8 @@ dt_int_escalation_lab<- function(research.question, episodedf, escalation_lab){
     #erythocytes
     x<- episodedf$ery - episodedf$start_date
     x<- x[!is.na(x)]
-  }else if(escalation_lab == "leucocytes"){
-    #leucocytes
+  }else if(escalation_lab == "leukocytes"){
+    #leukocytes
     x<- episodedf$leuko - episodedf$start_date
     x<- x[!is.na(x)]
   }else if(escalation_lab == "procalcitonin"){
@@ -1026,8 +1028,9 @@ dt_int_escalation_antibiotics<- function(research.question, episodedf){
   write_xlsx(d, paste0(research.question, ".xlsx"))
 }
 
-dt_int_escalation_ueberweis<- function(research.question, episodedf){
-  if(escalation.parameters_ueberweis[["type"]] == 1){
+dt_int_escalation_ueberweis<- function(research.question, episodedf, 
+                                       escalation_ueberweis){
+  if(escalation_ueberweis == "any"){
     #referral to specialist care
     x<- cbind(episodedf$FR_Pneumo - episodedf$start_date, 
               episodedf$FR_Radiol - episodedf$start_date, 
@@ -1040,25 +1043,25 @@ dt_int_escalation_ueberweis<- function(research.question, episodedf){
       }
     })
     x<- x[!is.na(x)]
-    warning(paste("There were", length(x), 
+    message(paste("There were", length(x), 
                   "episodes when patients were referred to a specialist."))
-  }else if(escalation.parameters_ueberweis[["type"]] == 2){
+  }else if(escalation_ueberweis == "pulmonologist"){
     #referral pulmonologist
     x<- episodedf$FR_Pneumo - episodedf$start_date
     x<- x[!is.na(x)]
-    warning(paste("There were", length(x), 
+    message(paste("There were", length(x), 
                   "episodes when patients were referred to a pulmonologist."))
-  }else if(escalation.parameters_ueberweis[["type"]] == 3){
+  }else if(escalation_ueberweis == "radiologist"){
     #referral radiologist
     x<- episodedf$FR_Radiol - episodedf$start_date
     x<- x[!is.na(x)]
-    warning(paste("There were", length(x), 
+    message(paste("There were", length(x), 
                   "episodes when patients were referred to a radiologist."))
-  }else if(escalation.parameters_ueberweis[["type"]] == 4){
+  }else if(escalation_ueberweis == "hospital"){
     #referral hospital
     x<- episodedf$FR_KH - episodedf$start_date
     x<- x[!is.na(x)]
-    warning(paste("There were", length(x), 
+    message(paste("There were", length(x), 
                   "episodes when patients were referred to a hospital."))
   }
   

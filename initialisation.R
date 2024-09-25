@@ -20,7 +20,7 @@ if(real.data){
   icd10_description<- read.csv("https://github.com/rapkroes/Code_UKSH_Husten/blob/288b25aa745f178d2705d990e5106ad6db320a4d/icd10_description.csv")
   selected.lab.descriptions<- read.csv("https://github.com/rapkroes/Code_UKSH_Husten/raw/main/freitextanalyse.csv", sep = ";")
   ICD3St<- read.csv("https://raw.githubusercontent.com/rapkroes/Code_UKSH_Husten/main/Table_ICD_3St.csv", sep = ";")
-  source("//fileserver1.uni-luebeck.de/ifa_homes/raphaelkroes/Documents/GitHub/Code_UKSH_Husten/functions.R")
+  source("https://raw.githubusercontent.com/rapkroes/Code_UKSH_Husten/refs/heads/main/functions.R")
   
 }else{
   source("fakedgp_work.R")

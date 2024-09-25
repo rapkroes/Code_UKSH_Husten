@@ -7,20 +7,25 @@ output: html_document
 
 
 ```{r}
-### activate packages at the start of every session
+### activate packages and read in hyperparameters at the start of EVERY session
 library(readxl)
 library(dplyr)
 library(parallel)
 library(lubridate)
 library(ggplot2)
 library(writexl)
-```
 
-```{r}
 real.data<- TRUE
 cutoff_quantile<- 0.95
 selected.max.length.of.episode<- 21
+```
 
+```{r}
+# Initialisation. Alternatively, load the corresponding .RData-file
+source("https://raw.githubusercontent.com/rapkroes/Code_UKSH_Husten/refs/heads/main/initialisation.R")
+save.image("cough_project_workspace.RData")
+```
+```{r}
 t1_r1<- summary.stats(episodedf = full_r1)
 t1_r2<- summary.stats(episodedf = full_r2)
 write.table(t1_r1, "table1_r1.csv", sep = "; ")
@@ -30,84 +35,366 @@ write.table(t1_r2, "table1_r2.csv", sep = "; ")
 
 
 ```{r}
-# create plots
-
-# no. 32
-
+# analyses regarding diagnoses
+discovery.tool(decision.rule = 1, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4, 
+               month.selection=1:12, selected.years = "all", 
+               dependent.variable = "diag", research.question = 
+                 "Welche Diagnosen wurden zuerst gestellt, R1",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any"
+               )
+discovery.tool(decision.rule = 2, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4, 
+               month.selection=1:12, selected.years = "all", 
+               dependent.variable = "diag", research.question = 
+                 "Welche Diagnosen wurden zuerst gestellt, R2",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any"
+               )
+discovery.tool(decision.rule = 1, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4, 
+               month.selection=1:12, selected.years = c(2000, 2019), 
+               dependent.variable = "diag",  research.question = 
+                 "Welche Diagnosen wurden zuerst gestellt, 2000-2019, R1",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any"
+               )
+discovery.tool(decision.rule = 2, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4, 
+               month.selection=1:12, selected.years = c(2000, 2019), 
+               dependent.variable = "diag", research.question = 
+                 "Welche Diagnosen wurden zuerst gestellt, 2000-2019, R2",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any"
+               )
+discovery.tool(decision.rule = 1, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = FALSE, AUB = NA, quarter.selection = 1:4, 
+               month.selection=1:12, selected.years = "all", 
+               dependent.variable = "diag", research.question = 
+                 "Welche Diagnosen wurden zuerst gestellt, ohne Pandemie R1",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any"
+               )
+discovery.tool(decision.rule = 2, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = FALSE, AUB = NA, quarter.selection = 1:4, 
+               month.selection=1:12, selected.years = "all", 
+               dependent.variable = "diag", research.question = 
+                 "Welche Diagnosen wurden zuerst gestellt, ohne Pandemie R2",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any"
+               )
+discovery.tool(decision.rule = 1, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4, 
+               month.selection=1:12, selected.years = "all", 
+               dependent.variable = "diag", research.question = 
+                 "An wie vielen Besuchen wurden Diagnosen gestellt, R1",
+               diag_initial_last = "first", diag_no_diagnoses = TRUE,
+               escalation_lab = "any"
+               )
+discovery.tool(decision.rule = 2, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4, 
+               month.selection=1:12, selected.years = "all", 
+               dependent.variable = "diag", research.question = 
+                 "An wie vielen Besuchen wurden Diagnosen gestellt, R2",
+               diag_initial_last = "first", diag_no_diagnoses = TRUE,
+               escalation_lab = "any"
+               )
 ```
-
 ```{r}
-diag.parameters<- list(initial.or.last= "initial",type= 1)
-discovery.tool(1, dependent.variable = "diag", research.question = "Welche Diagnosen wurden zuerst gestellt, R1")
-discovery.tool(2, dependent.variable = "diag", research.question = "Welche Diagnosen wurden zuerst gestellt, R2")
-discovery.tool(1, dependent.variable = "diag", selected.years = c(2000,2019), research.question = "Welche Diagnosen wurden zuerst gestellt, 2000-2019, R1")
-discovery.tool(2, dependent.variable = "diag", selected.years = c(2000,2019), research.question = "Welche Diagnosen wurden zuerst gestellt, 2000-2019, R2")
-discovery.tool(1, dependent.variable = "diag", pandemic = FALSE, research.question = "Welche Diagnosen wurden zuerst gestellt, ohne Pandemie R1")
-discovery.tool(2, dependent.variable = "diag", pandemic = FALSE, research.question = "Welche Diagnosen wurden zuerst gestellt, ohne Pandemie, R2")
-
-diag.parameters<- list(type= 2)
-discovery.tool(1, dependent.variable = "diag", research.question = "An wie vielen Besuchen wurden Diagnosen gestellt, R1")
-discovery.tool(2, dependent.variable = "diag", research.question = "An wie vielen Besuchen wurden Diagnosen gestellt, R2")
-
-discovery.tool(1, dependent.variable = "age", agelims = c(1,90), research.question = "Wie alt waren die Patienten, R1")
-discovery.tool(2, dependent.variable = "age", agelims = c(1,90), research.question = "Wie alt waren die Patienten, R2")
-discovery.tool(1, dependent.variable = "age", agelims = c(18,90), research.question = "Wie alt waren die Patienten (ohne Minderjährige), R1")
-discovery.tool(2, dependent.variable = "age", agelims = c(18,90), research.question = "Wie alt waren die Patienten (ohne Minderjährige), R2")
-
-escalation.parameters_ueberweis<- list(type="1")
-discovery.tool(2,dependent.variable = "escalation_ueberweis",research.question = "Wann wurden Patienten zu einem Spezialisten geschickt, R2")
-escalation.parameters_ueberweis<- list(type="2")
-discovery.tool(2,dependent.variable = "escalation_ueberweis",research.question = "Wann wurden Patienten zu einem Pneumologen geschickt, R2")
-escalation.parameters_ueberweis<- list(type="3")
-discovery.tool(2,dependent.variable = "escalation_ueberweis",research.question = "Wann wurden Patienten zu einem Radiologen geschickt, R2")
-escalation.parameters_ueberweis<- list(type="4")
-discovery.tool(2,dependent.variable = "escalation_ueberweis",research.question = "Wann wurden Patienten ins Krankenhaus geschickt, R2")
-
-escalation.parameters_ueberweis<- list(type="1")
-discovery.tool(1,dependent.variable = "escalation_ueberweis",research.question = "Wann wurden Patienten zu einem Spezialisten geschickt, R1")
-escalation.parameters_ueberweis<- list(type="2")
-discovery.tool(1,dependent.variable = "escalation_ueberweis",research.question = "Wann wurden Patienten zu einem Pneumologen geschickt, R1")
-escalation.parameters_ueberweis<- list(type="3")
-discovery.tool(1,dependent.variable = "escalation_ueberweis",research.question = "Wann wurden Patienten zu einem Radiologen geschickt, R1")
-escalation.parameters_ueberweis<- list(type="4")
-discovery.tool(1,dependent.variable = "escalation_ueberweis",research.question = "Wann wurden Patienten ins Krankenhaus geschickt, R1")
+# additional analyses regarding diagnoses
+discovery.tool(decision.rule = 1, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = TRUE, quarter.selection = 1:4, 
+               month.selection=1:12, selected.years = "all", 
+               dependent.variable = "diag", research.question = 
+                 "Welche Diagnosen wurden zuerst gestellt in AUB-Fällen, R1",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any"
+               )
+discovery.tool(decision.rule = 2, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = TRUE, quarter.selection = 1:4, 
+               month.selection=1:12, selected.years = "all", 
+               dependent.variable = "diag", research.question = 
+                 "Welche Diagnosen wurden zuerst gestellt in AUB-Fällen, R2",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any"
+               )
+discovery.tool(decision.rule = 1, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = FALSE, quarter.selection = 1:4, 
+               month.selection=1:12, selected.years = "all", 
+               dependent.variable = "diag", research.question = 
+                 "Welche Diagnosen wurden zuerst gestellt in nicht-AUB-Fällen, R1",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any"
+               )
+discovery.tool(decision.rule = 2, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = FALSE, quarter.selection = 1:4, 
+               month.selection=1:12, selected.years = "all", 
+               dependent.variable = "diag", research.question = 
+                 "Welche Diagnosen wurden zuerst gestellt in nicht-AUB-Fällen, R2",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any"
+               )
+for(q in seq(1, 4)){
+  discovery.tool(decision.rule = 1, agelims = c(1, 150), insurance = "all",
+                 remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+                 pandemic = "none", AUB = NA, quarter.selection = 1, 
+                 month.selection=1:12, selected.years = "all",
+                 dependent.variable = "diag", research.question =
+                   paste0("Welche Diagnosen wurden zuerst gestellt in Q", q, 
+                          ", R1"),
+                 diag_initial_last = "first", diag_no_diagnoses = FALSE,
+                 escalation_lab = "any"
+                 )
+  discovery.tool(decision.rule = 2, agelims = c(1, 150), insurance = "all",
+                 remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+                 pandemic = "none", AUB = NA, quarter.selection = 1, 
+                 month.selection=1:12, selected.years = "all",
+                 dependent.variable = "diag", research.question =
+                   paste0("Welche Diagnosen wurden zuerst gestellt in Q", q, 
+                          ", R2"),
+                 diag_initial_last = "first", diag_no_diagnoses = FALSE,
+                 escalation_lab = "any"
+                 )
+}
 ```
-
 ```{r}
-diag.parameters<- list(initial.or.last= "initial",type= 1)
-discovery.tool(1, dependent.variable = "diag", AUB=TRUE, research.question = "Welche Diagnosen wurden zuerst gestellt in AUB-Fällen, R1")
-discovery.tool(2, dependent.variable = "diag", AUB=TRUE, research.question = "Welche Diagnosen wurden zuerst gestellt in AUB-Fällen, R2")
-discovery.tool(1, dependent.variable = "diag", AUB=FALSE, research.question = "Welche Diagnosen wurden zuerst gestellt in nicht-AUB-Fällen, R1")
-discovery.tool(2, dependent.variable = "diag", AUB=FALSE, research.question = "Welche Diagnosen wurden zuerst gestellt in nicht-AUB-Fällen, R2")
-discovery.tool(1, dependent.variable = "diag", quarter.selection = 1, research.question = "Welche Diagnosen wurden zuerst gestellt in Q1, R1")
-discovery.tool(2, dependent.variable = "diag", quarter.selection = 1, research.question = "Welche Diagnosen wurden zuerst gestellt in Q1, R2")
-discovery.tool(1, dependent.variable = "diag", quarter.selection = 2, research.question = "Welche Diagnosen wurden zuerst gestellt in Q2, R1")
-discovery.tool(2, dependent.variable = "diag", quarter.selection = 2, research.question = "Welche Diagnosen wurden zuerst gestellt in Q2, R2")
-discovery.tool(1, dependent.variable = "diag", quarter.selection = 3, research.question = "Welche Diagnosen wurden zuerst gestellt in Q3, R1")
-discovery.tool(2, dependent.variable = "diag", quarter.selection = 3, research.question = "Welche Diagnosen wurden zuerst gestellt in Q3, R2")
-discovery.tool(1, dependent.variable = "diag", quarter.selection = 4, research.question = "Welche Diagnosen wurden zuerst gestellt in Q4, R1")
-discovery.tool(2, dependent.variable = "diag", quarter.selection = 4, research.question = "Welche Diagnosen wurden zuerst gestellt in Q4, R2")
+# analyses regarding age
+discovery.tool(decision.rule = 1, agelims = c(1, 90), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4,
+               month.selection=1:12, selected.years = "all",
+               dependent.variable = "age", research.question = 
+                 "Wie alt waren die Patienten, R1",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any"
+)
+discovery.tool(decision.rule = 2, agelims = c(1, 90), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4,
+               month.selection=1:12, selected.years = "all",
+               dependent.variable = "age", research.question = 
+                 "Wie alt waren die Patienten, R2",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any"
+)
+discovery.tool(decision.rule = 1, agelims = c(18, 90), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4,
+               month.selection=1:12, selected.years = "all",
+               dependent.variable = "age", research.question = 
+                 "Wie alt waren die Patienten (ohne Minderjährige), R1",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any"
+)
+discovery.tool(decision.rule = 2, agelims = c(18, 90), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4,
+               month.selection=1:12, selected.years = "all",
+               dependent.variable = "age", research.question = 
+                 "Wie alt waren die Patienten (ohne Minderjährige), R2",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any"
+)
+discovery.tool(decision.rule = 1, agelims = c(18, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4,
+               month.selection=1:12, selected.years = "all",
+               dependent.variable = "age", research.question = 
+                 "Wie alt waren die Patienten, ohne Minderjährige, R1",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any"
+)
+discovery.tool(decision.rule = 2, agelims = c(18, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4,
+               month.selection=1:12, selected.years = "all",
+               dependent.variable = "age", research.question = 
+                 "Wie alt waren die Patienten, ohne Minderjährige, R2",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any"
+)
 ```
 ```{r}
-#escalation lab plots
-escalation.parameters_lab<- list(type=1)
-discovery.tool(1,dependent.variable = "escalation_lab", research.question = "Wann wurde (irgend-) ein Labortest angeordnet, R1")
-discovery.tool(2,dependent.variable = "escalation_lab", research.question = "Wann wurde (irgend-) ein Labortest angeordnet, R2")
-escalation.parameters_lab<- list(type=4)
-discovery.tool(1,dependent.variable = "escalation_lab", research.question = "Wann wurde auf C-reaktives Protein getestet, R1")
-discovery.tool(2,dependent.variable = "escalation_lab", research.question = "Wann wurde auf C-reaktives Protein getestet, R2")
-escalation.parameters_lab<- list(type=6)
-discovery.tool(1,dependent.variable = "escalation_lab", research.question = "Wann wurden Leukozyten gemessen, R1")
-discovery.tool(2,dependent.variable = "escalation_lab", research.question = "Wann wurden Leukozyten gemessen, R2")
-escalation.parameters_lab<- list(type=7)
-discovery.tool(1,dependent.variable = "escalation_lab", research.question = "Wann wurde auf Procalcitonin getestet, R1")
-discovery.tool(2,dependent.variable = "escalation_lab", research.question = "Wann wurde auf Procalcitonin getestet, R2")
+# analyses regarding time of escalation/ referral to specialist
+discovery.tool(decision.rule = 1, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4,
+               month.selection=1:12, selected.years = "all",
+               dependent.variable = "escalation_ueberweis", research.question = 
+                 "Wann wurden Patienten zu einem Spezialisten geschickt, R1",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any", escalation_ueberweis = "any"
+)
+discovery.tool(decision.rule = 2, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4,
+               month.selection=1:12, selected.years = "all",
+               dependent.variable = "escalation_ueberweis", research.question = 
+                 "Wann wurden Patienten zu einem Spezialisten geschickt, R2",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any", escalation_ueberweis = "any"
+)
+discovery.tool(decision.rule = 1, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4,
+               month.selection=1:12, selected.years = "all",
+               dependent.variable = "escalation_ueberweis", research.question = 
+                 "Wann wurden Patienten zu einem Pneumologen geschickt, R1",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any", escalation_ueberweis = "pulmonologist"
+)
+discovery.tool(decision.rule = 2, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4,
+               month.selection=1:12, selected.years = "all",
+               dependent.variable = "escalation_ueberweis", research.question = 
+                 "Wann wurden Patienten zu einem Pneumologen geschickt, R2",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any", escalation_ueberweis = "pulmonologist"
+)
+discovery.tool(decision.rule = 1, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4,
+               month.selection=1:12, selected.years = "all",
+               dependent.variable = "escalation_ueberweis", research.question = 
+                 "Wann wurden Patienten zu einem Radiologen geschickt, R1",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any", escalation_ueberweis = "radiologist"
+)
+discovery.tool(decision.rule = 2, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4,
+               month.selection=1:12, selected.years = "all",
+               dependent.variable = "escalation_ueberweis", research.question = 
+                 "Wann wurden Patienten zu einem Radiologen geschickt, R2",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any", escalation_ueberweis = "radiologist"
+)
+discovery.tool(decision.rule = 1, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4,
+               month.selection=1:12, selected.years = "all",
+               dependent.variable = "escalation_ueberweis", research.question = 
+                 "Wann wurden Patienten in ein Krankenhaus geschickt, R1",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any", escalation_ueberweis = "hospital"
+)
+discovery.tool(decision.rule = 2, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4,
+               month.selection=1:12, selected.years = "all",
+               dependent.variable = "escalation_ueberweis", research.question = 
+                 "Wann wurden Patienten in ein Krankenhaus geschickt, R2",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any", escalation_ueberweis = "hospital"
+)
 ```
-
 ```{r}
-#probably necessary to adjust the function
-discovery.tool(1, dependent.variable = "age", agelims = c(18,150), research.question = "Wie alt waren die Patienten, ohne Minderjährige, R1")
-discovery.tool(2, dependent.variable = "age", agelims = c(18,150), research.question = "Wie alt waren die Patienten, ohne Minderjährige, R2")
-discovery.tool(1, dependent.variable = "escalation_antibiotics", research.question = "Wann wurden Antibiotika verschrieben, R1")
-discovery.tool(2, dependent.variable = "escalation_antibiotics", research.question = "Wann wurden Antibiotika verschrieben, R2")
+# analyses regarding time of escalation/ time of lab test
+discovery.tool(decision.rule = 1, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4,
+               month.selection=1:12, selected.years = "all",
+               dependent.variable = "escalation_lab", research.question = 
+                 "Wann wurde (irgend-) ein Labortest angeordnet, R1",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any", escalation_ueberweis = "any"
+               )
+discovery.tool(decision.rule = 2, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4,
+               month.selection=1:12, selected.years = "all",
+               dependent.variable = "escalation_lab", research.question = 
+                 "Wann wurde (irgend-) ein Labortest angeordnet, R2",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any", escalation_ueberweis = "any"
+               )
+discovery.tool(decision.rule = 1, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4,
+               month.selection=1:12, selected.years = "all",
+               dependent.variable = "escalation_lab", research.question = 
+                 "Wann wurde auf C-reaktives Protein getestet, R1",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any", escalation_ueberweis = "CRP"
+               )
+discovery.tool(decision.rule = 2, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4,
+               month.selection=1:12, selected.years = "all",
+               dependent.variable = "escalation_lab", research.question = 
+                 "Wann wurde auf C-reaktives Protein getestet, R2",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any", escalation_ueberweis = "CRP"
+               )
+discovery.tool(decision.rule = 1, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4,
+               month.selection=1:12, selected.years = "all",
+               dependent.variable = "escalation_lab", research.question = 
+                 "Wann wurde auf Leukozyten getestet, R1",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any", escalation_ueberweis = "leukocytes"
+               )
+discovery.tool(decision.rule = 2, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4,
+               month.selection=1:12, selected.years = "all",
+               dependent.variable = "escalation_lab", research.question = 
+                 "Wann wurde auf Leukozyten getestet, R2",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any", escalation_ueberweis = "leukocytes"
+               )
+discovery.tool(decision.rule = 1, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4,
+               month.selection=1:12, selected.years = "all",
+               dependent.variable = "escalation_lab", research.question = 
+                 "Wann wurde auf Procalcitonin getestet, R1",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any", escalation_ueberweis = "procalcitonin"
+               )
+discovery.tool(decision.rule = 2, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100),
+               pandemic = "none", AUB = NA, quarter.selection = 1:4,
+               month.selection=1:12, selected.years = "all",
+               dependent.variable = "escalation_lab", research.question = 
+                 "Wann wurde auf Procalcitonin getestet, R2",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any", escalation_ueberweis = "procalcitonin"
+               )
+```
+```{r}
+# analyses regarding time of escalation/ time of antibiotics prescription
+discovery.tool(decision.rule = 1, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100), 
+               pandemic = "none", AUB = NA, quarter.selection = 1:4,
+               month.selection=1:12, selected.years = "all", 
+               dependent.variable = "escalation_antibiotics", 
+               research.question = "Wann wurden Antibiotika verschrieben, R1",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any", escalation_ueberweis = "any"
+               )
+discovery.tool(decision.rule = 2, agelims = c(1, 150), insurance = "all",
+               remove.copd = FALSE, lims.chronic.diseases = c(0, 100), 
+               pandemic = "none", AUB = NA, quarter.selection = 1:4,
+               month.selection=1:12, selected.years = "all", 
+               dependent.variable = "escalation_antibiotics", 
+               research.question = "Wann wurden Antibiotika verschrieben, R2",
+               diag_initial_last = "first", diag_no_diagnoses = FALSE,
+               escalation_lab = "any", escalation_ueberweis = "any"
+               )
 ```
